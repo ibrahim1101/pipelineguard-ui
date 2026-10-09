@@ -67,6 +67,40 @@ fn spawn_development_bridge() -> Result<(Child, String, u16), String> {
     Ok((child, token, port))
 }
 
+// The packaged bridge lives next to the desktop executable under
+// cerberus-runtime/; never search PATH for an untrusted sidecar.
+fn packaged_sidecar_paths(executable: &std::path::Path) -> Result<(PathBuf, PathBuf), String> {
+    let parent = executable.parent().ok_or("Missing desktop executable directory")?;
+    let runtime = parent.join("cerberus-runtime");
+    let sidecar = runtime.join("cerberus-bridge.exe");
+    let engine = runtime.join("engine");
+    if !sidecar.is_file() || !engine.join("pipelineguard").is_dir() {
+        return Err("Packaged Cerberus runtime is missing".into());
+    }
+    Ok((sidecar, engine))
+}
+
+fn spawn_packaged_bridge() -> Result<(Child, String, u16), String> {
+    let executable = std::env::current_exe().map_err(|_| "Unable to locate desktop executable")?;
+    let (sidecar, engine) = packaged_sidecar_paths(&executable)?;
+    let listener = TcpListener::bind("127.0.0.1:0").map_err(|_| "Unable to reserve local port")?;
+    let port = listener.local_addr().map_err(|_| "Invalid local port")?.port();
+    let mut secret = [0u8; 32];
+    rand::rngs::OsRng.fill_bytes(&mut secret);
+    let token: String = secret.iter().map(|b| format!("{b:02x}")).collect();
+    let child = Command::new(sidecar)
+        .current_dir(executable.parent().ok_or("Missing desktop executable directory")?)
+        .env("CERBERUS_BRIDGE_PORT", port.to_string())
+        .env("PIPELINEGUARD_ENGINE_PATH", engine)
+        .env("PIPELINEGUARD_DESKTOP_MODE", "1")
+        .env("PIPELINEGUARD_TOKEN", &token)
+        .env("CERBERUS_MANAGED_CHILD", "1")
+        .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+        .spawn().map_err(|_| "Unable to start packaged Cerberus bridge")?;
+    drop(listener);
+    Ok((child, token, port))
+}
+
 // Verify the protected API with the native-only token, not the public health route.
 fn authenticated_ready(port: u16, token: &str) -> bool {
     let address = SocketAddr::from(([127, 0, 0, 1], port));
@@ -174,7 +208,10 @@ async fn bridge_request(
 fn main() {
     // This is a development-only bridge configuration; a future native
     // process manager must generate and own the token and child lifecycle.
-    let managed = match spawn_development_bridge() {
+    let packaged_requested = std::env::current_exe().ok()
+        .and_then(|exe| exe.parent().map(|p| p.join("cerberus-runtime").exists()))
+        .unwrap_or(false);
+    let managed = match if packaged_requested { spawn_packaged_bridge() } else { spawn_development_bridge() } {
         Ok((mut child, token, port)) => {
             match wait_for_managed_bridge(&mut child, port, &token) {
                 Ok(()) => Some((child, token, port)),
@@ -193,7 +230,7 @@ fn main() {
             None
         }
     };
-    let managed_start_failed = std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1") && managed.is_none();
+    let managed_start_failed = (packaged_requested || std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1")) && managed.is_none();
     let token = managed.as_ref().map(|(_, token, _)| token.clone())
         .or_else(|| if managed_start_failed { None } else { std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()) });
     let fallback_port = std::env::var("CERBERUS_DEV_BRIDGE_PORT").ok()
