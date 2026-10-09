@@ -45,8 +45,13 @@ jobs:
           $env:PIPELINEGUARD_ENGINE_PATH = (Resolve-Path engine).Path
           $env:PIPELINEGUARD_DESKTOP_MODE = '1'
           Remove-Item Env:PIPELINEGUARD_TOKEN -ErrorAction SilentlyContinue
+          # PowerShell 7 / GitHub Actions can turn native nonzero exits into
+          # terminating errors before we inspect the expected failure.
+          $env:PSNativeCommandUseErrorActionPreference = 'false'
           & dist/cerberus-bridge/cerberus-bridge.exe
-          if ($LASTEXITCODE -eq 0) { throw 'Sidecar unexpectedly started without token' }
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -eq 0) { throw 'Sidecar unexpectedly started without token' }
+          Write-Host "Expected fail-closed sidecar exit code: $exitCode"
       - name: Test packaged authenticated bridge startup
         shell: pwsh
         run: |
