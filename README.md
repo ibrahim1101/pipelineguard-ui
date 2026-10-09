@@ -4,6 +4,11 @@ A React-based frontend and Python FastAPI integration bridge for [PipelineGuard]
 
 > **Development status:** UI and bridge source are present. A production-ready Windows desktop installer, backend startup/shutdown integration, and end-to-end security validation have **not** been verified. Do not treat the frontend as a replacement for the existing stable PipelineGuard release.
 
+## Development documentation
+
+- [Engineering history and CI troubleshooting](docs/ENGINEERING_HISTORY.md) — living record of UI development, failed attempts, fixes, verified commits, and remaining work.
+- Update this document after meaningful development batches, including both successful and unsuccessful validation results.
+
 ## Repositories
 
 - **Security engine:** [PipelineGuard](https://github.com/ibrahim1101/PipelineGuard), development branch `feat/v2-engine-integration`.
