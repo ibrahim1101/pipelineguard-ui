@@ -227,6 +227,26 @@ mod tests {
     }
 
     #[test]
+    fn managed_child_drop_reaps_exited_process() {
+        use super::ManagedChild;
+        use std::process::{Command, Stdio};
+        use std::sync::Mutex;
+
+        // An already-exited process is safe to kill/wait and must not panic on drop.
+        let mut child = if cfg!(windows) {
+            Command::new("cmd").args(["/C", "exit", "0"])
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Windows test child")
+        } else {
+            Command::new("true")
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Unix test child")
+        };
+        let _ = child.wait().expect("wait for test child");
+        drop(ManagedChild(Mutex::new(Some(child))));
+    }
+
+    #[test]
     fn rejects_unsafe_paths_and_methods() {
         for path in ["//evil.example", "/../admin", "/a/./b", "/a\\b", "/a#fragment", "/http://evil"] {
             assert!(!allowed_request("GET", path), "{path}");
