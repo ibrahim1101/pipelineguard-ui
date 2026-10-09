@@ -20,6 +20,8 @@ app = FastAPI(title="PipelineGuard Bridge", docs_url=None, redoc_url=None)
 app.include_router(router)
 
 TOKEN = os.environ.get("PIPELINEGUARD_TOKEN")
+if os.environ.get("PIPELINEGUARD_DESKTOP_MODE") == "1" and not TOKEN:
+    raise RuntimeError("Desktop mode requires PIPELINEGUARD_TOKEN")
 
 
 @app.middleware("http")
