@@ -23,6 +23,7 @@ export function AppProvider({ children }) {
   const pollRef = useRef(null);
   const pollInFlightRef = useRef(false);
   const backendRef = useRef("connecting");
+  const heartbeatRequestRef = useRef(0);
   const mountedRef = useRef(false);
   const generationRef = useRef(0);
   const initRef = useRef(0);
@@ -107,6 +108,8 @@ export function AppProvider({ children }) {
     if (!mountedRef.current) return;
     const generation = generationRef.current;
     const request = ++initRef.current;
+    // Invalidate older heartbeat checks so late failures cannot override recovery.
+    ++heartbeatRequestRef.current;
     setBackend("connecting");
     try {
       const [st, pr, se, ss] = await Promise.all([api.status(), api.profiles(), api.settings(), api.scanState()]);
@@ -149,11 +152,15 @@ export function AppProvider({ children }) {
     // Health alone is insufficient: initialization must also reload profiles,
     // settings, scan state and history after the backend restarts.
     let recovering = false;
+    let heartbeatPending = false;
     const id = setInterval(async () => {
-      if (recovering) return;
+      if (recovering || heartbeatPending) return;
+      heartbeatPending = true;
+      const generation = generationRef.current;
+      const heartbeatRequest = ++heartbeatRequestRef.current;
       try {
         await api.status();
-        if (!mountedRef.current) return;
+        if (!mountedRef.current || generation !== generationRef.current || heartbeatRequest !== heartbeatRequestRef.current) return;
         if (backendRef.current === "offline") {
           recovering = true;
           try {
@@ -163,7 +170,9 @@ export function AppProvider({ children }) {
           }
         }
       } catch {
-        if (mountedRef.current) setBackend("offline");
+        if (mountedRef.current && generation === generationRef.current && heartbeatRequest === heartbeatRequestRef.current) setBackend("offline");
+      } finally {
+        heartbeatPending = false;
       }
     }, 30000);
     return () => {
@@ -171,6 +180,7 @@ export function AppProvider({ children }) {
       generationRef.current += 1;
       initRef.current += 1;
       refreshRef.current += 1;
+      heartbeatRequestRef.current += 1;
       clearInterval(id);
       clearTimeout(pollRef.current);
     };
