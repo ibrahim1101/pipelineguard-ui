@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { api } from "../lib/api";
 
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
