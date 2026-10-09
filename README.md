@@ -36,6 +36,16 @@ The default allowed frontend origins are `http://localhost:3000` and `http://127
 - Run the bridge on `127.0.0.1` only; CORS is not an authentication or network isolation mechanism.
 - OSV lookups require network access. Never send source files or detected secrets to external services.
 
+## Loopback-only bridge launcher (security groundwork)
+
+`backend/launch_local.py` binds Uvicorn to `127.0.0.1` only and generates a fresh token on each start. Example from the repository root, after installing Python dependencies and setting `PIPELINEGUARD_ENGINE_PATH`:
+
+```sh
+python backend/launch_local.py --port 8000
+```
+
+**Important:** This launcher intentionally does **not** print the secret token. It is groundwork for a future trusted desktop shell that must securely deliver the per-launch token to the frontend. Running this launcher alone does not establish an authenticated frontend session; do not treat it as a complete desktop integration. The existing manually configured bridge remains available for development. Never bind an unauthenticated bridge to `0.0.0.0` or a public interface.
+
 ## Remaining integration work
 
 1. Verify a desktop shell exists and starts/stops the Python bridge with a per-launch token.
