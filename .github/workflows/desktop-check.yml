@@ -68,7 +68,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install native bridge integration dependencies
-        run: python -m pip install -r engine/requirements.txt 'fastapi==0.110.1' 'uvicorn==0.25.0' 'python-dotenv>=1.0.1'
+        run: python -m pip install -r backend/requirements-desktop.txt
       - name: Test Rust shell security, process lifecycle and real bridge readiness
         working-directory: desktop/src-tauri
         shell: pwsh
