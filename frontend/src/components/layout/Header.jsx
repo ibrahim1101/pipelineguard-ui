@@ -12,8 +12,8 @@ export default function Header() {
   return (
     <header className="h-14 shrink-0 bg-pg-side border-b border-pg-line/80 flex items-center gap-3 px-4 z-40" data-testid="app-header">
       <div className="flex items-center gap-2.5 w-[216px] shrink-0" data-testid="app-brand">
-        <span aria-hidden="true" className="h-8 w-8 rounded-md ring-1 ring-pg-line bg-pg-surface flex items-center justify-center font-brand font-bold text-pg-text">C</span>
-        <span className="font-brand text-[17px] font-semibold tracking-[0.02em] text-pg-text">CERBERUS</span>
+        <img src="/cerberus-mark.svg" alt="Cerberus three-headed guardian shield" className="h-10 w-10 rounded-md object-contain" />
+        <span className="cerberus-wordmark text-[18px] text-pg-text">CERBERUS</span>
       </div>
       <ProjectSelector />
       <Select value={selection.profile} onValueChange={(v) => setSelection({ profile: v })} disabled={running}>
