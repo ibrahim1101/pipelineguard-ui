@@ -58,6 +58,7 @@ fn spawn_development_bridge() -> Result<(Child, String, u16), String> {
         .env("PIPELINEGUARD_ENGINE_PATH", engine)
         .env("PIPELINEGUARD_DESKTOP_MODE", "1")
         .env("PIPELINEGUARD_TOKEN", &token)
+        .env("CERBERUS_MANAGED_CHILD", "1")
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -93,8 +94,10 @@ fn authenticated_ready(port: u16, token: &str) -> bool {
 fn wait_for_managed_bridge(child: &mut Child, port: u16, token: &str) -> Result<(), String> {
     let deadline = Instant::now() + Duration::from_secs(12);
     while Instant::now() < deadline {
-        if let Ok(Some(_)) = child.try_wait() {
-            return Err("Managed Python bridge exited before becoming ready".into());
+        match child.try_wait() {
+            Ok(Some(status)) => return Err(format!("Managed Python bridge exited before readiness: {status}")),
+            Err(_) => return Err("Unable to inspect managed Python bridge process".into()),
+            Ok(None) => {}
         }
         if authenticated_ready(port, token) {
             return Ok(());
