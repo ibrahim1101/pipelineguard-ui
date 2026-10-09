@@ -158,3 +158,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Privacy cleanup:** Removed leftover Emergent injected script and PostHog telemetry loader from `frontend/public/index.html` to match local-first/no-telemetry claims. Other dependencies and runtime telemetry behavior still require audit.
 - **Compatibility:** Kept GitHub repositories, Python package/module names, API routes, storage locations and Tauri application identifier unchanged to avoid breaking v2 integrations. Existing logo asset remains in repository but is no longer used by header. Final Cerberus logo/icon and full technical migration remain future tasks.
 - **Verification:** New UI and desktop workflows pending; not claiming packaged desktop app readiness.
+
+### 2026-10-09 — Approved Cerberus emblem and metallic UI title
+- **Approved artwork:** User-selected text-free olive/black three-headed Cerberus shield.
+- **UI implementation:** Added compact 72px reproduction as `frontend/public/cerberus-mark.svg` (embedded JPEG), replaced temporary C in Header with shield; added `.cerberus-wordmark` styling in `frontend/src/index.css` for an angular metallic/olive title using offline system fonts.
+- **Limitations:** The 72px embedded reproduction is a small UI icon, not the full-resolution source or a vector redraw. The exact custom typeface from the rendered mockup is not available as a font, so CSS approximates its look. Desktop icon/installer asset not replaced. Existing engine and API identifiers remain unchanged.
+- **Verification:** React CI pending after branding commits. Preserve original full-resolution design for future icon and splash packaging.
