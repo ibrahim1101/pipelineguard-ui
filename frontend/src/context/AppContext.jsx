@@ -19,6 +19,7 @@ export function AppProvider({ children }) {
   const [selection, setSelectionState] = useState({ project: "", config: "", profile: "standard", online: false });
   const [viewScan, setViewScan] = useState(null);
   const pollRef = useRef(null);
+  const pollInFlightRef = useRef(false);
   const backendRef = useRef("connecting");
   const mountedRef = useRef(false);
   const generationRef = useRef(0);
@@ -45,7 +46,8 @@ export function AppProvider({ children }) {
   }, []);
 
   const poll = useCallback(async () => {
-    if (!mountedRef.current) return;
+    if (!mountedRef.current || pollInFlightRef.current) return;
+    pollInFlightRef.current = true;
     const generation = generationRef.current;
     clearTimeout(pollRef.current);
     try {
@@ -85,6 +87,8 @@ export function AppProvider({ children }) {
       // Keep retrying after transient bridge failures; do not show stale scan progress.
       setBackend("offline");
       pollRef.current = setTimeout(poll, 2000);
+    } finally {
+      pollInFlightRef.current = false;
     }
   }, [refreshData]);
 
