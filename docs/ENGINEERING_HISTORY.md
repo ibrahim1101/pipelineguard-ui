@@ -225,3 +225,11 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Inspected Dashboard, Scan Project, Findings and shell sources. Confirmed two simultaneous Start Scan actions on the Scan Project route (header and primary page action). Header now omits its scan button on `/scan`, preserving the dedicated page action and header action elsewhere.
 - Findings page now has a minimum usable height, adjusted viewport sizing, and responsive search width. This is a source-level layout improvement, not a completed visual QA pass.
 - Commits `1fffa01`, `b1100ea`. CI pending.
+
+### 2026-10-09 — Dependencies, Reports, History, Settings UI audit
+- Confirmed prior Scan Project and Findings UI CI runs `37956142230`, `37956153047`, `37956165479` all passed.
+- Dependencies: improved short-window table sizing, responsive metrics grid, full-width mobile search, and flex overflow containment.
+- History: responsive search and minimum table width inside existing horizontal scroll region.
+- Settings: scrollable tab strip for six tabs on narrow windows and responsive select width.
+- Reports: changed remaining visible PipelineGuard references to Cerberus and improved format-picker grid at narrow widths.
+- Source-level changes only; rendered desktop inspection remains outstanding. CI for these commits pending.
