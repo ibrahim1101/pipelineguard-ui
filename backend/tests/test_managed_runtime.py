@@ -20,6 +20,20 @@ def free_port():
 
 
 class ManagedRuntimeTests(unittest.TestCase):
+    def test_desktop_mode_without_token_fails_closed(self):
+        port = free_port()
+        env = dict(os.environ, PIPELINEGUARD_ENGINE_PATH=str(ENGINE),
+                   PIPELINEGUARD_DESKTOP_MODE="1", CERBERUS_MANAGED_CHILD="1")
+        env.pop("PIPELINEGUARD_TOKEN", None)
+        proc = subprocess.run(
+            [sys.executable, "-m", "uvicorn", "server:app",
+             "--host", "127.0.0.1", "--port", str(port)],
+            cwd=BACKEND, env=env, stdin=subprocess.DEVNULL,
+            capture_output=True, text=True, timeout=15,
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("Desktop mode requires PIPELINEGUARD_TOKEN", proc.stderr)
+
     def test_authenticated_startup_rejection_and_shutdown(self):
         port = free_port()
         token = "ci-managed-runtime-token"
