@@ -124,7 +124,8 @@ describe("AppProvider bridge lifecycle", () => {
 
   test("does not overlap scan-state polling during repeated retries", async () => {
     let resolvePending;
-    api.scanState.mockResolvedValueOnce({ status: "running" })
+    api.scanState.mockResolvedValue({ status: "running" })
+      .mockResolvedValueOnce({ status: "running" })
       .mockImplementationOnce(() => new Promise((resolve) => { resolvePending = resolve; }));
     await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
     expect(api.scanState).toHaveBeenCalledTimes(2);
