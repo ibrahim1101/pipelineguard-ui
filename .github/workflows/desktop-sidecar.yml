@@ -52,6 +52,8 @@ jobs:
           $exitCode = $LASTEXITCODE
           if ($exitCode -eq 0) { throw 'Sidecar unexpectedly started without token' }
           Write-Host "Expected fail-closed sidecar exit code: $exitCode"
+          # Reset native process status so GitHub's pwsh wrapper exits successfully.
+          $global:LASTEXITCODE = 0
       - name: Test packaged authenticated bridge startup
         shell: pwsh
         run: |
