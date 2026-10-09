@@ -73,6 +73,47 @@ jobs:
           } finally {
             if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
           }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build frontend and native Windows desktop executable
+        shell: pwsh
+        run: |
+          Push-Location frontend
+          try {
+            npm install --legacy-peer-deps --no-audit --no-fund
+            if ($LASTEXITCODE -ne 0) { throw 'Frontend dependency installation failed' }
+            $env:CI = 'false'
+            npm run build
+            if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed' }
+          } finally { Pop-Location }
+          Push-Location desktop/src-tauri
+          try {
+            cargo build --release
+            if ($LASTEXITCODE -ne 0) { throw 'Desktop executable build failed' }
+          } finally { Pop-Location }
+      - name: Stage native desktop executable beside packaged runtime
+        shell: pwsh
+        run: |
+          $app = 'dist/cerberus-standalone'
+          New-Item -ItemType Directory -Path $app -Force | Out-Null
+          Copy-Item desktop/src-tauri/target/release/pipelineguard-desktop.exe "$app/Cerberus.exe" -Force
+          Copy-Item dist/cerberus-runtime "$app/cerberus-runtime" -Recurse -Force
+          if (-not (Test-Path "$app/Cerberus.exe")) { throw 'Missing native Cerberus executable' }
+          if (-not (Test-Path "$app/cerberus-runtime/cerberus-bridge.exe")) { throw 'Missing adjacent bridge executable' }
+          if (-not (Test-Path "$app/cerberus-runtime/engine/pipelineguard")) { throw 'Missing scanner engine' }
+      - name: Verify staged runtime layout matches native launcher contract
+        shell: pwsh
+        run: |
+          $root = (Resolve-Path dist/cerberus-standalone).Path
+          $exe = Join-Path $root 'Cerberus.exe'
+          $runtime = Join-Path (Split-Path $exe -Parent) 'cerberus-runtime'
+          if (-not (Test-Path (Join-Path $runtime 'cerberus-bridge.exe'))) { throw 'Launcher sidecar discovery would fail' }
+          if (-not (Test-Path (Join-Path $runtime 'engine/pipelineguard'))) { throw 'Launcher engine discovery would fail' }
       - name: Verify packaged sidecar fails closed without desktop token
         shell: pwsh
         run: |
