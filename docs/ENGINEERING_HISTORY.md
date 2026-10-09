@@ -307,3 +307,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - First Windows release-build validation `37969422997` failed in `actions/setup-node@v4` before frontend or Rust compilation: npm cache dependency path `frontend/package-lock.json` did not exist in the repository.
 - Removed the invalid npm cache configuration and replaced `npm ci` with `npm install --no-audit --no-fund` for the current lockfile-free frontend. Commit `c401b3d`.
 - A committed lockfile and deterministic `npm ci` remain desirable future work. The Windows release build still requires a successful CI rerun.
+
+### 2026-10-09 — Windows frontend peer dependency build repair
+- Windows release-build workflow `37969731844` failed in frontend installation with npm ERESOLVE: `react-day-picker@8.10.1` expects `date-fns` v2/v3 but the frontend specifies `date-fns@4.1.0`. Subsequent CRACO invocation failed because installation never completed.
+- Changed the Windows build workflow to use `npm install --legacy-peer-deps --no-audit --no-fund` as a temporary compatibility measure and fail immediately if npm install exits nonzero. Commit `05e93a3`.
+- The underlying peer-dependency mismatch remains technical debt requiring coordinated dependency updates and frontend testing; this workflow workaround does not prove package compatibility. CI pending.
