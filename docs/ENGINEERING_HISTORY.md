@@ -312,3 +312,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows release-build workflow `37969731844` failed in frontend installation with npm ERESOLVE: `react-day-picker@8.10.1` expects `date-fns` v2/v3 but the frontend specifies `date-fns@4.1.0`. Subsequent CRACO invocation failed because installation never completed.
 - Changed the Windows build workflow to use `npm install --legacy-peer-deps --no-audit --no-fund` as a temporary compatibility measure and fail immediately if npm install exits nonzero. Commit `05e93a3`.
 - The underlying peer-dependency mismatch remains technical debt requiring coordinated dependency updates and frontend testing; this workflow workaround does not prove package compatibility. CI pending.
+
+### 2026-10-09 — AJV frontend build dependency repair
+- Windows desktop build `37970098294` installed npm dependencies but failed running CRACO/webpack: `Cannot find module 'ajv/dist/compile/codegen'` from `ajv-keywords`, indicating an incompatible/missing AJV v8 resolution.
+- Declared `ajv@^8.17.1` as a direct frontend development dependency to provide the webpack validator's required v8 API. Commit `392cc83`.
+- Production frontend compilation and Windows release binary still need CI confirmation; do not treat this as a verified build fix until the new run passes.
