@@ -1,0 +1,74 @@
+name: PipelineGuard UI CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-build:
+    name: React production build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --legacy-peer-deps
+      - name: Build frontend
+        env:
+          CI: 'false'
+          DISABLE_EMERGENT_OVERLAY: 'true'
+          REACT_APP_BACKEND_URL: http://127.0.0.1:8000
+        run: npm run build
+
+  backend-smoke:
+    name: Python bridge smoke checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ui
+      - uses: actions/checkout@v4
+        with:
+          repository: ibrahim1101/PipelineGuard
+          ref: feat/v2-engine-integration
+          path: engine
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install bridge and engine dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install fastapi==0.110.1 uvicorn==0.25.0 'pydantic>=2.6.4,<3' python-dotenv httpx 'typer>=0.12' rich pytest
+      - name: Compile Python bridge
+        run: python -m compileall -q ui/backend
+      - name: Check bridge startup and authentication
+        env:
+          PIPELINEGUARD_ENGINE_PATH: ${{ github.workspace }}/engine
+          PYTHONPATH: ${{ github.workspace }}/ui/backend
+          PIPELINEGUARD_DESKTOP_MODE: '1'
+          PIPELINEGUARD_TOKEN: ci-test-token
+          CORS_ORIGINS: http://localhost:3000
+        run: |
+          python - <<'PY'
+          from fastapi.testclient import TestClient
+          from server import app
+          with TestClient(app) as client:
+              health = client.get("/api/health")
+              assert health.status_code == 200, health.text
+              denied = client.get("/api/status")
+              assert denied.status_code == 401, denied.text
+              allowed = client.get("/api/status", headers={"X-PipelineGuard-Token": "ci-test-token"})
+              assert allowed.status_code == 200, allowed.text
+              print("Bridge health and token authentication: PASS")
+          PY
