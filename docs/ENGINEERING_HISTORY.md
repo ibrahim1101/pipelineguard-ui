@@ -177,3 +177,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Correction:** Updated `frontend/src/lib/api.test.js` for native `bridge_request` IPC, fail-closed behavior and browser compatibility in commit `8d771068`.
 - **Verified:** Updated test run `37942658222` **successful**; latest documentation commit `9a3751e9` run `37942674389` **successful**. Original historical run remains failed; newer green runs supersede it.
 - **Next:** Implement Rust `bridge_request` and managed Python bridge lifecycle. The frontend IPC adapter alone does not make the desktop runtime operational.
+
+### 2026-10-09 — Native Tauri IPC handler (pending Windows CI)
+- **Implementation:** Added Rust `bridge_request` command using native reqwest client to proxy method/path/JSON body to loopback Python bridge, returning HTTP status and JSON response to React. The token stays native-side; no renderer global or browser fetch in Tauri mode.
+- **Guards:** Fail closed without configured token, reject unsafe paths/methods, disable redirects, request timeout, loopback-only target; unit tests cover accepted/rejected request shapes.
+- **Development configuration only:** `CERBERUS_DEV_BRIDGE_TOKEN` and optional `CERBERUS_DEV_BRIDGE_PORT` supply the token/port to the Rust process. Production must instead generate token in native code and own Python child lifecycle. No automatic engine startup, dynamic port reservation or installer yet.
+- **Commits:** `c8ee58b`, `c2ffba7`, `a01d33e`. Windows Tauri and React CI in progress; runtime behavior not yet validated.
