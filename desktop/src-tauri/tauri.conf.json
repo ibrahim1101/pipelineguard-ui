@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "PipelineGuard",
+  "version": "0.1.0",
+  "identifier": "dev.pipelineguard.desktop",
+  "build": {
+    "frontendDist": "../../frontend/build",
+    "devUrl": "http://localhost:3000"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "PipelineGuard",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 950,
+        "minHeight": 650
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:8000; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:"
+    }
+  },
+  "bundle": {
+    "active": false
+  }
+}
