@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2c08d2bbd0d38d5701eb73d3ee2912f30723faa5`, GitHub Actions run [37928177818](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37928177818) **successful**. New polling changes await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `3f8ede34e59e3eb4926d17d8909d44f22eeee0a3`, GitHub Actions run [37929171669](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929171669) **successful**. New report-initialization changes await CI.
 
 ## Scope and repository boundaries
 
@@ -56,6 +56,13 @@
 - **Commits:** `74f7bf4`, `ebc2dc9`, `4f66ec4`.
 - **Validation:** GitHub Actions pending; inspect run before declaring success.
 - **Previous failure:** Run `37926993456` malformed JSX escapes; corrected in `e2b49e9`; runs `37928154757` and `37928177818` passed.
+
+### 2026-10-09 — Initialization report outage isolation (pending CI)
+- **Problem:** `init()` included report refresh in the same exception handler as bridge connectivity, so a healthy bridge was marked offline if latest scan, history, or activity retrieval failed.
+- **Fix:** Handle report loading errors separately after successful bridge initialization, preserving connected state and showing an actionable warning.
+- **Tests:** Parameterized initialization regression for `latestScan`, `history`, and `activity` failures.
+- **Commits:** `f878df8`, `6b33268`.
+- **Verification:** Pending new GitHub Actions result; engine unchanged.
 
 ## Next engineering tasks
 
