@@ -16,9 +16,9 @@ export default function AppShell() {
       <TooltipProvider delayDuration={250}>
         <div className="pg-grain h-screen w-screen flex flex-col bg-pg-bg text-pg-text overflow-hidden" data-testid="app-shell">
           <Header />
-          <div className="flex flex-1 min-h-0">
+          <div className="flex flex-1 min-h-0 min-w-0">
             <Sidebar />
-            <main className="flex-1 min-w-0 overflow-y-auto pg-scroll" data-testid="main-workspace">
+            <main className="flex-1 min-w-0 overflow-x-hidden overflow-y-auto pg-scroll" data-testid="main-workspace">
               {backend === "offline" ? (
                 <BackendOffline />
               ) : (
@@ -27,7 +27,7 @@ export default function AppShell() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="px-6 py-6 xl:px-8 max-w-[1680px] mx-auto"
+                  className="px-4 py-5 lg:px-6 lg:py-6 xl:px-8 max-w-[1680px] mx-auto"
                 >
                   {outlet}
                 </motion.div>
