@@ -26,6 +26,12 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn install --non-interactive
+      - name: React lifecycle regression tests
+        env:
+          CI: 'true'
+          DISABLE_EMERGENT_OVERLAY: 'true'
+          REACT_APP_BACKEND_URL: http://127.0.0.1:8000
+        run: yarn test --watchAll=false --runInBand
       - name: Build frontend
         env:
           CI: 'false'
