@@ -342,3 +342,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added Rust packaged-sidecar discovery relative to the native executable (`cerberus-runtime/cerberus-bridge.exe` plus `cerberus-runtime/engine/pipelineguard`) and managed spawn with an OS-chosen loopback port, random token, authenticated readiness and child cleanup. Commit `858ba35`.
 - Added regression test for missing adjacent runtime layout. Commit `2f8d889`.
 - The native launcher integration is pending Windows CI. Sidecar workflow currently packages only the bridge onedir output, not the complete adjacent runtime layout. Tauri bundling remains disabled and no installer is ready.
+
+### 2026-10-10 — Adjacent packaged runtime layout smoke test
+- Windows desktop launcher integration checks `37977148260` and `37977134795` both passed.
+- Sidecar CI now assembles `dist/cerberus-runtime/` with `cerberus-bridge.exe`, its PyInstaller onedir dependencies, and the scanner engine directory. It launches the sidecar with `dist/` as working directory, exercising packaged engine path and authenticated readiness without using the backend source directory as CWD. Commit `9907279`.
+- This is an assembly and smoke-test milestone, not a signed or bundled Tauri installer. Native executable + runtime combined packaging remains to be validated.
