@@ -164,3 +164,10 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **UI implementation:** Added compact 72px reproduction as `frontend/public/cerberus-mark.svg` (embedded JPEG), replaced temporary C in Header with shield; added `.cerberus-wordmark` styling in `frontend/src/index.css` for an angular metallic/olive title using offline system fonts.
 - **Limitations:** The 72px embedded reproduction is a small UI icon, not the full-resolution source or a vector redraw. The exact custom typeface from the rendered mockup is not available as a font, so CSS approximates its look. Desktop icon/installer asset not replaced. Existing engine and API identifiers remain unchanged.
 - **Verification:** React CI pending after branding commits. Preserve original full-resolution design for future icon and splash packaging.
+
+### 2026-10-09 — Renderer API migration to native IPC (pending CI)
+- **CI checkpoint:** All Cerberus branding React workflows green, including run `37942337934`; prior Tauri Windows compilation run `37941230527` green.
+- **Change:** In Tauri context, frontend API now calls native `bridge_request` IPC with method/path/body and never directly fetches or accesses a renderer token. Browser development retains HTTP fetch behavior.
+- **Tests:** Replaced obsolete token-global tests with IPC routing, fail-closed, HTTP error and browser compatibility tests.
+- **Security and runtime boundary:** This is frontend preparation only. Native Rust `bridge_request` handler, process management and token storage **do not yet exist**. Tauri desktop API requests will fail until native handler is implemented; do not ship as complete desktop integration.
+- **Commits:** `479444b9`, `8d771068`.
