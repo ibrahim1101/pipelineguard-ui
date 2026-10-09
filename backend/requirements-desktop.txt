@@ -1,0 +1,6 @@
+# Minimal runtime dependencies for the local Cerberus desktop bridge.
+# The engine's scanning code uses Python's standard library; keep dev/test
+# dependencies and the Emergent web template dependencies out of packaging.
+fastapi==0.110.1
+uvicorn==0.25.0
+python-dotenv>=1.0.1
