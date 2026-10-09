@@ -1,4 +1,5 @@
 import { Loader2, Play } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useApp } from "@/context/AppContext";
@@ -9,6 +10,7 @@ const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function Header() {
   const { profiles, selection, setSelection, startScan, running, scanState, latest } = useApp();
+  const onScanPage = useLocation().pathname === "/scan";
   return (
     <header className="h-14 shrink-0 bg-pg-side border-b border-pg-line/80 flex items-center gap-3 px-4 z-40 min-w-0" data-testid="app-header">
       <div className="flex items-center gap-2.5 w-[198px] xl:w-[216px] shrink-0" data-testid="app-brand">
@@ -41,10 +43,10 @@ export default function Header() {
         </div>
       )}
       {!running && latest && <StatusPill status={latest.status} testId="header-last-status" />}
-      <Button onClick={startScan} disabled={running} className="h-9 px-4 font-semibold" data-testid="header-start-scan-btn">
+      {!onScanPage && <Button onClick={startScan} disabled={running} className="h-9 px-4 font-semibold" data-testid="header-start-scan-btn">
         {running ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
         {running ? "Scanning" : "Start Scan"}
-      </Button>
+      </Button>}
     </header>
   );
 }
