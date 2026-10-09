@@ -27,7 +27,14 @@ def main() -> None:
     if not os.environ.get("PIPELINEGUARD_ENGINE_PATH"):
         parser.error("PIPELINEGUARD_ENGINE_PATH must point to the engine checkout")
 
-    configure_local_bridge()
+    # Native Tauri owner provisions a per-launch token via child environment.
+    # Standalone development launches continue generating their own token.
+    if os.environ.get("CERBERUS_MANAGED_CHILD") == "1":
+        if not os.environ.get("PIPELINEGUARD_TOKEN"):
+            parser.error("managed bridge requires PIPELINEGUARD_TOKEN")
+        os.environ["PIPELINEGUARD_DESKTOP_MODE"] = "1"
+    else:
+        configure_local_bridge()
     import uvicorn
 
     # Never accept a host override here: this launcher is strictly local.
