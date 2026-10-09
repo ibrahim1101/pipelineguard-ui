@@ -151,3 +151,10 @@
 ## Development policy
 
 Prefer small commits and inspect CI after each batch. Preserve the engine repository boundary and the private UI repository. Never mark an untested visual or packaging feature as verified. Document regressions, failed attempts, fixes, and outstanding limitations rather than silently overwriting history.
+
+### 2026-10-09 — Product rebrand: Cerberus (UI-facing, CI pending)
+- **Decision:** Cerberus is the new product/display name replacing PipelineGuard in the new React UI and desktop window title.
+- **Changes:** Header typographic C mark and CERBERUS wordmark; dashboard, status and settings labels; HTML page title and description; Tauri `productName` and window title.
+- **Privacy cleanup:** Removed leftover Emergent injected script and PostHog telemetry loader from `frontend/public/index.html` to match local-first/no-telemetry claims. Other dependencies and runtime telemetry behavior still require audit.
+- **Compatibility:** Kept GitHub repositories, Python package/module names, API routes, storage locations and Tauri application identifier unchanged to avoid breaking v2 integrations. Existing logo asset remains in repository but is no longer used by header. Final Cerberus logo/icon and full technical migration remain future tasks.
+- **Verification:** New UI and desktop workflows pending; not claiming packaged desktop app readiness.
