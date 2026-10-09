@@ -121,12 +121,19 @@ struct BridgeResponse {
     body: Value,
 }
 
+fn unsafe_encoded_path(path: &str) -> bool {
+    let pathname = path.split('?').next().unwrap_or("");
+    let lower = pathname.to_ascii_lowercase();
+    ["%2e", "%2f", "%5c", "%25"].iter().any(|code| lower.contains(code))
+}
+
 fn allowed_request(method: &str, path: &str) -> bool {
     matches!(method, "GET" | "POST" | "PUT" | "DELETE")
         && path.starts_with('/')
         && !path.starts_with("//")
         && !path.contains("://")
         && !path.contains('#')
+        && !unsafe_encoded_path(path)
         && !path.contains('\\')
         && !path.chars().any(char::is_control)
         && !path.split('?').next().unwrap_or("").split('/').any(|part| part == ".." || part == ".")
@@ -225,5 +232,8 @@ mod tests {
             assert!(!allowed_request("GET", path), "{path}");
         }
         assert!(!allowed_request("PATCH", "/settings"));
+        for path in ["/%2e%2e/admin", "/%2E%2E/admin", "/%2f%2fevil", "/%5cadmin", "/%252e%252e/admin"] {
+            assert!(!allowed_request("GET", path), "encoded unsafe path: {path}");
+        }
     }
 }
