@@ -192,10 +192,14 @@ jobs:
             }
             if (-not $bridge) { throw 'Native desktop did not spawn its packaged bridge' }
             Write-Host "Native launcher spawned managed bridge PID $($bridge.ProcessId)"
-            Stop-Process -Id $desktop.Id -Force
-            Start-Sleep -Seconds 3
+            # A forced kill bypasses Rust Drop; test graceful GUI shutdown instead.
+            $desktop.Refresh()
+            if ($desktop.MainWindowHandle -eq 0) { throw 'Desktop main window not available for graceful shutdown' }
+            if (-not $desktop.CloseMainWindow()) { throw 'Unable to request graceful desktop shutdown' }
+            if (-not $desktop.WaitForExit(10000)) { throw 'Desktop did not exit after close request' }
+            Start-Sleep -Seconds 2
             $orphan = Get-Process -Id $bridge.ProcessId -ErrorAction SilentlyContinue
-            if ($orphan) { throw 'Packaged bridge survived forced desktop termination; process lifecycle requires investigation' }
+            if ($orphan) { throw 'Packaged bridge survived graceful desktop shutdown' }
           } finally {
             taskkill.exe /PID $desktop.Id /T /F 2>$null | Out-Null
             $global:LASTEXITCODE = 0
