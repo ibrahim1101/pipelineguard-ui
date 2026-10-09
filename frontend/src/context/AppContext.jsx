@@ -20,6 +20,7 @@ export function AppProvider({ children }) {
   const [viewScan, setViewScan] = useState(null);
   const pollRef = useRef(null);
   const backendRef = useRef("connecting");
+  const mountedRef = useRef(false);
   const wasRunning = useRef(false);
 
   const setSelection = useCallback((patch) => setSelectionState((s) => ({ ...s, ...patch })), []);
@@ -60,9 +61,11 @@ export function AppProvider({ children }) {
   }, [refreshData]);
 
   const init = useCallback(async () => {
+    if (!mountedRef.current) return;
     setBackend("connecting");
     try {
       const [st, pr, se, ss] = await Promise.all([api.status(), api.profiles(), api.settings(), api.scanState()]);
+      if (!mountedRef.current) return;
       setStatus(st);
       setProfiles(pr);
       setSettings(se);
@@ -76,7 +79,7 @@ export function AppProvider({ children }) {
       }
       await refreshData();
     } catch {
-      setBackend("offline");
+      if (mountedRef.current) setBackend("offline");
     }
   }, [poll, refreshData]);
 
@@ -85,6 +88,7 @@ export function AppProvider({ children }) {
   }, [backend]);
 
   useEffect(() => {
+    mountedRef.current = true;
     init();
     // Health alone is insufficient: initialization must also reload profiles,
     // settings, scan state and history after the backend restarts.
@@ -106,6 +110,7 @@ export function AppProvider({ children }) {
       }
     }, 30000);
     return () => {
+      mountedRef.current = false;
       clearInterval(id);
       clearTimeout(pollRef.current);
     };
