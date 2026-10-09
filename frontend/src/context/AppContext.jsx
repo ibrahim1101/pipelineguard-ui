@@ -59,14 +59,26 @@ export function AppProvider({ children }) {
       }
       if (wasRunning.current) {
         wasRunning.current = false;
-        const l = await refreshData();
-        if (!mountedRef.current || generation !== generationRef.current) return;
+        // Report loading is separate from scan execution. A transient history
+        // failure must not turn a completed scan into a bridge outage.
         setViewScan(null);
         if (s.status === "completed") {
           toast.success(`Scan complete — ${s.result?.status}, score ${s.result?.score}/100`);
-          if (s.online_effective && l) setOsvOnline(l.dependencies.insights.lookup_failed === 0);
+        } else if (s.status === "failed") {
+          toast.error(`Scan failed: ${s.error}`);
         }
-        if (s.status === "failed") toast.error(`Scan failed: ${s.error}`);
+        try {
+          const l = await refreshData();
+          if (!mountedRef.current || generation !== generationRef.current) return;
+          if (s.status === "completed" && s.online_effective && l) {
+            const failed = l.dependencies?.insights?.lookup_failed;
+            if (typeof failed === "number") setOsvOnline(failed === 0);
+          }
+        } catch {
+          if (mountedRef.current && generation === generationRef.current) {
+            toast.error("Scan finished, but reports could not be refreshed. Retry loading history.");
+          }
+        }
       }
     } catch {
       if (!mountedRef.current || generation !== generationRef.current) return;
