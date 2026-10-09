@@ -104,6 +104,30 @@ describe("AppProvider bridge lifecycle", () => {
     expect(api.history.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
+  test("ignores stale heartbeat failure after a successful manual reconnect", async () => {
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    let rejectOld;
+    api.status.mockImplementationOnce(() => new Promise((resolve, reject) => { rejectOld = reject; }));
+    await act(async () => { jest.advanceTimersByTime(30000); });
+    await act(async () => { await observed.retry(); });
+    expect(observed.backend).toBe("connected");
+    await act(async () => { rejectOld(new Error("stale heartbeat failure")); });
+    expect(observed.backend).toBe("connected");
+  });
+
+  test("does not overlap heartbeat checks when a previous health request is pending", async () => {
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    let resolveOld;
+    api.status.mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }));
+    await act(async () => { jest.advanceTimersByTime(30000); });
+    const calls = api.status.mock.calls.length;
+    await act(async () => { jest.advanceTimersByTime(90000); });
+    expect(api.status).toHaveBeenCalledTimes(calls);
+    await act(async () => { resolveOld({ ready: true }); });
+    await act(async () => { jest.advanceTimersByTime(30000); });
+    expect(api.status).toHaveBeenCalledTimes(calls + 1);
+  });
+
   test("ignores stale initialization when a newer retry finishes first", async () => {
     let resolveOld;
     api.status.mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }));
