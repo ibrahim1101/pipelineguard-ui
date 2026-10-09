@@ -352,3 +352,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows adjacent runtime smoke workflow `37979474655` passed, including authenticated packaged startup from outside backend source working directory.
 - Extended packaged sidecar Windows CI to build the production frontend and native Tauri release executable, stage `dist/cerberus-standalone/Cerberus.exe` beside `cerberus-runtime/`, and assert that the adjacent bridge executable and scanner engine paths match the Rust launcher's discovery contract. Commit `c03cbb6`.
 - This validates combined artifact staging only. Native GUI process startup, fully installed application behavior, and Tauri installer creation remain unverified. CI pending.
+
+### 2026-10-10 — Downloadable standalone Windows preview CI artifact
+- Combined Windows build workflow `37979860296` completed successfully, including native desktop release compilation, packaged sidecar, adjacent engine layout and authentication smoke checks.
+- Extended `.github/workflows/desktop-sidecar.yml` with required payload presence and executable size checks, plus a 7-day GitHub Actions upload artifact named `cerberus-windows-standalone-preview`. Commit `e2e7667`.
+- The artifact is an unsigned preview folder, not an installer. Full GUI startup and installed application behavior still require Windows testing. CI for artifact publishing is pending.
