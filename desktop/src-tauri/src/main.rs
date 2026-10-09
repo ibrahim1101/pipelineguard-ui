@@ -272,6 +272,33 @@ mod tests {
     }
 
     #[test]
+    fn managed_bridge_rejects_child_exit_before_readiness() {
+        use super::wait_for_managed_bridge;
+        use std::process::{Command, Stdio};
+        use std::net::TcpListener;
+        use std::time::{Duration, Instant};
+
+        let listener = TcpListener::bind("127.0.0.1:0").expect("reserve test port");
+        let port = listener.local_addr().expect("test port").port();
+        let mut child = if cfg!(windows) {
+            Command::new("cmd").args(["/C", "exit", "17"])
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Windows failing child")
+        } else {
+            Command::new("sh").args(["-c", "exit 17"])
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Unix failing child")
+        };
+        let started = Instant::now();
+        let result = wait_for_managed_bridge(&mut child, port, "test-token");
+        assert!(result.is_err(), "exited backend must not pass readiness");
+        assert!(result.unwrap_err().contains("exited before readiness"));
+        assert!(started.elapsed() < Duration::from_secs(5), "exited child should fail promptly");
+        let _ = child.wait();
+        drop(listener);
+    }
+
+    #[test]
     fn rejects_unsafe_paths_and_methods() {
         for path in ["//evil.example", "/../admin", "/a/./b", "/a\\b", "/a#fragment", "/http://evil"] {
             assert!(!allowed_request("GET", path), "{path}");
