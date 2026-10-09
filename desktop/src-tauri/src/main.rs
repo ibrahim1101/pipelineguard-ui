@@ -299,6 +299,40 @@ mod tests {
     }
 
     #[test]
+    fn native_readiness_accepts_real_authenticated_bridge() {
+        use super::{authenticated_ready, wait_for_managed_bridge, ManagedChild};
+        use std::net::TcpListener;
+        use std::process::{Command, Stdio};
+        use std::sync::Mutex;
+
+        // CI explicitly supplies paths; skip this integration case for local cargo test.
+        let Ok(backend) = std::env::var("CERBERUS_TEST_BACKEND_DIR") else { return; };
+        let Ok(engine) = std::env::var("CERBERUS_TEST_ENGINE_DIR") else { return; };
+        let python = std::env::var("CERBERUS_TEST_PYTHON").unwrap_or_else(|_| "python".into());
+        let listener = TcpListener::bind("127.0.0.1:0").expect("reserve loopback port");
+        let port = listener.local_addr().expect("loopback address").port();
+        let token = "native-readiness-integration-token";
+        let child = Command::new(python)
+            .args(["-m", "uvicorn", "server:app", "--host", "127.0.0.1", "--port", &port.to_string()])
+            .current_dir(backend)
+            .env("PIPELINEGUARD_ENGINE_PATH", engine)
+            .env("PIPELINEGUARD_DESKTOP_MODE", "1")
+            .env("PIPELINEGUARD_TOKEN", token)
+            .env("CERBERUS_MANAGED_CHILD", "1")
+            .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+            .spawn().expect("start actual Python bridge");
+        let managed = ManagedChild(Mutex::new(Some(child)));
+        drop(listener);
+        {
+            let mut guard = managed.0.lock().expect("managed child lock");
+            let child = guard.as_mut().expect("managed bridge child");
+            wait_for_managed_bridge(child, port, token).expect("authenticated native readiness");
+        }
+        assert!(!authenticated_ready(port, "incorrect-token"), "wrong token cannot pass readiness");
+        drop(managed);
+    }
+
+    #[test]
     fn rejects_unsafe_paths_and_methods() {
         for path in ["//evil.example", "/../admin", "/a/./b", "/a\\b", "/a#fragment", "/http://evil"] {
             assert!(!allowed_request("GET", path), "{path}");
