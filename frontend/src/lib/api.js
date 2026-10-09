@@ -30,18 +30,34 @@ function formatDetail(detail) {
 
 async function request(method, path, body) {
   const headers = { "Content-Type": "application/json" };
-  // Desktop requests must never be sent without the per-launch bridge token.
-  // The future trusted shell will provision this in memory (never URL/storage).
-  const token = window.__PIPELINEGUARD_TOKEN__;
-  if (window.__TAURI__?.core?.invoke && !token) {
-    throw new ApiError("Desktop bridge authentication is not initialized", 401);
-  }
-  if (token) headers["X-PipelineGuard-Token"] = token;
+  // Desktop requests are routed through trusted native IPC. No bridge token
+  // is exposed to renderer JavaScript or sent by browser fetch.
+  const desktopInvoke = window.__TAURI__?.core?.invoke;
   let res;
-  try {
-    res = await fetch(`${BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
-  } catch {
-    throw new ApiError("PipelineGuard engine bridge is unreachable", 0);
+  if (desktopInvoke) {
+    try {
+      const result = await desktopInvoke("bridge_request", { method, path, body: body ?? null });
+      if (!result || typeof result.status !== "number") {
+        throw new Error("Invalid desktop bridge response");
+      }
+      res = {
+        ok: result.status >= 200 && result.status < 300,
+        status: result.status,
+        statusText: result.statusText || "",
+        json: async () => result.body,
+      };
+    } catch {
+      throw new ApiError("Cerberus desktop bridge is unavailable", 0);
+    }
+  } else {
+    // Browser development retains its existing local HTTP bridge behavior.
+    let response;
+    try {
+      response = await fetch(`${BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    } catch {
+      throw new ApiError("PipelineGuard engine bridge is unreachable", 0);
+    }
+    res = response;
   }
   if (!res.ok) {
     let detail = null;
