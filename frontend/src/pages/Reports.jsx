@@ -44,7 +44,7 @@ export default function Reports() {
 
   return (
     <>
-      <PageHeader title="Reports" description="Export engine reports in the formats PipelineGuard supports: HTML, JSON and SARIF." />
+      <PageHeader title="Reports" description="Export Cerberus engine reports as HTML, JSON or SARIF." />
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
         <div className="xl:col-span-5 flex flex-col gap-4">
           <Panel title="Latest scan" testId="reports-latest-panel">
@@ -56,7 +56,7 @@ export default function Reports() {
             ) : <p className="text-sm text-pg-muted" data-testid="reports-no-scan">Run a scan before exporting a report.</p>}
           </Panel>
           <Panel title="Export" testId="reports-export-panel">
-            <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Report format">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Report format">
               {FORMATS.map((f) => (
                 <button key={f.id} role="radio" aria-checked={format === f.id} onClick={() => setFormat(f.id)} data-testid={`reports-format-${f.id}`}
                   className={`rounded-xl border p-3 text-left transition-colors ${format === f.id ? "border-pg-accent/60 bg-pg-accent/[0.06]" : "border-pg-line hover:bg-pg-surface2/50"}`}>
@@ -81,7 +81,7 @@ export default function Reports() {
               ? <Button size="sm" variant="outline" onClick={openFolder} data-testid="reports-open-folder-btn"><FolderOpen className="h-3.5 w-3.5 mr-1.5" />Open folder</Button>
               : <Button size="sm" variant="outline" onClick={async () => toast[(await copyText(list.directory)) ? "success" : "error"]("Folder path copied")} data-testid="reports-copy-folder-btn"><Copy className="h-3.5 w-3.5 mr-1.5" />Copy folder path</Button>)}
           </>}>
-          {!list?.files.length ? <EmptyState compact icon={FileText} title="No reports in this folder" description="Generated PipelineGuard reports will be listed here." testId="reports-empty" /> : (
+          {!list?.files.length ? <EmptyState compact icon={FileText} title="No reports in this folder" description="Generated Cerberus reports will be listed here." testId="reports-empty" /> : (
             <ul className="divide-y divide-pg-line/40" data-testid="reports-file-list">
               {list.files.map((f, i) => (
                 <li key={f.path} className="flex items-center gap-3 py-2.5" data-testid={`reports-file-${i}`}>
