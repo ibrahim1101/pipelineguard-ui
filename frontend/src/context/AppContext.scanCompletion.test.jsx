@@ -44,6 +44,7 @@ describe("scan completion and report refresh regressions", () => {
   });
   async function mountAndStart() {
     await act(async () => root.render(<AppProvider><Probe /></AppProvider>));
+    api.scanState.mockResolvedValue({ status: "running" });
     await act(async () => { await app.startScan(); });
   }
   async function completeWith(failingMethod, finalStatus = "completed") {
@@ -68,7 +69,21 @@ describe("scan completion and report refresh regressions", () => {
       await completeWith(method);
     }
   );
-  test("bridge interruption retries and completes without duplicate success notifications", async () => {\n    await mountAndStart();\n    api.scanState.mockRejectedValueOnce(new Error("bridge disconnected"));\n    await act(async () => { jest.advanceTimersByTime(600); await Promise.resolve(); });\n    expect(app.backend).toBe("offline");\n    api.scanState.mockResolvedValue({ status: "completed", result: { status: "pass", score: 95 } });\n    await act(async () => { jest.advanceTimersByTime(2000); await Promise.resolve(); });\n    expect(app.backend).toBe("connected");\n    expect(app.scanState.status).toBe("completed");\n    expect(toast.success).toHaveBeenCalledTimes(1);\n    await act(async () => { jest.advanceTimersByTime(5000); await Promise.resolve(); });\n    expect(toast.success).toHaveBeenCalledTimes(1);\n  });\n\n  test("failed scan stays failed when history refresh fails", async () => {
+  test("bridge interruption retries and completes without duplicate success notifications", async () => {
+    await mountAndStart();
+    api.scanState.mockRejectedValueOnce(new Error("bridge disconnected"));
+    await act(async () => { jest.advanceTimersByTime(600); await Promise.resolve(); });
+    expect(app.backend).toBe("offline");
+    api.scanState.mockResolvedValue({ status: "completed", result: { status: "pass", score: 95 } });
+    await act(async () => { jest.advanceTimersByTime(2000); await Promise.resolve(); });
+    expect(app.backend).toBe("connected");
+    expect(app.scanState.status).toBe("completed");
+    expect(toast.success).toHaveBeenCalledTimes(1);
+    await act(async () => { jest.advanceTimersByTime(5000); await Promise.resolve(); });
+    expect(toast.success).toHaveBeenCalledTimes(1);
+  });
+
+  test("failed scan stays failed when history refresh fails", async () => {
     await mountAndStart();
     await completeWith("history", "failed");
     expect(toast.success).not.toHaveBeenCalled();
