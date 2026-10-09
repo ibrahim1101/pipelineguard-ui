@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'desktop/**'
+      - 'backend/**'
+      - 'engine/**'
       - '.github/workflows/desktop-check.yml'
   pull_request:
     branches: [main]
@@ -41,6 +43,16 @@ jobs:
       - name: Check Rust shell
         working-directory: desktop/src-tauri
         run: cargo check
-      - name: Test Rust shell security and request guards
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install native bridge integration dependencies
+        run: python -m pip install -r engine/requirements.txt fastapi==0.110.1 uvicorn==0.25.0 python-dotenv>=1.0.1
+      - name: Test Rust shell security, process lifecycle and real bridge readiness
         working-directory: desktop/src-tauri
-        run: cargo test
+        shell: pwsh
+        run: |
+          $env:CERBERUS_TEST_BACKEND_DIR = (Resolve-Path ../../backend).Path
+          $env:CERBERUS_TEST_ENGINE_DIR = (Resolve-Path ../../engine).Path
+          $env:CERBERUS_TEST_PYTHON = (Get-Command python).Source
+          cargo test
