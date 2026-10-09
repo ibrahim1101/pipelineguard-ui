@@ -189,3 +189,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Bridge change:** `backend/launch_local.py` supports `CERBERUS_MANAGED_CHILD=1`: requires `PIPELINEGUARD_TOKEN` supplied by a trusted native parent and sets desktop auth mode, rather than generating a token the parent cannot know. Existing standalone development behavior remains unchanged.
 - **Test:** Added a contract test ensuring the managed-child token requirement remains present.
 - **Next blocker:** Rust does not yet generate token, launch/reap child or wait for readiness. Do not claim automatic startup works. Verify CI for this incremental bridge contract before proceeding.
+
+### 2026-10-09 — Experimental Rust-owned Python bridge lifecycle (CI pending)
+- Added optional `CERBERUS_MANAGED_DEV=1` mode in Tauri Rust: generates a 256-bit native token, obtains an ephemeral loopback port, spawns Python uvicorn with desktop auth and engine path, retains child in native state, and kills/reaps it on state drop.
+- Requires `CERBERUS_BACKEND_DIR`, `PIPELINEGUARD_ENGINE_PATH` and installed Python dependencies; not a packaged desktop binary.
+- **Known incomplete areas:** No authenticated readiness wait; port reservation race; no child crash recovery; managed launch errors silently fall back to manual mode; process-tree cleanup not established. Not production ready. Native CI pending for commit `dadf125`.
