@@ -1,9 +1,9 @@
 import React, { act } from "react";
 import { createRoot } from "react-dom/client";
 import { AppProvider, useApp } from "./AppContext";
-import { api } from "@/lib/api";
+import { api } from "../lib/api";
 
-jest.mock("@/lib/api", () => ({
+jest.mock("../lib/api", () => ({
   api: {
     status: jest.fn(), profiles: jest.fn(), settings: jest.fn(), scanState: jest.fn(),
     latestScan: jest.fn(), history: jest.fn(), activity: jest.fn(),
