@@ -64,11 +64,11 @@ export default function Findings() {
   const clear = () => { setQ(""); setSev("all"); setCat("all"); setGroup("all"); };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-84px-48px)]">
+    <div className="flex flex-col min-h-[480px] h-[calc(100vh-164px)]">
       <PageHeader title="Findings" description={`${scan.summary.total_findings} findings · ${scan.summary.critical} critical · ${scan.summary.warnings} warnings`} />
       <ViewingBanner />
       <div className="flex flex-wrap items-center gap-2 mb-3" data-testid="findings-filters">
-        <div className="relative w-[280px]">
+        <div className="relative w-full sm:w-[280px]">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-pg-muted" />
           <Input value={qText} onChange={(e) => setQ(e.target.value)} placeholder="Search rule, file, package, advisory" className="pl-9 bg-pg-surface" data-testid="findings-search-input" />
         </div>
@@ -91,7 +91,7 @@ export default function Findings() {
         {filtered && <Button variant="ghost" size="sm" onClick={clear} data-testid="findings-clear-filters-btn"><X className="h-4 w-4 mr-1" />Clear filters</Button>}
         <span className="ml-auto text-xs text-pg-muted font-mono" data-testid="findings-visible-count">{rows.length} of {scan.findings.length} shown</span>
       </div>
-      <div className="flex gap-4 flex-1 min-h-0">
+      <div className="flex gap-4 flex-1 min-h-0 min-w-0">
         <div className="pg-panel flex-1 min-w-0 overflow-hidden">
           <VirtualTable testId="findings-table" columns={COLUMNS} rows={rows} getKey={(f) => f.uid} selectedKey={selected}
             onSelect={(f) => setSelected(f.uid)} sort={sort} onSort={setSort}
