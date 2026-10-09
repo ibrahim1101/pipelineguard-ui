@@ -30,6 +30,23 @@ class StorageTests(unittest.TestCase):
         storage.update_history_entry(scan_id, reports=[report])
         self.assertEqual(storage.read_history()[0]["reports"], [report])
 
+    def test_rejects_snapshot_path_traversal_and_invalid_identifiers(self):
+        scan_id = "safe0123456789"
+        storage.save_snapshot(scan_id, {"findings": []}, {"scan_id": scan_id})
+        for invalid in ("../safe0123456789", "..\\\\safe0123456789", "/etc/passwd",
+                        "a/b", "a\\\\b", "..", "", "scan.json", "%2e%2e%2fsecret"):
+            with self.subTest(scan_id=invalid):
+                self.assertIsNone(storage.load_snapshot(invalid))
+        self.assertIsNotNone(storage.load_snapshot(scan_id))
+
+    def test_rejects_malformed_snapshot_without_report_object(self):
+        scan_id = "bad0123456789"
+        storage.scans_dir().mkdir(parents=True, exist_ok=True)
+        (storage.scans_dir() / f"{scan_id}.json").write_text(
+            '{"report": [], "meta": {}}', encoding="utf-8"
+        )
+        self.assertIsNone(storage.load_snapshot(scan_id))
+
     def test_clear_history_removes_snapshots(self):
         scan_id = "fedcba9876543210"
         storage.save_snapshot(scan_id, {"findings": []}, {"scan_id": scan_id})
