@@ -206,3 +206,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added `scripts/install-cerberus-brand-assets.ps1` to unpack the ZIP into the correct frontend and Tauri icon paths on a Windows checkout. Script does not auto-commit/push and preserves exact original artwork.
 - Header now prefers `/cerberus-logo-original.png` and falls back to the existing checked-in `/cerberus-mark.svg` until the binary asset is uploaded. Tauri build script already uses `icons/icon.ico` when present.
 - **Remaining:** Run the installer script on a local checkout and push the binary files, then verify browser and native icon rendering. Until that happens, repository still uses low-resolution logo and placeholder ICO. Commits `7067596`, `c7b5a3f`.
+
+### 2026-10-09 — Cerberus branded icon enforcement
+- Confirmed original high-resolution logo, scaled PNGs and branded Windows ICO were committed to main; desktop run `37948376427` and UI run `37948376401` both succeeded.
+- Removed the legacy 1×1 grayscale placeholder generation in `desktop/src-tauri/build.rs`. The desktop build now fails if the Cerberus ICO is absent or clearly invalid.
+- Added Windows CI asset checks for the approved native ICO and original PNG so branding cannot silently regress.
+- **Next:** Verify these checks in new CI, then run a real Windows desktop visual review. Commits `71d95f1`, `3005268`.
