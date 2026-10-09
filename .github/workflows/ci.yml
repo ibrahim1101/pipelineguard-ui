@@ -79,6 +79,15 @@ jobs:
           CORS_ORIGINS: http://localhost:3000
           PIPELINEGUARD_DATA_DIR: ${{ runner.temp }}/pipelineguard-ci-data
         run: python ui/backend/tests/smoke_bridge.py
+      - name: Bridge API security regressions
+        env:
+          PIPELINEGUARD_ENGINE_PATH: ${{ github.workspace }}/engine
+          PYTHONPATH: ${{ github.workspace }}/ui/backend
+          PIPELINEGUARD_DESKTOP_MODE: '1'
+          PIPELINEGUARD_TOKEN: ci-test-token
+          CORS_ORIGINS: http://localhost:3000
+          PIPELINEGUARD_DATA_DIR: ${{ runner.temp }}/pipelineguard-ci-data
+        run: python ui/backend/tests/security_bridge.py
       - name: Offline scan and report integration
         env:
           PIPELINEGUARD_ENGINE_PATH: ${{ github.workspace }}/engine
