@@ -362,3 +362,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Preview artifact workflow `37982792504` passed, including upload of `cerberus-windows-standalone-preview`.
 - Added CI smoke test against the exact staged preview runtime, launching its packaged bridge with the preview directory as working directory, bundled engine path, authenticated status check, and isolated writable data directory. Fixed duplicate desktop push-path entry and included desktop changes in PR trigger. Commit `0cf13ff`.
 - This still does not exercise GUI window startup or installer installation; those require separate validation. CI pending.
+
+### 2026-10-10 — Native desktop process smoke test
+- Staged preview backend workflow `37984508920` passed.
+- Added Windows CI startup smoke that launches the staged `Cerberus.exe` with development bridge credentials removed, waits eight seconds, fails on early native process exit, and terminates the process tree during cleanup. Commit `eef0006`.
+- This is a basic process-liveness check, not automated visual GUI validation, renderer interaction testing, or a Windows installer test. CI pending.
