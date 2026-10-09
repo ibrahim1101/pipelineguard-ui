@@ -212,3 +212,10 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Removed the legacy 1×1 grayscale placeholder generation in `desktop/src-tauri/build.rs`. The desktop build now fails if the Cerberus ICO is absent or clearly invalid.
 - Added Windows CI asset checks for the approved native ICO and original PNG so branding cannot silently regress.
 - **Next:** Verify these checks in new CI, then run a real Windows desktop visual review. Commits `71d95f1`, `3005268`.
+
+### 2026-10-09 — Cerberus shell layout refinement
+- Confirmed branded icon enforcement passed Windows desktop CI `37949992723` and UI CI `37949992773`.
+- Updated AppShell workspace to constrain horizontal overflow and adapt page padding to narrower windows.
+- Sidebar navigation now scrolls independently of its fixed privacy footer, preventing overlap in shorter desktop windows; sidebar width adapts at XL breakpoint.
+- Header brand and profile selector widths adapt to match sidebar sizing. No page-level visual QA performed yet; these are source-level layout corrections only.
+- Commits `8b95c68`, `167f16b`, `79f22af`. Await new CI results.
