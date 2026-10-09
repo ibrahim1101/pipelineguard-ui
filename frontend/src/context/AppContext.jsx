@@ -113,7 +113,15 @@ export function AppProvider({ children }) {
         wasRunning.current = true;
         poll();
       }
-      await refreshData();
+      // A report endpoint can fail while the bridge itself remains healthy.
+      // Keep connectivity and scan state authoritative; surface a separate warning.
+      try {
+        await refreshData();
+      } catch {
+        if (mountedRef.current && generation === generationRef.current && request === initRef.current) {
+          toast.error("Connected to the bridge, but reports could not be loaded. Retry loading history.");
+        }
+      }
     } catch {
       if (mountedRef.current && generation === generationRef.current && request === initRef.current) setBackend("offline");
     }
