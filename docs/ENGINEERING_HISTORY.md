@@ -291,3 +291,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows desktop CI `37966552530` passed the live-child shutdown test.
 - Added `managed_bridge_rejects_child_exit_before_readiness` in the Rust shell: launches a child that exits with status 17, calls native readiness polling, and asserts prompt failure rather than waiting the full startup timeout. Commit `4c363b9`.
 - This covers native readiness failure logic; full graphical Tauri launch and installer integration remain untested.
+
+### 2026-10-09 — Native Rust-to-Python authenticated readiness integration
+- Windows desktop validation `37967231042` passed early-exit readiness regression.
+- Added an opt-in Rust integration test that launches the actual Uvicorn backend, checks native authenticated readiness, rejects an incorrect token, and reaps the child via `ManagedChild`. Commit `410e92d`.
+- Updated Windows desktop workflow to install minimal public Python runtime dependencies, set backend/engine paths, and run the Rust integration test in CI. Commits `740d651`, `950a073`.
+- This exercises native readiness against the actual backend without opening the graphical Tauri window; installer bundling remains disabled. CI pending.
