@@ -370,6 +370,13 @@ mod tests {
     }
 
     #[test]
+    fn packaged_sidecar_requires_complete_adjacent_runtime() {
+        use super::packaged_sidecar_paths;
+        let fake_executable = std::env::temp_dir().join("cerberus-missing-runtime-test").join("cerberus.exe");
+        assert!(packaged_sidecar_paths(&fake_executable).is_err());
+    }
+
+    #[test]
     fn rejects_unsafe_paths_and_methods() {
         for path in ["//evil.example", "/../admin", "/a/./b", "/a\\b", "/a#fragment", "/http://evil"] {
             assert!(!allowed_request("GET", path), "{path}");
