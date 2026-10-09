@@ -357,3 +357,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Combined Windows build workflow `37979860296` completed successfully, including native desktop release compilation, packaged sidecar, adjacent engine layout and authentication smoke checks.
 - Extended `.github/workflows/desktop-sidecar.yml` with required payload presence and executable size checks, plus a 7-day GitHub Actions upload artifact named `cerberus-windows-standalone-preview`. Commit `e2e7667`.
 - The artifact is an unsigned preview folder, not an installer. Full GUI startup and installed application behavior still require Windows testing. CI for artifact publishing is pending.
+
+### 2026-10-10 — Staged Windows preview runtime smoke test
+- Preview artifact workflow `37982792504` passed, including upload of `cerberus-windows-standalone-preview`.
+- Added CI smoke test against the exact staged preview runtime, launching its packaged bridge with the preview directory as working directory, bundled engine path, authenticated status check, and isolated writable data directory. Fixed duplicate desktop push-path entry and included desktop changes in PR trigger. Commit `0cf13ff`.
+- This still does not exercise GUI window startup or installer installation; those require separate validation. CI pending.
