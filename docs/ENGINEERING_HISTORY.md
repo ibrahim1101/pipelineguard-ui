@@ -332,3 +332,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Sidecar workflow `37975957941` successfully built the Windows PyInstaller onedir executable; tokenless startup correctly printed `Desktop mode requires PIPELINEGUARD_TOKEN` and exited nonzero.
 - GitHub PowerShell treated the expected native nonzero exit as a failed step before the explicit assertion. Disabled native-command error promotion for that negative test and captured the exit code explicitly. Commit `dccb293`.
 - Authenticated packaged startup still needs validation in the next workflow run. No installer is published.
+
+### 2026-10-10 — Fail-closed sidecar exit code normalization
+- Workflow `37976377078` built the PyInstaller sidecar and confirmed the missing-token rejection (exit code 1), but GitHub's PowerShell action wrapper still failed the step because `$LASTEXITCODE` was left nonzero.
+- After asserting that the sidecar exited nonzero, the negative test now resets `$global:LASTEXITCODE = 0` to allow the workflow to proceed to authenticated packaged startup. Commit `5e43b86`. CI pending.
