@@ -200,3 +200,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Applied dedicated, subtle olive-metal icon treatment in the app header without changing the approved shield shape; preserved the existing Cerberus wordmark CSS.
 - **Remaining:** The checked-in shield SVG embeds a small 72×72 JPEG reproduction, not the original high-resolution artwork; Windows native icon remains a placeholder. Final full-resolution asset integration, branded ICO, font matching and visual QA remain open.
 - **Commits:** `d1899a4`, `41e8d16`, `dd71f38`. CI pending.
+
+### 2026-10-09 — High-resolution Cerberus artwork delivery and integration path
+- Recovered the original approved 1254×1254 PNG locally and generated a ZIP of original, scaled PNGs and multi-size Windows ICO. This ZIP is delivered as a conversation download, **not yet committed to GitHub**.
+- Added `scripts/install-cerberus-brand-assets.ps1` to unpack the ZIP into the correct frontend and Tauri icon paths on a Windows checkout. Script does not auto-commit/push and preserves exact original artwork.
+- Header now prefers `/cerberus-logo-original.png` and falls back to the existing checked-in `/cerberus-mark.svg` until the binary asset is uploaded. Tauri build script already uses `icons/icon.ico` when present.
+- **Remaining:** Run the installer script on a local checkout and push the binary files, then verify browser and native icon rendering. Until that happens, repository still uses low-resolution logo and placeholder ICO. Commits `7067596`, `c7b5a3f`.
