@@ -61,6 +61,20 @@ describe("AppProvider bridge lifecycle", () => {
     expect(observed.latestLoaded).toBe(true);
   });
 
+  test.each(["latestScan", "history", "activity"])(
+    "keeps bridge connected when initial %s report loading fails", async (endpoint) => {
+      const { toast } = require("sonner");
+      jest.clearAllMocks();
+      api[endpoint].mockRejectedValueOnce(new Error("report endpoint unavailable"));
+      await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+      expect(observed.backend).toBe("connected");
+      expect(observed.scanState.status).toBe("idle");
+      expect(toast.error).toHaveBeenCalledWith(
+        "Connected to the bridge, but reports could not be loaded. Retry loading history."
+      );
+    }
+  );
+
   test("recovers and refreshes data after a backend outage", async () => {
     await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
     await flush();
