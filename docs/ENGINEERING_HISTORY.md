@@ -244,3 +244,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Rust Tauri managed-development bridge now probes the protected `GET /api/status` endpoint with its randomly generated per-launch `X-PipelineGuard-Token` before accepting the child as ready. The public health endpoint is deliberately not used.
 - Polls for up to 12 seconds, checks early child exit, and kills/reaps a child that fails readiness. The renderer never receives the token.
 - This remains opt-in `CERBERUS_MANAGED_DEV=1`; no installer or production sidecar is claimed. Startup may still need runtime Windows verification. Commit `33a3c90`.
+
+### 2026-10-09 — Managed bridge fail-closed hardening
+- Authenticated bridge readiness changes passed desktop CI `37957562032` and UI CI `37957562054`, `37957580320`.
+- Added `CERBERUS_MANAGED_CHILD=1` to spawned Python environment, recorded early child exit status and explicitly handled process inspection failures.
+- Fixed managed startup fallback: if `CERBERUS_MANAGED_DEV=1` and the child fails to start or authenticate, the shell must not fall back to `CERBERUS_DEV_BRIDGE_TOKEN` (fail closed).
+- Commits `a11e44f`, `c7a386e`. Pending CI and Windows runtime smoke test. Installer bundling remains disabled.
