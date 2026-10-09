@@ -9,7 +9,7 @@ export default function StatusBar() {
   const osv = osvOnline == null ? ["Not checked", "#A4B0B0"] : osvOnline ? ["Reachable", "#A4D65E"] : ["Unreachable", "#FF5964"];
   return (
     <footer className="h-7 shrink-0 bg-pg-side border-t border-pg-line/80 px-4 flex items-center gap-6 text-[11.5px] text-pg-muted font-mono" data-testid="status-bar">
-      <span data-testid="status-version">PipelineGuard {status?.app_version || "—"} · engine {status?.engine_version || "—"}</span>
+      <span data-testid="status-version">Cerberus {status?.app_version || "—"} · engine {status?.engine_version || "—"}</span>
       <span className="flex items-center gap-1.5" data-testid="status-backend"><Dot color={backendColor} /> Engine bridge: {backend}</span>
       <span data-testid="status-last-scan">
         {scanState.status === "running" ? `Scanning · ${Math.round(scanState.progress || 0)}%` :
