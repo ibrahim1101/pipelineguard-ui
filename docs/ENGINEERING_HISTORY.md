@@ -250,3 +250,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added `CERBERUS_MANAGED_CHILD=1` to spawned Python environment, recorded early child exit status and explicitly handled process inspection failures.
 - Fixed managed startup fallback: if `CERBERUS_MANAGED_DEV=1` and the child fails to start or authenticate, the shell must not fall back to `CERBERUS_DEV_BRIDGE_TOKEN` (fail closed).
 - Commits `a11e44f`, `c7a386e`. Pending CI and Windows runtime smoke test. Installer bundling remains disabled.
+
+### 2026-10-09 — Windows desktop unit-test gate
+- Previous managed bridge hardening passed desktop runs `37958467262`, `37958481326` and UI runs `37958467467`, `37958481384`, `37958498883`.
+- Desktop Windows workflow now executes `cargo test` after `cargo check`, so Rust unit tests become a CI gate. The workflow previously compiled without running tests.
+- Commits `67c8f40`, `a891b6e`. Runtime Windows smoke testing and installer bundling are still pending.
