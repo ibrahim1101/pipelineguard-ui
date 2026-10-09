@@ -1,0 +1,246 @@
+{
+  "project_name": "PipelineGuard v2.0",
+  "app_type": "Dashboard / Desktop DevSecOps Security Application",
+  "design_archetype": "PREMIUM DARK TITANIUM (Matte Obsidian & Stealth Cybersecurity)",
+  "brand_identity": {
+    "name": "PipelineGuard",
+    "version": "v2.0",
+    "tagline": "DevSecOps Security Command & Vulnerability Intelligence",
+    "logo_rule": "Use small existing cyber-cat logo PNG in top header ONLY. Strict prohibition of additional cat/mascot imagery elsewhere."
+  },
+  "color_palette": {
+    "primary_bg": "#111619",
+    "sidebar_bg": "#101416",
+    "elevated_surface": "#1B2225",
+    "secondary_surface": "#252C2B",
+    "border_color": "#364144",
+    "primary_text": "#F1F4F3",
+    "secondary_text": "#A4B0B0",
+    "security_accent": "#A4D65E",
+    "subtle_accent": "#708D47",
+    "critical": "#FF5964",
+    "warning": "#F0B65C",
+    "safe": "#A4D65E",
+    "info": "#38BDF8",
+    "hsl_theme_variables": {
+      "background": "200 19% 8%",
+      "foreground": "165 15% 95%",
+      "card": "197 16% 13%",
+      "card_foreground": "165 15% 95%",
+      "popover": "197 16% 13%",
+      "popover_foreground": "165 15% 95%",
+      "primary": "85 58% 60%",
+      "primary_foreground": "200 19% 8%",
+      "secondary": "170 8% 16%",
+      "secondary_foreground": "165 15% 95%",
+      "muted": "170 8% 16%",
+      "muted_foreground": "180 6% 66%",
+      "accent": "170 8% 16%",
+      "accent_foreground": "165 15% 95%",
+      "destructive": "356 100% 68%",
+      "destructive_foreground": "165 15% 95%",
+      "border": "190 11% 24%",
+      "input": "190 11% 24%",
+      "ring": "85 58% 60%"
+    }
+  },
+  "typography": {
+    "wordmark_font": "JetBrains Mono / Space Grotesk (Refined technical treatment)",
+    "body_font": "Inter / System Sans-serif",
+    "code_font": "JetBrains Mono / Source Code Pro",
+    "hierarchy": {
+      "h1_page_title": "text-2xl font-bold tracking-tight text-[#F1F4F3]",
+      "h2_section_header": "text-lg font-semibold tracking-tight text-[#F1F4F3]",
+      "h3_card_title": "text-sm font-semibold text-[#F1F4F3]",
+      "body_regular": "text-sm text-[#A4B0B0] leading-relaxed",
+      "metric_value": "text-3xl font-extrabold tracking-tight tabular-nums text-[#F1F4F3]",
+      "mono_label": "font-mono text-xs uppercase tracking-wider text-[#A4B0B0]"
+    }
+  },
+  "layout_architecture": {
+    "wrapper": "h-screen w-screen flex flex-col bg-[#111619] text-[#F1F4F3] overflow-hidden select-none font-sans",
+    "top_header": {
+      "height": "h-14",
+      "styling": "bg-[#101416] border-b border-[#364144] px-4 flex items-center justify-between shrink-0 z-40 backdrop-blur-md bg-opacity-95",
+      "left_section": "Cyber-cat logo PNG + PipelineGuard v2.0 wordmark with technical badge + Active Project Selector dropdown",
+      "right_section": "Profile Selector (Quick/Standard/Deep/Release/Forensic) + Global 'Start Scan' quick button + Active Scan Progress Pill + System Status Indicator"
+    },
+    "body_area": "flex-1 flex overflow-hidden min-h-0",
+    "sidebar": {
+      "width": "w-64",
+      "styling": "bg-[#101416] border-r border-[#364144] p-3 flex flex-col justify-between shrink-0 z-30",
+      "nav_items": [
+        {"id": "dashboard", "label": "Security Command", "icon": "LayoutDashboard"},
+        {"id": "scan_project", "label": "Scan Project", "icon": "PlayCircle"},
+        {"id": "findings", "label": "Findings & Vulnerabilities", "icon": "ShieldAlert"},
+        {"id": "dependencies", "label": "Dependency Inventory", "icon": "PackageSearch"},
+        {"id": "osv_intel", "label": "OSV Intelligence", "icon": "Globe"},
+        {"id": "reports", "label": "Reports & Exports", "icon": "FileSpreadsheet"},
+        {"id": "history", "label": "Scan History", "icon": "History"},
+        {"id": "settings", "label": "Engine Settings", "icon": "Sliders"}
+      ]
+    },
+    "main_content": "flex-1 overflow-y-auto p-6 bg-[#111619] relative min-w-0 space-y-6",
+    "bottom_status_bar": {
+      "height": "h-7",
+      "styling": "bg-[#101416] border-t border-[#364144] px-4 flex items-center justify-between text-xs text-[#A4B0B0] shrink-0 z-40 font-mono",
+      "items": [
+        "PipelineGuard Engine v2.0.4-release",
+        "FastAPI Engine Bridge: CONNECTED (127.0.0.1:8000)",
+        "Last Scan: 12 mins ago (0 Criticals)",
+        "OSV Live API: ONLINE"
+      ]
+    }
+  },
+  "page_specifications": {
+    "dashboard": {
+      "title": "Security Command Center",
+      "description": "Executive & Operational DevSecOps posture overview",
+      "metric_cards": [
+        {"key": "security_score", "label": "Security Health Score", "range": "0-100", "visual": "Radial / gauge score with color status"},
+        {"key": "scan_status", "label": "Gate Status", "states": ["SAFE", "WARNING", "BLOCKED"], "badge_style": "High contrast status pill"},
+        {"key": "total_findings", "label": "Total Findings", "sub_breakdown": "Critical, High, Medium, Low, Info pills"},
+        {"key": "scan_duration", "label": "Avg Scan Speed", "value": "e.g. 4.2s"},
+        {"key": "files_scanned", "label": "Files Analyzed", "value": "e.g. 1,420 files"},
+        {"key": "dependency_vulns", "label": "Dependency Risk Index", "value": "Package CVE exposure score"}
+      ],
+      "charts": [
+        "Findings by Severity Bar Chart (Recharts)",
+        "Findings by Category Pie/Donut Chart (SAST vs Dependency vs Config vs Secrets)",
+        "Dependency Risk Overview Horizon/Bar",
+        "Historical Scan Score Trend Line Chart (render only when history >= 1 scan)"
+      ],
+      "sections": [
+        "Recent Scans Table (Quick actions: view report, re-scan)",
+        "Recent Security Activity Stream (Timestamped audit log)",
+        "Critical Findings Preview Sheet / Drawer integration"
+      ]
+    },
+    "scan_project": {
+      "title": "Execute Security Scan",
+      "description": "Configure path, profile, and trigger fast asynchronous scanning engine",
+      "form_controls": [
+        "Folder / Repository Path Input with Browse Dialog trigger",
+        "Optional Custom Rules JSON Path Input",
+        "Profile Picker Grid: Quick (10s), Standard (30s), Deep (2m), Release Gate (Strict), Forensic (Full AST)",
+        "OSV Live API Lookup Switch (Toggle real-time vulnerability intelligence)",
+        "Start Scan Primary CTA with pulse animation during scan"
+      ],
+      "live_scan_monitor": [
+        "Real-time Progress Bar & Stage Stepper: [Initialization -> File Parsing -> Rule AST Match -> Dependency Audit -> OSV Query -> Report Build]",
+        "Real-time Counters: Elapsed Time, Files Processed, Findings Detected, Rules Evaluated",
+        "Live File Processing Terminal-style log drawer (Clean matte surface, no bright neon)",
+        "Scan Complete Results Summary Card with instant Navigation to Findings / Reports"
+      ]
+    },
+    "findings": {
+      "title": "Security & Vulnerability Findings",
+      "description": "Triage, filter, inspect and resolve codebase vulnerabilities",
+      "table_columns": ["Severity", "Category", "Rule ID", "File / Package", "Line / Version", "Status", "Actions"],
+      "filters": ["Search query", "Severity multi-select", "Category filter (SAST/Secret/SCA/IaC)", "Resolution status"],
+      "inspector_panel": {
+        "layout": "Right-side sliding panel (Sheet component)",
+        "details": "Rule metadata, CVE link, CWE ID, Remediation guidance, Code snippet viewer with masked secret evidence preview"
+      }
+    },
+    "dependencies": {
+      "title": "Software Bill of Materials (SBOM) & Dependencies",
+      "description": "Third-party package vulnerability inventory and license risk",
+      "components": [
+        "Package Inventory Table (Package Name, Current Version, Ecosystem [npm/pypi/cargo/go], Vulnerability Count, License, Risk Level)",
+        "Package Detail Drawer (Direct vs Transitive dependencies, OSV Advisory Links, Fix Version suggestion)"
+      ]
+    },
+    "osv_intelligence": {
+      "title": "OSV Intelligence Lookup",
+      "description": "Live query against Open Source Vulnerabilities database API",
+      "lookup_form": "Package Name input + Version input + Ecosystem dropdown (PyPI, npm, Crates, Go, Maven, NuGet, Packagist)",
+      "results_display": "Advisory summary card, affected version ranges, CVSS score matrix, official remediation notes, raw JSON view option"
+    },
+    "reports": {
+      "title": "Reports & Compliance Exports",
+      "description": "Generate standard security compliance audit artifacts",
+      "export_formats": ["HTML Executive Dashboard", "JSON Automation Payload", "SARIF 2.1.0 GitHub/GitLab Security Format"],
+      "features": [
+        "Export Configuration Form (Destination folder, Include Code Snippets toggle, Min Severity filter)",
+        "Existing Generated Reports Data Table (Filename, Format, Created At, File Size, Actions: Download / Open / Delete)",
+        "Interactive In-App HTML Report Preview Modal"
+      ]
+    },
+    "scan_history": {
+      "title": "Historical Scan Audit Log",
+      "description": "Track posture trends over time and compare scan differentials",
+      "features": [
+        "Historical Scans Data Table (Timestamp, Target Path, Profile Used, Duration, Findings Breakdown, Status)",
+        "Scan Comparison Drawer: Select 2 historical scans to view Diff (New vulnerabilities introduced, Fixed vulnerabilities)"
+      ]
+    },
+    "settings": {
+      "title": "Engine Configuration & Preferences",
+      "description": "Tune detection engine, intelligence feeds, and desktop UI behavior",
+      "tabs": [
+        {
+          "name": "General & Engine",
+          "editor": "Interactive Scanner Engine Config JSON Editor for 7 core keys (max_file_size_mb, threads, ignore_patterns, severe_threshold, fail_on_critical, enable_entropy_secrets, telemetry_opt_out)"
+        },
+        {"name": "Vulnerability Intelligence", "controls": "OSV Cache TTL, Offline Mode Toggle, Custom Rule Path"},
+        {"name": "Appearance & Accessibility", "controls": "Density Picker (Compact / Comfortable), Text Scale (100% / 110% / 120%), Reduced Motion Toggle"},
+        {"name": "Reports Default", "controls": "Default Export Path, Default Format, Company Branding Name"},
+        {"name": "About PipelineGuard", "controls": "Version info, FastAPI Engine Status, Tauri Bridge Ready status, License, Core Rule set version"}
+      ]
+    }
+  },
+  "surface_design_system": {
+    "card_style": "bg-[#1B2225] border border-[#364144] rounded-xl p-5 shadow-sm hover:border-[#4A575A] transition-colors duration-200",
+    "interactive_surface": "bg-[#252C2B] border border-[#364144] rounded-lg p-3 hover:bg-[#2C3433] transition-all",
+    "input_style": "bg-[#101416] border border-[#364144] text-[#F1F4F3] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#A4D65E] transition-colors placeholder-[#616D70]",
+    "button_primary": "bg-[#A4D65E] text-[#111619] font-semibold rounded-lg px-4 py-2 text-sm hover:bg-[#B5E66E] active:scale-[0.98] transition-all shadow-sm flex items-center gap-2",
+    "button_secondary": "bg-[#252C2B] text-[#F1F4F3] border border-[#364144] rounded-lg px-4 py-2 text-sm hover:bg-[#2F3736] hover:border-[#4A575A] active:scale-[0.98] transition-all flex items-center gap-2",
+    "button_destructive": "bg-[#FF5964]/10 text-[#FF5964] border border-[#FF5964]/30 rounded-lg px-4 py-2 text-sm hover:bg-[#FF5964]/20 transition-all flex items-center gap-2",
+    "badge_styles": {
+      "critical": "bg-[#FF5964]/15 text-[#FF5964] border border-[#FF5964]/30 font-medium px-2.5 py-0.5 rounded-full text-xs font-mono",
+      "warning": "bg-[#F0B65C]/15 text-[#F0B65C] border border-[#F0B65C]/30 font-medium px-2.5 py-0.5 rounded-full text-xs font-mono",
+      "safe": "bg-[#A4D65E]/15 text-[#A4D65E] border border-[#A4D65E]/30 font-medium px-2.5 py-0.5 rounded-full text-xs font-mono",
+      "info": "bg-[#38BDF8]/15 text-[#38BDF8] border border-[#38BDF8]/30 font-medium px-2.5 py-0.5 rounded-full text-xs font-mono"
+    }
+  },
+  "motion_and_microinteractions": {
+    "transitions": "Use explicit properties e.g. transition-colors duration-150, transition-transform duration-200. NEVER use transition: all.",
+    "hover_effects": "Subtle border lighting (#364144 to #4A575A), gentle opacity or shadow shift.",
+    "progress_animations": "Smooth width transitions for scan progress stepper and progress bars.",
+    "accessibility": "Respect prefers-reduced-motion, provide data-testid on every interactive control."
+  },
+  "testing_requirements": {
+    "mandatory_attribute": "data-testid",
+    "format": "kebab-case role-based (e.g. data-testid=\"start-scan-button\", data-testid=\"scan-profile-picker\", data-testid=\"findings-filter-input\")",
+    "key_elements": [
+      "All sidebar navigation buttons",
+      "Top header project/profile dropdowns and start scan button",
+      "Scan project folder path input and profile cards",
+      "Findings table rows, search input, and inspector drawer elements",
+      "OSV query form fields and result containers",
+      "Reports export trigger and report rows",
+      "Settings JSON editor inputs and tab triggers",
+      "Bottom status bar connection pills"
+    ]
+  },
+  "hall_of_shame_forbidden_patterns": [
+    "NO neon glowing borders or intense cyberpunk grid lines",
+    "NO bright green backgrounds or full green canvas fills",
+    "NO dark olive green backgrounds",
+    "NO fake terminal green matrix animations",
+    "NO oversized marketing headlines or centered marketing copy",
+    "NO extra cat images or mascots anywhere in the app (only cyber-cat logo in header)",
+    "NO transparent dropdown menus or missing header backdrop blur",
+    "NO generic empty tables without polished empty states"
+  ],
+  "instructions_to_main_agent": [
+    "Build a complete, desktop-grade DevSecOps Security Application UI in React with Tailwind CSS and Lucide React icons.",
+    "Ensure all 8 pages are fully navigable via the left sidebar: Dashboard, Scan Project, Findings, Dependencies, OSV Intelligence, Reports, Scan History, Settings.",
+    "Implement real working state and simulated FastAPI scanning engine bridge hooks so that clicking 'Start Scan' runs a realistic multi-stage scan progress with live updates.",
+    "Use Recharts for charts (Severity Breakdown, Category Distribution, Scan Score Trend).",
+    "Use exact color tokens: #111619 (main bg), #101416 (sidebar/header/status bar), #1B2225 (cards), #252C2B (secondary), #364144 (borders), #F1F4F3 (primary text), #A4B0B0 (secondary text), #A4D65E (security accent), #FF5964 (critical), #F0B65C (warning).",
+    "Attach data-testid to every interactive component, button, input, and table cell.",
+    "Ensure smooth dark titanium aesthetic with high data density, tabular numbers for stats, clear status badges, and right-side inspector panels."
+  ]
+}

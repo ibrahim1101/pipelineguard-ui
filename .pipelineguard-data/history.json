@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2026-10-09T09:52:30+00:00",
+    "project": "/app/sample_projects/demo-webapp",
+    "status": "BLOCKED",
+    "score": 0,
+    "findings": 23,
+    "scan_id": "e6f98f9d5e3f4b28",
+    "profile": "standard",
+    "duration_ms": 2374.4,
+    "files": 8,
+    "dependency_check_complete": false,
+    "online": true,
+    "reports": [
+      "/app/.pipelineguard-data/reports/pipelineguard-demo-webapp-20261009-100431.sarif"
+    ]
+  }
+]

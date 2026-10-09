@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 203 19% 8%;
+        --foreground: 160 9% 95%;
+        --card: 197 16% 13%;
+        --card-foreground: 160 9% 95%;
+        --popover: 197 16% 13%;
+        --popover-foreground: 160 9% 95%;
+        --primary: 85 58% 60%;
+        --primary-foreground: 203 19% 8%;
+        --secondary: 170 8% 16%;
+        --secondary-foreground: 160 9% 95%;
+        --muted: 170 8% 16%;
+        --muted-foreground: 180 6% 67%;
+        --accent: 170 8% 18%;
+        --accent-foreground: 160 9% 95%;
+        --destructive: 356 100% 67%;
+        --destructive-foreground: 160 9% 95%;
+        --border: 193 11% 24%;
+        --input: 193 11% 24%;
+        --ring: 85 58% 60%;
+        --radius: 0.75rem;
+        color-scheme: dark;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    html {
+        font-size: 100%;
+    }
+    body {
+        @apply bg-background text-foreground;
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: "tnum" 0;
+    }
+    code, pre, .font-mono {
+        font-family: "JetBrains Mono", Consolas, monospace;
+    }
+    ::selection {
+        background: rgba(164, 214, 94, 0.28);
+        color: #f1f4f3;
+    }
+    :focus-visible {
+        outline: 2px solid #a4d65e;
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .pg-panel {
+        @apply rounded-xl border border-pg-line/80 bg-pg-surface;
+        background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 38%);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 10px 30px -18px rgba(0, 0, 0, 0.7);
+    }
+    .pg-metal {
+        background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.02) 70%, rgba(255, 255, 255, 0));
+    }
+    .pg-scroll::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    .pg-scroll::-webkit-scrollbar-thumb {
+        background: #2c3538;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+    .pg-scroll::-webkit-scrollbar-thumb:hover {
+        background-color: #3d494c;
+    }
+    .pg-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .pg-grain::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        z-index: 60;
+    }
+}
+
+html[data-density="compact"] .pg-density-pad {
+    padding: 0.875rem;
+}
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+
+    [data-debug-wrapper="true"] > * {
+        margin-left: inherit;
+        margin-right: inherit;
+        margin-top: inherit;
+        margin-bottom: inherit;
+        padding-left: inherit;
+        padding-right: inherit;
+        padding-top: inherit;
+        padding-bottom: inherit;
+        column-gap: inherit;
+        row-gap: inherit;
+        gap: inherit;
+        border-left-width: inherit;
+        border-right-width: inherit;
+        border-top-width: inherit;
+        border-bottom-width: inherit;
+        border-left-style: inherit;
+        border-right-style: inherit;
+        border-top-style: inherit;
+        border-bottom-style: inherit;
+        border-left-color: inherit;
+        border-right-color: inherit;
+        border-top-color: inherit;
+        border-bottom-color: inherit;
+    }
+}

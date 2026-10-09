@@ -1,0 +1,1429 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "PipelineGuard",
+          "version": "1.0.0",
+          "rules": [
+            {
+              "id": "slack-token",
+              "name": "Slack token"
+            },
+            {
+              "id": "aws-access-key",
+              "name": "AWS access key"
+            },
+            {
+              "id": "generic-secret-assignment",
+              "name": "Generic secret assignment"
+            },
+            {
+              "id": "private-key",
+              "name": "Private key"
+            },
+            {
+              "id": "malformed-dependency-manifest",
+              "name": "Malformed dependency manifest"
+            },
+            {
+              "id": "dependency-check-incomplete",
+              "name": "Dependency check incomplete"
+            },
+            {
+              "id": "known-dependency-vulnerability",
+              "name": "Known dependency vulnerability"
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "slack-token",
+          "level": "error",
+          "message": {
+            "text": "Slack token detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app/notify.js"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "aws-access-key",
+          "level": "error",
+          "message": {
+            "text": "AWS access key detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app/settings.py"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "generic-secret-assignment",
+          "level": "error",
+          "message": {
+            "text": "Generic secret assignment detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app/settings.py"
+                },
+                "region": {
+                  "startLine": 4
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "private-key",
+          "level": "error",
+          "message": {
+            "text": "Private key detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "deploy/id_rsa.example"
+                },
+                "region": {
+                  "startLine": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "malformed-dependency-manifest",
+          "level": "warning",
+          "message": {
+            "text": "Malformed dependency manifest detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "services/legacy/package.json"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "dependency-check-incomplete",
+          "level": "warning",
+          "message": {
+            "text": "Dependency check incomplete detected."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-29mw-wpgm-hmr9: Regular Expression Denial of Service (ReDoS) in lodash (lodash 4.17.15)"
+          },
+          "properties": {
+            "id": "GHSA-29mw-wpgm-hmr9",
+            "aliases": [
+              "CVE-2020-28500"
+            ],
+            "package": "lodash",
+            "version": "4.17.15",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "4.0.0"
+                  },
+                  {
+                    "fixed": "4.17.21"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "4.17.21"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-28500",
+              "https://github.com/github/advisory-database/pull/6139",
+              "https://github.com/lodash/lodash/pull/5065",
+              "https://github.com/lodash/lodash/pull/5065/commits/02906b8191d3c100c193fe6f7b27d1c40f200bb7",
+              "https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a",
+              "https://www.oracle.com/security-alerts/cpuoct2021.html",
+              "https://www.oracle.com/security-alerts/cpujul2022.html",
+              "https://www.oracle.com/security-alerts/cpujan2022.html",
+              "https://www.oracle.com//security-alerts/cpujul2021.html",
+              "https://snyk.io/vuln/SNYK-JS-LODASH-1018905",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074893",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074895",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074892",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074894",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074896",
+              "https://security.netapp.com/advisory/ntap-20210312-0006",
+              "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-28500.yml",
+              "https://github.com/lodash/lodash/blob/npm/trimEnd.js%23L8",
+              "https://github.com/lodash/lodash",
+              "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-35jh-r3h4-6jhm: Command Injection in lodash (lodash 4.17.15)"
+          },
+          "properties": {
+            "id": "GHSA-35jh-r3h4-6jhm",
+            "aliases": [
+              "CVE-2021-23337",
+              "CVE-2026-4800",
+              "GHSA-r5fr-rjxr-66jc"
+            ],
+            "package": "lodash",
+            "version": "4.17.15",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H"
+              },
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "4.17.21"
+                  }
+                ]
+              },
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "4.0.0"
+                  },
+                  {
+                    "fixed": "4.18.0"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "4.17.21",
+              "4.18.0"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2021-23337",
+              "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c",
+              "https://www.oracle.com/security-alerts/cpuoct2021.html",
+              "https://www.oracle.com/security-alerts/cpujul2022.html",
+              "https://www.oracle.com/security-alerts/cpujan2022.html",
+              "https://www.oracle.com//security-alerts/cpujul2021.html",
+              "https://snyk.io/vuln/SNYK-JS-LODASH-1040724",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1074929",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBLODASH-1074931",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-1074928",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1074930",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGFUJIONWEBJARS-1074932",
+              "https://security.netapp.com/advisory/ntap-20210312-0006",
+              "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2021-23337.yml",
+              "https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js#L14851",
+              "https://github.com/lodash/lodash",
+              "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf",
+              "https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc",
+              "https://nvd.nist.gov/vuln/detail/CVE-2026-4800",
+              "https://cna.openjsf.org/security-advisories.html",
+              "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-f23m-r3pf-42rh: lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit` (lodash 4.17.15)"
+          },
+          "properties": {
+            "id": "GHSA-f23m-r3pf-42rh",
+            "aliases": [
+              "CVE-2025-13465",
+              "CVE-2026-2950",
+              "GHSA-xxjr-mmjv-4gpg"
+            ],
+            "package": "lodash",
+            "version": "4.17.15",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:L/SC:H/SI:H/SA:H/E:P"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "4.18.0"
+                  }
+                ]
+              },
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "4.0.0"
+                  },
+                  {
+                    "fixed": "4.17.23"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "4.18.0",
+              "4.17.23"
+            ],
+            "references": [
+              "https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh",
+              "https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg",
+              "https://nvd.nist.gov/vuln/detail/CVE-2026-2950",
+              "https://github.com/lodash/lodash",
+              "https://nvd.nist.gov/vuln/detail/CVE-2025-13465",
+              "https://github.com/lodash/lodash/commit/edadd452146f7e4bad4ea684e955708931d84d81",
+              "https://cert-portal.siemens.com/productcert/html/ssa-253495.html"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-p6mc-m468-83gw: Prototype Pollution in lodash (lodash 4.17.15)"
+          },
+          "properties": {
+            "id": "GHSA-p6mc-m468-83gw",
+            "aliases": [
+              "CVE-2020-8203"
+            ],
+            "package": "lodash",
+            "version": "4.17.15",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:H"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "3.7.0"
+                  },
+                  {
+                    "fixed": "4.17.19"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "4.17.19"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-8203",
+              "https://github.com/lodash/lodash/issues/4744",
+              "https://github.com/lodash/lodash/issues/4874",
+              "https://github.com/github/advisory-database/pull/2884",
+              "https://github.com/lodash/lodash/commit/c84fe82760fb2d3e03a63379b297a1cc1a2fce12",
+              "https://hackerone.com/reports/712065",
+              "https://hackerone.com/reports/864701",
+              "https://github.com/lodash/lodash",
+              "https://github.com/lodash/lodash/wiki/Changelog#v41719",
+              "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/lodash-rails/CVE-2020-8203.yml",
+              "https://security.netapp.com/advisory/ntap-20200724-0006",
+              "https://web.archive.org/web/20210914001339/https://github.com/lodash/lodash/issues/4744"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-vh95-rmgr-6w4m: Prototype Pollution in minimist (minimist 1.2.0)"
+          },
+          "properties": {
+            "id": "GHSA-vh95-rmgr-6w4m",
+            "aliases": [
+              "CVE-2020-7598"
+            ],
+            "package": "minimist",
+            "version": "1.2.0",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "0.2.1"
+                  }
+                ]
+              },
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "1.0.0"
+                  },
+                  {
+                    "fixed": "1.2.3"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "0.2.1",
+              "1.2.3"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-7598",
+              "https://github.com/minimistjs/minimist/commit/10bd4cdf49d9686d48214be9d579a9cdfda37c68",
+              "https://github.com/minimistjs/minimist/commit/38a4d1caead72ef99e824bb420a2528eec03d9ab",
+              "https://github.com/minimistjs/minimist/commit/4cf1354839cb972e38496d35e12f806eea92c11f#diff-a1e0ee62c91705696ddb71aa30ad4f95",
+              "https://github.com/minimistjs/minimist/commit/63e7ed05aa4b1889ec2f3b196426db4500cbda94",
+              "https://github.com/substack/minimist",
+              "https://snyk.io/vuln/SNYK-JS-MINIMIST-559764",
+              "https://www.npmjs.com/advisories/1179",
+              "http://lists.opensuse.org/opensuse-security-announce/2020-06/msg00024.html"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "error",
+          "message": {
+            "text": "GHSA-xvch-5gv4-984h: Prototype Pollution in minimist (minimist 1.2.0)"
+          },
+          "properties": {
+            "id": "GHSA-xvch-5gv4-984h",
+            "aliases": [
+              "CVE-2021-44906"
+            ],
+            "package": "minimist",
+            "version": "1.2.0",
+            "advisory_severity": "CRITICAL",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "1.0.0"
+                  },
+                  {
+                    "fixed": "1.2.6"
+                  }
+                ]
+              },
+              {
+                "type": "SEMVER",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "0.2.4"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "0.2.4",
+              "1.2.6"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2021-44906",
+              "https://github.com/minimistjs/minimist/issues/11",
+              "https://github.com/substack/minimist/issues/164",
+              "https://github.com/minimistjs/minimist/pull/24",
+              "https://github.com/minimistjs/minimist/commit/34e20b8461118608703d6485326abbb8e35e1703",
+              "https://github.com/minimistjs/minimist/commit/bc8ecee43875261f4f17eb20b1243d3ed15e70eb",
+              "https://github.com/minimistjs/minimist/commit/c2b981977fa834b223b408cfb860f933c9811e4d",
+              "https://github.com/minimistjs/minimist/commit/ef9153fc52b6cea0744b2239921c5dcae4697f11",
+              "https://github.com/Marynk/JavaScript-vulnerability-detection/blob/main/minimist%20PoC.zip",
+              "https://github.com/minimistjs/minimist/commits/v0.2.4",
+              "https://github.com/substack/minimist",
+              "https://github.com/substack/minimist/blob/master/index.js#L69",
+              "https://security.netapp.com/advisory/ntap-20240621-0006",
+              "https://snyk.io/vuln/SNYK-JS-MINIMIST-559764",
+              "https://stackoverflow.com/questions/8588563/adding-custom-properties-to-a-function/20278068#20278068"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-9hjg-9r4m-mvj7: Requests vulnerable to .netrc credentials leak via malicious URLs (requests 2.19.0)"
+          },
+          "properties": {
+            "id": "GHSA-9hjg-9r4m-mvj7",
+            "aliases": [
+              "CVE-2024-47081",
+              "PYSEC-2026-1872"
+            ],
+            "package": "requests",
+            "version": "2.19.0",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.32.4"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.32.4"
+            ],
+            "references": [
+              "https://github.com/psf/requests/security/advisories/GHSA-9hjg-9r4m-mvj7",
+              "https://nvd.nist.gov/vuln/detail/CVE-2024-47081",
+              "https://github.com/psf/requests/pull/6965",
+              "https://github.com/psf/requests/commit/96ba401c1296ab1dda74a2365ef36d88f7d144ef",
+              "https://github.com/psf/requests",
+              "https://requests.readthedocs.io/en/latest/api/#requests.Session.trust_env",
+              "https://seclists.org/fulldisclosure/2025/Jun/2",
+              "http://seclists.org/fulldisclosure/2025/Jun/2",
+              "http://www.openwall.com/lists/oss-security/2025/06/03/11",
+              "http://www.openwall.com/lists/oss-security/2025/06/03/9",
+              "http://www.openwall.com/lists/oss-security/2025/06/04/1",
+              "http://www.openwall.com/lists/oss-security/2025/06/04/6",
+              "https://pypi.org/project/requests",
+              "https://github.com/advisories/GHSA-9hjg-9r4m-mvj7"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-9wx4-h78v-vm56: Requests `Session` object does not verify requests after making first request with verify=False (requests 2.19.0)"
+          },
+          "properties": {
+            "id": "GHSA-9wx4-h78v-vm56",
+            "aliases": [
+              "CVE-2024-35195",
+              "PYSEC-2026-1873"
+            ],
+            "package": "requests",
+            "version": "2.19.0",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.32.0"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.32.0"
+            ],
+            "references": [
+              "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56",
+              "https://nvd.nist.gov/vuln/detail/CVE-2024-35195",
+              "https://github.com/psf/requests/pull/6655",
+              "https://github.com/psf/requests/commit/a58d7f2ffb4d00b46dca2d70a3932a0b37e22fac",
+              "https://github.com/psf/requests",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/IYLSNK5TL46Q6XPRVMHVWS63MVJQOK4Q",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/N7WP6EYDSUOCOJYHDK5NX43PYZ4SNHGZ",
+              "https://pypi.org/project/requests",
+              "https://github.com/advisories/GHSA-9wx4-h78v-vm56"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-gc5v-m9x4-r6x2: Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function (requests 2.19.0)"
+          },
+          "properties": {
+            "id": "GHSA-gc5v-m9x4-r6x2",
+            "aliases": [
+              "CVE-2026-25645",
+              "PYSEC-2026-2275"
+            ],
+            "package": "requests",
+            "version": "2.19.0",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:L/AC:H/PR:L/UI:R/S:U/C:N/I:H/A:N"
+              },
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.33.0"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.33.0"
+            ],
+            "references": [
+              "https://github.com/psf/requests/security/advisories/GHSA-gc5v-m9x4-r6x2",
+              "https://nvd.nist.gov/vuln/detail/CVE-2026-25645",
+              "https://github.com/psf/requests/commit/66d21cb07bd6255b1280291c4fafb71803cdb3b7",
+              "https://github.com/psf/requests",
+              "https://github.com/psf/requests/releases/tag/v2.33.0"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-j8r2-6x86-q33q: Unintended leak of Proxy-Authorization header in requests (requests 2.19.0)"
+          },
+          "properties": {
+            "id": "GHSA-j8r2-6x86-q33q",
+            "aliases": [
+              "CVE-2023-32681",
+              "PYSEC-2023-74"
+            ],
+            "package": "requests",
+            "version": "2.19.0",
+            "advisory_severity": "MODERATE",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:N/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "2.3.0"
+                  },
+                  {
+                    "fixed": "2.31.0"
+                  }
+                ]
+              },
+              {
+                "type": "GIT",
+                "repo": "https://github.com/psf/requests",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.31.0",
+              "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5"
+            ],
+            "references": [
+              "https://github.com/psf/requests/security/advisories/GHSA-j8r2-6x86-q33q",
+              "https://nvd.nist.gov/vuln/detail/CVE-2023-32681",
+              "https://github.com/psf/requests/commit/74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+              "https://github.com/psf/requests",
+              "https://github.com/psf/requests/releases/tag/v2.31.0",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/requests/PYSEC-2023-74.yaml",
+              "https://lists.debian.org/debian-lts-announce/2023/06/msg00018.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AW7HNFGYP44RT3DUDQXG2QT3OEV2PJ7Y",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/KOYASTZDGQG2BWLSNBPL3TQRL2G7QYNZ",
+              "https://security.gentoo.org/glsa/202309-08",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/AW7HNFGYP44RT3DUDQXG2QT3OEV2PJ7Y/"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-x84v-xcm2-53pg: Insufficiently Protected Credentials in Requests (requests 2.19.0)"
+          },
+          "properties": {
+            "id": "GHSA-x84v-xcm2-53pg",
+            "aliases": [
+              "CVE-2018-18074",
+              "PYSEC-2018-28"
+            ],
+            "package": "requests",
+            "version": "2.19.0",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.20.0"
+                  }
+                ]
+              },
+              {
+                "type": "GIT",
+                "repo": "https://github.com/requests/requests",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "c45d7c49ea75133e52ab22a8e9e13173938e36ff"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.20.0",
+              "c45d7c49ea75133e52ab22a8e9e13173938e36ff"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2018-18074",
+              "https://github.com/requests/requests/issues/4716",
+              "https://github.com/requests/requests/pull/4718",
+              "https://github.com/requests/requests/commit/c45d7c49ea75133e52ab22a8e9e13173938e36ff",
+              "https://access.redhat.com/errata/RHSA-2019:2035",
+              "https://bugs.debian.org/910766",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/requests/PYSEC-2018-28.yaml",
+              "https://github.com/requests/requests",
+              "https://usn.ubuntu.com/3790-1",
+              "https://usn.ubuntu.com/3790-2",
+              "https://www.oracle.com/security-alerts/cpujul2022.html",
+              "http://docs.python-requests.org/en/master/community/updates/#release-and-version-history",
+              "http://lists.opensuse.org/opensuse-security-announce/2019-07/msg00024.html",
+              "https://usn.ubuntu.com/3790-1/",
+              "https://usn.ubuntu.com/3790-2/",
+              "https://github.com/advisories/GHSA-x84v-xcm2-53pg"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-562c-5r94-xh97: Flask is vulnerable to Denial of Service via incorrect encoding of JSON data (flask 0.12.2)"
+          },
+          "properties": {
+            "id": "GHSA-562c-5r94-xh97",
+            "aliases": [
+              "CVE-2018-1000656",
+              "PYSEC-2018-66"
+            ],
+            "package": "flask",
+            "version": "0.12.2",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "0.12.3"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "0.12.3"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2018-1000656",
+              "https://github.com/pallets/flask/pull/2691",
+              "https://github.com/pallets/flask/commit/b178e89e4456e777b1a7ac6d7199052d0dfdbbbe",
+              "https://github.com/advisories/GHSA-562c-5r94-xh97",
+              "https://github.com/pallets/flask",
+              "https://github.com/pallets/flask/releases/tag/0.12.3",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/flask/PYSEC-2018-66.yaml",
+              "https://lists.debian.org/debian-lts-announce/2019/08/msg00025.html",
+              "https://security.netapp.com/advisory/ntap-20190221-0001",
+              "https://usn.ubuntu.com/4378-1",
+              "https://security.netapp.com/advisory/ntap-20190221-0001/",
+              "https://usn.ubuntu.com/4378-1/"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-5wv5-4vpf-pj6m: Pallets Project Flask is vulnerable to Denial of Service via Unexpected memory usage (flask 0.12.2)"
+          },
+          "properties": {
+            "id": "GHSA-5wv5-4vpf-pj6m",
+            "aliases": [
+              "CVE-2019-1010083",
+              "PYSEC-2019-179"
+            ],
+            "package": "flask",
+            "version": "0.12.2",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "1.0"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "1.0"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2019-1010083",
+              "https://github.com/advisories/GHSA-5wv5-4vpf-pj6m",
+              "https://github.com/pallets/flask",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/flask/PYSEC-2019-179.yaml",
+              "https://www.palletsprojects.com/blog/flask-1-0-released",
+              "https://www.palletsprojects.com/blog/flask-1-0-released/"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-68rp-wp8r-4726: Flask session does not add `Vary: Cookie` header when accessed in some ways (flask 0.12.2)"
+          },
+          "properties": {
+            "id": "GHSA-68rp-wp8r-4726",
+            "aliases": [
+              "CVE-2026-27205",
+              "PYSEC-2026-2151"
+            ],
+            "package": "flask",
+            "version": "0.12.2",
+            "advisory_severity": "LOW",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+              },
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "3.1.3"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "3.1.3"
+            ],
+            "references": [
+              "https://github.com/pallets/flask/security/advisories/GHSA-68rp-wp8r-4726",
+              "https://nvd.nist.gov/vuln/detail/CVE-2026-27205",
+              "https://github.com/pallets/flask/commit/089cb86dd22bff589a4eafb7ab8e42dc357623b4",
+              "https://github.com/pallets/flask",
+              "https://github.com/pallets/flask/releases/tag/3.1.3"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "warning",
+          "message": {
+            "text": "GHSA-m2qf-hxjv-5gpq: Flask vulnerable to possible disclosure of permanent session cookie due to missing Vary: Cookie header (flask 0.12.2)"
+          },
+          "properties": {
+            "id": "GHSA-m2qf-hxjv-5gpq",
+            "aliases": [
+              "CVE-2023-30861",
+              "PYSEC-2023-62"
+            ],
+            "package": "flask",
+            "version": "0.12.2",
+            "advisory_severity": "HIGH",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "2.3.0"
+                  },
+                  {
+                    "fixed": "2.3.2"
+                  }
+                ]
+              },
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.2.5"
+                  }
+                ]
+              },
+              {
+                "type": "GIT",
+                "repo": "https://github.com/pallets/flask",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "70f906c51ce49c485f1d355703e9cc3386b1cc2b"
+                  },
+                  {
+                    "fixed": "afd63b16170b7c047f5758eb910c416511e9c965"
+                  }
+                ]
+              },
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "2.2.5"
+                  },
+                  {
+                    "introduced": "2.3.0"
+                  },
+                  {
+                    "fixed": "2.3.2"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "2.2.5",
+              "2.3.2",
+              "70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+              "afd63b16170b7c047f5758eb910c416511e9c965"
+            ],
+            "references": [
+              "https://github.com/pallets/flask/security/advisories/GHSA-m2qf-hxjv-5gpq",
+              "https://nvd.nist.gov/vuln/detail/CVE-2023-30861",
+              "https://github.com/pallets/flask/commit/70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+              "https://github.com/pallets/flask/commit/afd63b16170b7c047f5758eb910c416511e9c965",
+              "https://github.com/pallets/flask",
+              "https://github.com/pallets/flask/releases/tag/2.2.5",
+              "https://github.com/pallets/flask/releases/tag/2.3.2",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/flask/PYSEC-2023-62.yaml",
+              "https://lists.debian.org/debian-lts-announce/2023/08/msg00024.html",
+              "https://security.netapp.com/advisory/ntap-20230818-0006",
+              "https://www.debian.org/security/2023/dsa-5442"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "error",
+          "message": {
+            "text": "GHSA-6757-jp84-gxfx: Improper Input Validation in PyYAML (pyyaml 5.3)"
+          },
+          "properties": {
+            "id": "GHSA-6757-jp84-gxfx",
+            "aliases": [
+              "CVE-2020-1747",
+              "PYSEC-2020-96"
+            ],
+            "package": "pyyaml",
+            "version": "5.3",
+            "advisory_severity": "CRITICAL",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "5.1b7"
+                  },
+                  {
+                    "fixed": "5.3.1"
+                  }
+                ]
+              },
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "5.1"
+                  },
+                  {
+                    "fixed": "5.3.1"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "5.3.1"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-1747",
+              "https://github.com/github/advisory-database/pull/4942",
+              "https://github.com/yaml/pyyaml/pull/386",
+              "https://github.com/yaml/pyyaml/commit/0cedb2a0697b2bc49e4f3841b8d4590b6b15657e",
+              "https://github.com/yaml/pyyaml/commit/5080ba513377b6355a0502104846ee804656f1e0",
+              "https://bugzilla.redhat.com/show_bug.cgi?id=CVE-2020-1747",
+              "https://github.com/advisories/GHSA-6757-jp84-gxfx",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/pyyaml/PYSEC-2020-96.yaml",
+              "https://github.com/yaml/pyyaml",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/7PPAS6C4SZRDQLR7C22A5U3QOLXY33JX",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/K5HEPD7LEVDPCITY5IMDYWXUMX37VFMY",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/MMQXSZXNJT6ERABJZAAICI3DQSQLCP3D",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WORRFHPQVAFKKXXWLSSW6XKUYLWM6CSH",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZBJA3SGNJKCAYPSHOHWY3KBCWNM5NYK2",
+              "https://www.oracle.com/security-alerts/cpujul2022.html",
+              "http://lists.opensuse.org/opensuse-security-announce/2020-04/msg00017.html",
+              "http://lists.opensuse.org/opensuse-security-announce/2020-05/msg00017.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/WORRFHPQVAFKKXXWLSSW6XKUYLWM6CSH/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZBJA3SGNJKCAYPSHOHWY3KBCWNM5NYK2/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/K5HEPD7LEVDPCITY5IMDYWXUMX37VFMY/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/MMQXSZXNJT6ERABJZAAICI3DQSQLCP3D/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/7PPAS6C4SZRDQLR7C22A5U3QOLXY33JX/"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "known-dependency-vulnerability",
+          "level": "error",
+          "message": {
+            "text": "GHSA-8q59-q68h-6hv4: Improper Input Validation in PyYAML (pyyaml 5.3)"
+          },
+          "properties": {
+            "id": "GHSA-8q59-q68h-6hv4",
+            "aliases": [
+              "CVE-2020-14343",
+              "PYSEC-2021-142"
+            ],
+            "package": "pyyaml",
+            "version": "5.3",
+            "advisory_severity": "CRITICAL",
+            "cvss_score": null,
+            "severity_vectors": [
+              {
+                "type": "CVSS_V3",
+                "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              },
+              {
+                "type": "CVSS_V4",
+                "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+              }
+            ],
+            "affected_ranges": [
+              {
+                "type": "ECOSYSTEM",
+                "events": [
+                  {
+                    "introduced": "0"
+                  },
+                  {
+                    "fixed": "5.4"
+                  }
+                ]
+              }
+            ],
+            "fixed_versions": [
+              "5.4"
+            ],
+            "references": [
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-14343",
+              "https://github.com/SeldonIO/seldon-core/issues/2252",
+              "https://github.com/yaml/pyyaml/issues/420",
+              "https://github.com/yaml/pyyaml/issues/420#issuecomment-663673966",
+              "https://github.com/yaml/pyyaml/commit/a001f2782501ad2d24986959f0239a354675f9dc",
+              "https://bugzilla.redhat.com/show_bug.cgi?id=1860466",
+              "https://github.com/advisories/GHSA-8q59-q68h-6hv4",
+              "https://github.com/pypa/advisory-database/tree/main/vulns/pyyaml/PYSEC-2021-142.yaml",
+              "https://github.com/yaml/pyyaml",
+              "https://pypi.org/project/PyYAML",
+              "https://www.oracle.com/security-alerts/cpuapr2022.html",
+              "https://www.oracle.com/security-alerts/cpujul2022.html"
+            ],
+            "remediation": "Review fixed versions and affected ranges before upgrading."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "PipelineGuard"
+                },
+                "region": {}
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

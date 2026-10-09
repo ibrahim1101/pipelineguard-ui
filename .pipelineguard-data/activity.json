@@ -1,0 +1,21 @@
+[
+  {
+    "kind": "scan-started",
+    "message": "Scan started (standard)",
+    "timestamp": "2026-10-09T09:52:27+00:00",
+    "project": "/app/sample_projects/demo-webapp"
+  },
+  {
+    "kind": "scan-completed",
+    "message": "Scan completed \u2014 BLOCKED, score 0",
+    "timestamp": "2026-10-09T09:52:30+00:00",
+    "project": "/app/sample_projects/demo-webapp",
+    "scan_id": "e6f98f9d5e3f4b28"
+  },
+  {
+    "kind": "report-generated",
+    "message": "SARIF report generated",
+    "timestamp": "2026-10-09T10:04:31+00:00",
+    "path": "/app/.pipelineguard-data/reports/pipelineguard-demo-webapp-20261009-100431.sarif"
+  }
+]
