@@ -336,3 +336,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — Fail-closed sidecar exit code normalization
 - Workflow `37976377078` built the PyInstaller sidecar and confirmed the missing-token rejection (exit code 1), but GitHub's PowerShell action wrapper still failed the step because `$LASTEXITCODE` was left nonzero.
 - After asserting that the sidecar exited nonzero, the negative test now resets `$global:LASTEXITCODE = 0` to allow the workflow to proceed to authenticated packaged startup. Commit `5e43b86`. CI pending.
+
+### 2026-10-10 — Packaged Python sidecar launcher integration (initial)
+- PyInstaller sidecar validation workflow `37976764862` passed on Windows, including no-token fail-closed and authenticated readiness.
+- Added Rust packaged-sidecar discovery relative to the native executable (`cerberus-runtime/cerberus-bridge.exe` plus `cerberus-runtime/engine/pipelineguard`) and managed spawn with an OS-chosen loopback port, random token, authenticated readiness and child cleanup. Commit `858ba35`.
+- Added regression test for missing adjacent runtime layout. Commit `2f8d889`.
+- The native launcher integration is pending Windows CI. Sidecar workflow currently packages only the bridge onedir output, not the complete adjacent runtime layout. Tauri bundling remains disabled and no installer is ready.
