@@ -31,9 +31,9 @@ function About() {
   const [diag, setDiag] = useState(null);
   useEffect(() => { api.diagnostics().then(setDiag).catch(() => {}); }, []);
   return (
-    <Panel title="About PipelineGuard" testId="settings-about-panel">
+    <Panel title="About Cerberus" testId="settings-about-panel">
       <dl>
-        <KV label="Application" testId="about-version">PipelineGuard {status?.app_version} (v2.0 development, unreleased)</KV>
+        <KV label="Application" testId="about-version">Cerberus {status?.app_version} (v2.0 development, unreleased)</KV>
         <KV label="Engine" mono>{status?.engine_version} · {status?.engine_path}</KV>
         <KV label="Stable release">v1.0.0</KV>
         <KV label="License">No LICENSE file is present in the repository; license not specified.</KV>
@@ -78,7 +78,7 @@ export default function Settings() {
 
   return (
     <>
-      <PageHeader title="Settings" description="Preferences are stored locally in the PipelineGuard data folder. Policy settings live in your JSON configuration file." />
+      <PageHeader title="Settings" description="Preferences are stored locally in the Cerberus local data folder. Policy settings live in your JSON configuration file." />
       <Tabs defaultValue="general">
         <TabsList className="bg-pg-surface border border-pg-line mb-4" data-testid="settings-tabs">
           {[["general", "General"], ["engine", "Scan Engine"], ["intel", "Vulnerability Intelligence"], ["appearance", "Appearance"], ["reports", "Reports"], ["about", "About"]].map(([v, l]) => (
