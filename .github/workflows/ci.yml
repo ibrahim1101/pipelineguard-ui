@@ -22,14 +22,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Enable Yarn
+        run: corepack enable
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --legacy-peer-deps
+        run: yarn install --non-interactive
       - name: Build frontend
         env:
           CI: 'false'
           DISABLE_EMERGENT_OVERLAY: 'true'
           REACT_APP_BACKEND_URL: http://127.0.0.1:8000
-        run: npm run build
+        run: yarn build
 
   backend-smoke:
     name: Python bridge smoke checks
@@ -50,6 +52,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install fastapi==0.110.1 uvicorn==0.25.0 'pydantic>=2.6.4,<3' python-dotenv httpx 'typer>=0.12' rich pytest
+          python -m pip install -e ./engine
       - name: Compile Python bridge
         run: python -m compileall -q ui/backend
       - name: Check bridge startup and authentication
