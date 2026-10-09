@@ -207,6 +207,37 @@ jobs:
           path: dist/cerberus-standalone/
           if-no-files-found: error
           retention-days: 7
+      - name: Build per-user NSIS installer from validated standalone payload
+        shell: pwsh
+        run: |
+          choco install nsis --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'NSIS installation failed' }
+          $compiler = "${env:ProgramFiles(x86)}\\NSIS\\makensis.exe"
+          if (-not (Test-Path $compiler)) { throw 'NSIS compiler missing' }
+          & $compiler /V2 desktop/installer/cerberus.nsi
+          if ($LASTEXITCODE -ne 0) { throw 'NSIS installer build failed' }
+          if (-not (Test-Path dist/Cerberus-Setup-0.1.0.exe)) { throw 'Installer output missing' }
+      - name: Smoke test silent installation and uninstallation
+        shell: pwsh
+        run: |
+          $setup = (Resolve-Path dist/Cerberus-Setup-0.1.0.exe).Path
+          $target = Join-Path $env:LOCALAPPDATA 'Programs/Cerberus'
+          $install = Start-Process -FilePath $setup -ArgumentList '/S' -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "Installer exited with $($install.ExitCode)" }
+          if (-not (Test-Path (Join-Path $target 'Cerberus.exe'))) { throw 'Installed native executable missing' }
+          if (-not (Test-Path (Join-Path $target 'cerberus-runtime/cerberus-bridge.exe'))) { throw 'Installed sidecar missing' }
+          if (-not (Test-Path (Join-Path $target 'cerberus-runtime/engine/pipelineguard'))) { throw 'Installed scanner engine missing' }
+          $uninstaller = Join-Path $target 'Uninstall.exe'
+          $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
+          if ($uninstall.ExitCode -ne 0) { throw "Uninstaller exited with $($uninstall.ExitCode)" }
+          Start-Sleep -Seconds 2
+          if (Test-Path (Join-Path $target 'Cerberus.exe')) { throw 'Uninstall left native executable behind' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cerberus-windows-nsis-installer-preview
+          path: dist/Cerberus-Setup-0.1.0.exe
+          if-no-files-found: error
+          retention-days: 7
       - name: Verify packaged sidecar fails closed without desktop token
         shell: pwsh
         run: |
