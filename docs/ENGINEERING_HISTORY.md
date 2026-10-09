@@ -286,3 +286,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Native Rust desktop cleanup validation `37964933152` passed.
 - Added `managed_child_drop_terminates_running_process`, spawning a long-running subprocess on Windows or Unix, asserting it is running, then dropping `ManagedChild` and requiring prompt kill-and-wait cleanup (under ten seconds). Commit `517a451`.
 - This verifies native child cleanup without opening a Tauri window; full application lifecycle and packaged sidecar testing remain outstanding.
+
+### 2026-10-09 — Native readiness early-exit regression
+- Windows desktop CI `37966552530` passed the live-child shutdown test.
+- Added `managed_bridge_rejects_child_exit_before_readiness` in the Rust shell: launches a child that exits with status 17, calls native readiness polling, and asserts prompt failure rather than waiting the full startup timeout. Commit `4c363b9`.
+- This covers native readiness failure logic; full graphical Tauri launch and installer integration remain untested.
