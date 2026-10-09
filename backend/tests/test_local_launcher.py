@@ -28,6 +28,14 @@ class LocalLauncherTests(unittest.TestCase):
                 else:
                     os.environ["PIPELINEGUARD_DESKTOP_MODE"] = old_mode
 
+    def test_managed_child_mode_requires_native_owned_token(self):
+        import ast
+        from pathlib import Path
+        source = (Path(__file__).resolve().parents[1] / "launch_local.py").read_text()
+        self.assertIn('CERBERUS_MANAGED_CHILD', source)
+        self.assertIn('managed bridge requires PIPELINEGUARD_TOKEN', source)
+        ast.parse(source)
+
     def test_launcher_does_not_expose_host_argument(self):
         import ast
         from pathlib import Path
