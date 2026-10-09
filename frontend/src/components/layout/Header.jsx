@@ -43,7 +43,7 @@ export default function Header() {
         </div>
       )}
       {!running && latest && <StatusPill status={latest.status} testId="header-last-status" />}
-      {!onScanPage && <Button onClick={startScan} disabled={running} className="h-9 px-4 font-semibold" data-testid="header-start-scan-btn">
+      {!onScanPage && <Button onClick={startScan} disabled={running || !selection.project} title={!selection.project ? "Select a project folder before scanning" : undefined} className="h-9 px-4 font-semibold" data-testid="header-start-scan-btn">
         {running ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
         {running ? "Scanning" : "Start Scan"}
       </Button>}
