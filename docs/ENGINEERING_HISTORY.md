@@ -302,3 +302,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Rust-to-Python native authenticated readiness workflow `37968434471` passed Windows CI.
 - Extended desktop validation to install frontend dependencies, compile production React assets, and compile the unbundled Windows Tauri executable via `cargo build --release`, verifying the executable exists. Commit `8a2e27b`.
 - Added frontend changes to desktop workflow triggers. The binary is a CI validation output, not a distributed installer; bundled packaging and graphical runtime QA remain pending. CI pending.
+
+### 2026-10-09 — Windows release-build Node setup repair
+- First Windows release-build validation `37969422997` failed in `actions/setup-node@v4` before frontend or Rust compilation: npm cache dependency path `frontend/package-lock.json` did not exist in the repository.
+- Removed the invalid npm cache configuration and replaced `npm ci` with `npm install --no-audit --no-fund` for the current lockfile-free frontend. Commit `c401b3d`.
+- A committed lockfile and deterministic `npm ci` remain desirable future work. The Windows release build still requires a successful CI rerun.
