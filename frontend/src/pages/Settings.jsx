@@ -21,7 +21,7 @@ const Field = ({ label, hint, children }) => (
 
 const Pick = ({ value, onChange, options, testId }) => (
   <Select value={String(value)} onValueChange={onChange}>
-    <SelectTrigger className="w-[220px] bg-pg-bg" data-testid={testId}><SelectValue /></SelectTrigger>
+    <SelectTrigger className="w-full sm:w-[220px] bg-pg-bg" data-testid={testId}><SelectValue /></SelectTrigger>
     <SelectContent>{options.map(([v, l]) => <SelectItem key={v} value={String(v)}>{l}</SelectItem>)}</SelectContent>
   </Select>
 );
@@ -80,11 +80,11 @@ export default function Settings() {
     <>
       <PageHeader title="Settings" description="Preferences are stored locally in the Cerberus local data folder. Policy settings live in your JSON configuration file." />
       <Tabs defaultValue="general">
-        <TabsList className="bg-pg-surface border border-pg-line mb-4" data-testid="settings-tabs">
+        <div className="overflow-x-auto pg-scroll mb-4"><TabsList className="bg-pg-surface border border-pg-line w-max min-w-full" data-testid="settings-tabs">
           {[["general", "General"], ["engine", "Scan Engine"], ["intel", "Vulnerability Intelligence"], ["appearance", "Appearance"], ["reports", "Reports"], ["about", "About"]].map(([v, l]) => (
             <TabsTrigger key={v} value={v} className="data-[state=active]:bg-pg-surface2" data-testid={`settings-tab-${v}`}>{l}</TabsTrigger>
           ))}
-        </TabsList>
+        </TabsList></div>
         <TabsContent value="general">
           <Panel title="General" testId="settings-general-panel">
             <Field label="Default scan profile"><Pick value={form.default_profile} onChange={(v) => set({ default_profile: v })} options={profiles.map((p) => [p.name, p.name[0].toUpperCase() + p.name.slice(1)])} testId="settings-default-profile-select" /></Field>
