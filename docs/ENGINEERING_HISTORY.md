@@ -43,7 +43,7 @@
 5. A completed engine scan and successful report loading are separate events; failure in one should not misreport the other.
 6. Green CI validates covered tests/builds only; it does not certify a standalone installer, pixel-perfect UI, or complete security review.
 
-## Next engineering tasks
+### 2026-10-09 — Scan completion regression coverage (pending CI)\n- **Goal:** Ensure scan completion/failure remains authoritative if latest report, history, or activity refresh fails.\n- **Files / behavior changed:** Added `frontend/src/context/AppContext.scanCompletion.test.jsx` with parameterized completion tests for all three refresh endpoints and a failed-scan regression. No production UI or engine code changed.\n- **Failed approaches / errors:** None observed at commit time; CI validation pending.\n- **Fix and rationale:** Assert independent scan status, connection state, completion/failure toast, and refresh warning.\n- **Commit:** `c5c7d92befa00fdf17c842710582bb1bc514b5a4`.\n- **CI run and result:** Not yet verified.\n- **Manual verification outstanding:** Bridge interruption and actual desktop scan scenarios.\n- **Next action:** Inspect CI and address any test issues before polling improvements.\n\n## Next engineering tasks
 
 - [ ] Regression test scan completion when history/latest/activity refresh fails.
 - [ ] Regression test failed scans, bridge outages during scans, and recovery without duplicate polling.
