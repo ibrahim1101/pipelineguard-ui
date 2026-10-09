@@ -238,3 +238,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Previous four-page UI refinement CI runs `37956599782`, `37956604068`, `37956612592`, `37956618490`, `37956634655` passed.
 - Header Start Scan is disabled when no project folder is selected, matching the Scan Project page's guard.
 - Desktop managed development bridge now emits an explicit startup diagnostic when `CERBERUS_MANAGED_DEV=1` and spawning fails, rather than silently swallowing the error. Production packaging, authenticated readiness and runtime visual QA remain pending.
+
+### 2026-10-09 — Authenticated managed bridge readiness
+- Prior desktop validation `37957135170` and UI validations `37957135346`, `37957149364` passed.
+- Rust Tauri managed-development bridge now probes the protected `GET /api/status` endpoint with its randomly generated per-launch `X-PipelineGuard-Token` before accepting the child as ready. The public health endpoint is deliberately not used.
+- Polls for up to 12 seconds, checks early child exit, and kills/reaps a child that fails readiness. The renderer never receives the token.
+- This remains opt-in `CERBERUS_MANAGED_DEV=1`; no installer or production sidecar is claimed. Startup may still need runtime Windows verification. Commit `33a3c90`.
