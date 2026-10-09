@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GitCompare, History as HistoryIcon, Search, Trash2 } from "lucide-react";
+import { GitCompare, History as HistoryIcon, RefreshCw, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +16,7 @@ import CompareDialog from "@/components/history/CompareDialog";
 import { basename, fmtDate, fmtDuration } from "@/lib/format";
 
 export default function History() {
-  const { history, refreshData } = useApp();
+  const { history, refreshData, reportsError, reportsLoading } = useApp();
   const nav = useNavigate();
   const [qText, setQ] = useState("");
   const [status, setStatus] = useState("all");
@@ -46,6 +46,7 @@ export default function History() {
             </AlertDialogContent>
           </AlertDialog>
         )} />
+      {reportsError && <div role="alert" className="pg-panel mb-4 flex flex-wrap items-center justify-between gap-3 p-4" data-testid="history-load-error"><p className="text-sm text-pg-muted">Scan history could not be refreshed. Previous results are preserved.</p><Button variant="outline" size="sm" disabled={reportsLoading} onClick={() => refreshData().catch(() => toast.error("History refresh failed. Try again."))} data-testid="history-retry-btn"><RefreshCw className="h-4 w-4 mr-2" />{reportsLoading ? "Retrying…" : "Retry loading history"}</Button></div>}
       {history.length === 0 ? (
         <div className="pg-panel"><EmptyState icon={HistoryIcon} title="No stored scans" description="Completed scans are recorded here automatically." action={<Button onClick={() => nav("/scan")} data-testid="history-go-scan-btn">Start a scan</Button>} testId="history-empty" /></div>
       ) : (
