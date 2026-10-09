@@ -317,3 +317,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows desktop build `37970098294` installed npm dependencies but failed running CRACO/webpack: `Cannot find module 'ajv/dist/compile/codegen'` from `ajv-keywords`, indicating an incompatible/missing AJV v8 resolution.
 - Declared `ajv@^8.17.1` as a direct frontend development dependency to provide the webpack validator's required v8 API. Commit `392cc83`.
 - Production frontend compilation and Windows release binary still need CI confirmation; do not treat this as a verified build fix until the new run passes.
+
+### 2026-10-09 — Minimal desktop Python runtime dependency isolation
+- Added `backend/requirements-desktop.txt` for the local FastAPI/Uvicorn bridge, excluding cloud, database, development and Emergent template dependencies from the desktop packaging dependency set.
+- Updated Windows desktop Rust integration CI and managed Python bridge smoke CI to install this isolated runtime set; HTTPX remains smoke-test-only. Commits `214e244`, `02cdc91`, `f673fe3`.
+- This validates a prerequisite for future standalone Python sidecar packaging; a bundled interpreter, sidecar startup and installer remain unimplemented and require separate tests. CI pending.
