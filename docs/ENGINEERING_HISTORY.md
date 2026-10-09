@@ -367,3 +367,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Staged preview backend workflow `37984508920` passed.
 - Added Windows CI startup smoke that launches the staged `Cerberus.exe` with development bridge credentials removed, waits eight seconds, fails on early native process exit, and terminates the process tree during cleanup. Commit `eef0006`.
 - This is a basic process-liveness check, not automated visual GUI validation, renderer interaction testing, or a Windows installer test. CI pending.
+
+### 2026-10-10 — Native packaged bridge lifecycle validation
+- Native Windows desktop startup workflow `37987274034` passed.
+- Added CI check that starts staged `Cerberus.exe`, finds the packaged bridge as its direct child via Windows CIM, requests graceful GUI close, and verifies the bridge process exits. Initial draft incorrectly used forced termination, which bypasses Rust Drop; corrected in commit `1dd7fb7` before declaring test success. Commits `178b3f2`, `1dd7fb7`.
+- New lifecycle workflow is pending. This is not a full interactive UI test or installer validation.
