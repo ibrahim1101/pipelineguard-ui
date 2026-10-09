@@ -75,6 +75,21 @@ describe("AppProvider bridge lifecycle", () => {
     expect(api.history.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
+  test("ignores stale initialization when a newer retry finishes first", async () => {
+    let resolveOld;
+    api.status.mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }));
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    expect(container.textContent).toBe("connecting");
+
+    await act(async () => { await observed.retry(); });
+    expect(container.textContent).toBe("connected");
+    expect(api.history).toHaveBeenCalledTimes(1);
+
+    await act(async () => { resolveOld({ ready: true }); });
+    expect(container.textContent).toBe("connected");
+    expect(api.history).toHaveBeenCalledTimes(1);
+  });
+
   test("ignores initialization response after unmount", async () => {
     let resolveStatus;
     api.status.mockImplementationOnce(() => new Promise((resolve) => { resolveStatus = resolve; }));
