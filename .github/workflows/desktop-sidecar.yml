@@ -154,6 +154,23 @@ jobs:
           } finally {
             if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
           }
+      - name: Smoke test native desktop process startup
+        shell: pwsh
+        run: |
+          $app = (Resolve-Path dist/cerberus-standalone).Path
+          $exe = Join-Path $app 'Cerberus.exe'
+          Remove-Item Env:CERBERUS_MANAGED_DEV -ErrorAction SilentlyContinue
+          Remove-Item Env:CERBERUS_DEV_BRIDGE_TOKEN -ErrorAction SilentlyContinue
+          $proc = Start-Process -FilePath $exe -WorkingDirectory $app -PassThru
+          try {
+            Start-Sleep -Seconds 8
+            $proc.Refresh()
+            if ($proc.HasExited) { throw "Native Cerberus process exited early: $($proc.ExitCode)" }
+            Write-Host "Native Cerberus desktop process remained alive after startup"
+          } finally {
+            taskkill.exe /PID $proc.Id /T /F | Out-Null
+            $global:LASTEXITCODE = 0
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: cerberus-windows-standalone-preview
