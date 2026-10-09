@@ -347,3 +347,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows desktop launcher integration checks `37977148260` and `37977134795` both passed.
 - Sidecar CI now assembles `dist/cerberus-runtime/` with `cerberus-bridge.exe`, its PyInstaller onedir dependencies, and the scanner engine directory. It launches the sidecar with `dist/` as working directory, exercising packaged engine path and authenticated readiness without using the backend source directory as CWD. Commit `9907279`.
 - This is an assembly and smoke-test milestone, not a signed or bundled Tauri installer. Native executable + runtime combined packaging remains to be validated.
+
+### 2026-10-10 — Native executable and packaged runtime staging
+- Windows adjacent runtime smoke workflow `37979474655` passed, including authenticated packaged startup from outside backend source working directory.
+- Extended packaged sidecar Windows CI to build the production frontend and native Tauri release executable, stage `dist/cerberus-standalone/Cerberus.exe` beside `cerberus-runtime/`, and assert that the adjacent bridge executable and scanner engine paths match the Rust launcher's discovery contract. Commit `c03cbb6`.
+- This validates combined artifact staging only. Native GUI process startup, fully installed application behavior, and Tauri installer creation remain unverified. CI pending.
