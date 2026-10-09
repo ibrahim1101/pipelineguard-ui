@@ -1,0 +1,78 @@
+name: Packaged Python sidecar validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'engine/**'
+      - '.github/workflows/desktop-sidecar.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'engine/**'
+      - '.github/workflows/desktop-sidecar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sidecar:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install isolated bridge dependencies and packager
+        shell: pwsh
+        run: |
+          python -m pip install -r backend/requirements-desktop.txt 'pyinstaller>=6.0,<7'
+          if ($LASTEXITCODE -ne 0) { throw 'Sidecar dependencies failed to install' }
+      - name: Build Windows Python sidecar (onedir)
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --name cerberus-bridge --paths backend --paths engine --collect-submodules bridge --collect-submodules pipelineguard --collect-submodules scanners --hidden-import server backend/desktop_sidecar.py
+          if ($LASTEXITCODE -ne 0) { throw 'PyInstaller sidecar build failed' }
+          if (-not (Test-Path dist/cerberus-bridge/cerberus-bridge.exe)) { throw 'Missing sidecar executable' }
+      - name: Verify packaged sidecar fails closed without desktop token
+        shell: pwsh
+        run: |
+          $env:CERBERUS_BRIDGE_PORT = '18763'
+          $env:PIPELINEGUARD_ENGINE_PATH = (Resolve-Path engine).Path
+          $env:PIPELINEGUARD_DESKTOP_MODE = '1'
+          Remove-Item Env:PIPELINEGUARD_TOKEN -ErrorAction SilentlyContinue
+          & dist/cerberus-bridge/cerberus-bridge.exe
+          if ($LASTEXITCODE -eq 0) { throw 'Sidecar unexpectedly started without token' }
+      - name: Test packaged authenticated bridge startup
+        shell: pwsh
+        run: |
+          $env:CERBERUS_BRIDGE_PORT = '18764'
+          $env:PIPELINEGUARD_ENGINE_PATH = (Resolve-Path engine).Path
+          $env:PIPELINEGUARD_DESKTOP_MODE = '1'
+          $env:PIPELINEGUARD_TOKEN = 'ci-packaged-sidecar-token'
+          $exe = (Resolve-Path dist/cerberus-bridge/cerberus-bridge.exe).Path
+          $proc = Start-Process -FilePath $exe -WorkingDirectory (Resolve-Path backend).Path -PassThru -WindowStyle Hidden
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 100; $i++) {
+              if ($proc.HasExited) { throw 'Packaged sidecar exited before readiness' }
+              try {
+                $response = Invoke-WebRequest -Uri 'http://127.0.0.1:18764/api/status' -Headers @{'X-PipelineGuard-Token'='ci-packaged-sidecar-token'} -TimeoutSec 2
+                if ($response.StatusCode -eq 200) { $ready = $true; break }
+              } catch { }
+              Start-Sleep -Milliseconds 200
+            }
+            if (-not $ready) { throw 'Packaged sidecar did not become authenticated-ready' }
+            try {
+              Invoke-WebRequest -Uri 'http://127.0.0.1:18764/api/status' -TimeoutSec 3 | Out-Null
+              throw 'Unauthenticated request was accepted'
+            } catch {
+              if ($_.Exception.Response.StatusCode.value__ -ne 401) { throw }
+            }
+          } finally {
+            if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
+          }
