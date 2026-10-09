@@ -285,8 +285,15 @@ def list_reports(directory: str | None = Query(default=None)):
         _bad("Folder must be absolute")
     files = []
     if folder.is_dir():
+        known_reports = {
+            str(Path(report_path).resolve())
+            for entry in storage.read_history()
+            for report_path in entry.get("reports", [])
+            if isinstance(report_path, str)
+        }
         for item in folder.iterdir():
-            if item.is_file() and item.name.startswith("pipelineguard") and item.suffix.lower() in REPORT_EXT.values():
+            if (item.is_file() and str(item.resolve()) in known_reports
+                    and item.name.startswith("pipelineguard") and item.suffix.lower() in REPORT_EXT.values()):
                 stat = item.stat()
                 files.append({"name": item.name, "path": str(item), "format": item.suffix.lstrip(".").lower(),
                               "size": stat.st_size, "modified": datetime.fromtimestamp(stat.st_mtime).astimezone().isoformat(timespec="seconds")})
