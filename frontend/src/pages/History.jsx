@@ -52,7 +52,7 @@ export default function History() {
       ) : (
         <Panel testId="history-panel">
           <div className="flex flex-wrap items-center gap-2 pt-4 mb-3">
-            <div className="relative w-[260px]"><Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-pg-muted" />
+            <div className="relative w-full sm:w-[260px]"><Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-pg-muted" />
               <Input value={qText} onChange={(e) => setQ(e.target.value)} placeholder="Search projects" className="pl-9 bg-pg-bg" data-testid="history-search-input" /></div>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger className="w-[160px] bg-pg-bg" data-testid="history-status-filter"><SelectValue /></SelectTrigger>
@@ -62,7 +62,7 @@ export default function History() {
             <Button className="ml-auto" size="sm" disabled={picked.length !== 2} onClick={runCompare} data-testid="history-compare-btn"><GitCompare className="h-4 w-4 mr-2" />Compare ({picked.length}/2)</Button>
           </div>
           <div className="overflow-x-auto pg-scroll">
-            <table className="w-full text-sm" data-testid="history-table">
+            <table className="w-full min-w-[780px] text-sm" data-testid="history-table">
               <thead><tr className="text-xs text-pg-muted text-left border-b border-pg-line/70">
                 <th className="w-10 py-2.5" /><th className="py-2.5 font-normal">Project</th><th className="font-normal">Date & time</th><th className="font-normal">Profile</th><th className="font-normal">Score</th><th className="font-normal">Status</th><th className="font-normal">Findings</th><th className="font-normal">Duration</th>
               </tr></thead>
