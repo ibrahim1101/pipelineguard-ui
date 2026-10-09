@@ -1,0 +1,38 @@
+name: Desktop shell validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-check.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tauri-check:
+    name: Tauri Rust check (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri
+      - name: Validate Tauri manifest and configuration
+        shell: pwsh
+        run: |
+          $config = Get-Content desktop/src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          if ($config.bundle.active -ne $false) { throw 'Bundling must remain disabled until packaging is verified' }
+          if ($config.build.frontendDist -ne '../../frontend/build') { throw 'Unexpected frontend build path' }
+          if (-not (Test-Path desktop/src-tauri/Cargo.toml)) { throw 'Missing Rust manifest' }
+      - name: Check Rust shell
+        working-directory: desktop/src-tauri
+        run: cargo check --locked
