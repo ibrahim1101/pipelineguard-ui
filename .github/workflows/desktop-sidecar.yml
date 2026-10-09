@@ -7,12 +7,12 @@ on:
       - 'backend/**'
       - 'desktop/**'
       - 'engine/**'
-      - 'desktop/**'
       - '.github/workflows/desktop-sidecar.yml'
   pull_request:
     branches: [main]
     paths:
       - 'backend/**'
+      - 'desktop/**'
       - 'engine/**'
       - '.github/workflows/desktop-sidecar.yml'
   workflow_dispatch:
@@ -129,6 +129,31 @@ jobs:
           $bridge = Get-Item "$app/cerberus-runtime/cerberus-bridge.exe"
           $desktop = Get-Item "$app/Cerberus.exe"
           if ($bridge.Length -lt 100000 -or $desktop.Length -lt 100000) { throw 'Unexpectedly small native executable' }
+      - name: Smoke test the exact staged preview runtime
+        shell: pwsh
+        run: |
+          $app = (Resolve-Path dist/cerberus-standalone).Path
+          $runtime = Join-Path $app 'cerberus-runtime'
+          $env:CERBERUS_BRIDGE_PORT = '18766'
+          $env:PIPELINEGUARD_ENGINE_PATH = Join-Path $runtime 'engine'
+          $env:PIPELINEGUARD_DESKTOP_MODE = '1'
+          $env:PIPELINEGUARD_TOKEN = 'ci-staged-preview-token'
+          $env:PIPELINEGUARD_DATA_DIR = Join-Path $env:RUNNER_TEMP 'cerberus-preview-data'
+          $proc = Start-Process -FilePath (Join-Path $runtime 'cerberus-bridge.exe') -WorkingDirectory $app -PassThru -WindowStyle Hidden
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 100; $i++) {
+              if ($proc.HasExited) { throw 'Staged preview bridge exited before readiness' }
+              try {
+                $response = Invoke-WebRequest -Uri 'http://127.0.0.1:18766/api/status' -Headers @{'X-PipelineGuard-Token'='ci-staged-preview-token'} -TimeoutSec 2
+                if ($response.StatusCode -eq 200) { $ready = $true; break }
+              } catch { }
+              Start-Sleep -Milliseconds 200
+            }
+            if (-not $ready) { throw 'Staged preview bridge did not become authenticated-ready' }
+          } finally {
+            if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: cerberus-windows-standalone-preview
