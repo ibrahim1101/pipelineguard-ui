@@ -23,14 +23,20 @@ export function AppProvider({ children }) {
   const mountedRef = useRef(false);
   const generationRef = useRef(0);
   const initRef = useRef(0);
+  const refreshRef = useRef(0);
+  const selectionTouchedRef = useRef(false);
   const wasRunning = useRef(false);
 
-  const setSelection = useCallback((patch) => setSelectionState((s) => ({ ...s, ...patch })), []);
+  const setSelection = useCallback((patch) => {
+    selectionTouchedRef.current = true;
+    setSelectionState((s) => ({ ...s, ...patch }));
+  }, []);
 
   const refreshData = useCallback(async () => {
     const generation = generationRef.current;
+    const request = ++refreshRef.current;
     const [l, h, a] = await Promise.all([api.latestScan(), api.history(), api.activity()]);
-    if (!mountedRef.current || generation !== generationRef.current) return null;
+    if (!mountedRef.current || generation !== generationRef.current || request !== refreshRef.current) return null;
     setLatest(l);
     setHistory(h);
     setActivity(a);
@@ -45,6 +51,7 @@ export function AppProvider({ children }) {
     try {
       const s = await api.scanState();
       if (!mountedRef.current || generation !== generationRef.current) return;
+      setBackend("connected");
       setScanState(s);
       if (s.status === "running") {
         pollRef.current = setTimeout(poll, 600);
@@ -80,8 +87,10 @@ export function AppProvider({ children }) {
       setStatus(st);
       setProfiles(pr);
       setSettings(se);
-      setSelectionState({ project: se.default_project || "", config: se.default_config || "",
-        profile: se.default_profile, online: se.online_default });
+      if (!selectionTouchedRef.current) {
+        setSelectionState({ project: se.default_project || "", config: se.default_config || "",
+          profile: se.default_profile, online: se.online_default });
+      }
       setScanState(ss);
       setBackend("connected");
       if (ss.status === "running") {
@@ -126,6 +135,7 @@ export function AppProvider({ children }) {
       mountedRef.current = false;
       generationRef.current += 1;
       initRef.current += 1;
+      refreshRef.current += 1;
       clearInterval(id);
       clearTimeout(pollRef.current);
     };
@@ -147,10 +157,14 @@ export function AppProvider({ children }) {
     try {
       const s = await api.startScan({ project: selection.project, config: selection.config || null,
         profile: selection.profile, online: selection.online });
+      if (!mountedRef.current) return false;
       setScanState(s);
       wasRunning.current = true;
       poll();
-      api.activity().then(setActivity).catch(() => {});
+      const generation = generationRef.current;
+      api.activity().then((events) => {
+        if (mountedRef.current && generation === generationRef.current) setActivity(events);
+      }).catch(() => {});
       return true;
     } catch (e) {
       toast.error(e.message);
@@ -161,7 +175,9 @@ export function AppProvider({ children }) {
   const openScan = useCallback(async (id) => {
     if (!id || id === latest?.scan_id) return setViewScan(null);
     try {
-      setViewScan(await api.scan(id));
+      const generation = generationRef.current;
+      const scan = await api.scan(id);
+      if (mountedRef.current && generation === generationRef.current) setViewScan(scan);
     } catch (e) {
       toast.error(e.message);
     }
