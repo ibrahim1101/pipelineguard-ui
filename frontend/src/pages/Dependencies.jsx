@@ -55,10 +55,10 @@ export default function Dependencies() {
   const statuses = [...new Set(scan.dependencies.packages.map((p) => p.status))];
   const ecos = [...new Set(scan.dependencies.packages.map((p) => p.ecosystem))];
   return (
-    <div className="flex flex-col h-[calc(100vh-84px-48px)]">
+    <div className="flex flex-col min-h-[480px] h-[calc(100vh-164px)]">
       <PageHeader title="Dependencies" description={`${scan.dependencies.manifests.length} manifests · ${ins.mode === "online" ? "checked against OSV" : "offline inventory, advisories not checked"}`} />
       <ViewingBanner />
-      <div className="grid grid-cols-3 xl:grid-cols-6 gap-3 mb-3" data-testid="deps-insights">
+      <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-3 mb-3" data-testid="deps-insights">
         <Tile label="Packages" value={ins.total} testId="deps-insight-total" />
         <Tile label="Vulnerable" value={ins.vulnerable} tone={ins.vulnerable ? "text-pg-crit" : ""} testId="deps-insight-vulnerable" />
         <Tile label="No known advisories" value={ins.no_known_advisories} testId="deps-insight-clean" />
@@ -68,7 +68,7 @@ export default function Dependencies() {
       </div>
       {ins.notices.length > 0 && <div className="mb-3"><Note tone="warn" testId="deps-notices">Engine notices: {ins.notices.join(" · ")} "No known advisories" means OSV returned none for that exact version — it is not a guarantee of safety.</Note></div>}
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        <div className="relative w-[260px]">
+        <div className="relative w-full sm:w-[260px]">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-pg-muted" />
           <Input value={qText} onChange={(e) => setQ(e.target.value)} placeholder="Search packages" className="pl-9 bg-pg-surface" data-testid="deps-search-input" />
         </div>
@@ -82,7 +82,7 @@ export default function Dependencies() {
         </Select>
         <span className="ml-auto text-xs text-pg-muted font-mono" data-testid="deps-visible-count">{rows.length} of {scan.dependencies.packages.length} packages</span>
       </div>
-      <div className="flex gap-4 flex-1 min-h-0">
+      <div className="flex gap-4 flex-1 min-h-0 min-w-0">
         <div className="pg-panel flex-1 min-w-0 overflow-hidden">
           <VirtualTable testId="deps-table" columns={COLUMNS} rows={rows} getKey={(p) => p.uid} selectedKey={selected} onSelect={(p) => setSelected(p.uid)} sort={sort} onSort={setSort}
             empty={<EmptyState compact title={scan.dependencies.packages.length ? "No packages match" : "No supported dependency manifests found"} testId="deps-empty" />} />
