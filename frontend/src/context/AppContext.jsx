@@ -12,6 +12,8 @@ export function AppProvider({ children }) {
   const [settings, setSettings] = useState(null);
   const [latest, setLatest] = useState(null);
   const [latestLoaded, setLatestLoaded] = useState(false);
+  const [reportsError, setReportsError] = useState(false);
+  const [reportsLoading, setReportsLoading] = useState(false);
   const [history, setHistory] = useState([]);
   const [activity, setActivity] = useState([]);
   const [scanState, setScanState] = useState({ status: "idle" });
@@ -36,13 +38,22 @@ export function AppProvider({ children }) {
   const refreshData = useCallback(async () => {
     const generation = generationRef.current;
     const request = ++refreshRef.current;
-    const [l, h, a] = await Promise.all([api.latestScan(), api.history(), api.activity()]);
-    if (!mountedRef.current || generation !== generationRef.current || request !== refreshRef.current) return null;
-    setLatest(l);
-    setHistory(h);
-    setActivity(a);
-    setLatestLoaded(true);
-    return l;
+    setReportsLoading(true);
+    try {
+      const [l, h, a] = await Promise.all([api.latestScan(), api.history(), api.activity()]);
+      if (!mountedRef.current || generation !== generationRef.current || request !== refreshRef.current) return null;
+      setLatest(l);
+      setHistory(h);
+      setActivity(a);
+      setLatestLoaded(true);
+      setReportsError(false);
+      return l;
+    } catch (error) {
+      if (mountedRef.current && generation === generationRef.current && request === refreshRef.current) setReportsError(true);
+      throw error;
+    } finally {
+      if (mountedRef.current && generation === generationRef.current && request === refreshRef.current) setReportsLoading(false);
+    }
   }, []);
 
   const poll = useCallback(async () => {
@@ -208,7 +219,7 @@ export function AppProvider({ children }) {
   }, [latest]);
 
   const value = {
-    backend, status, profiles, settings, setSettings, latest, latestLoaded, history, activity, scanState,
+    backend, status, profiles, settings, setSettings, latest, latestLoaded, reportsError, reportsLoading, history, activity, scanState,
     osvOnline, setOsvOnline, selection, setSelection, startScan, refreshData, retry: init,
     viewScan, openScan, clearViewScan: () => setViewScan(null), currentScan: viewScan || latest,
     running: scanState.status === "running",
