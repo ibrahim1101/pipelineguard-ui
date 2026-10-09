@@ -1,0 +1,38 @@
+name: Managed Python bridge smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'engine/**'
+      - '.github/workflows/managed-bridge-smoke.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'engine/**'
+      - '.github/workflows/managed-bridge-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  managed-runtime:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install engine and bridge dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r engine/requirements.txt
+          python -m pip install -r backend/requirements.txt
+      - name: Verify authenticated startup and shutdown
+        shell: pwsh
+        run: python -m unittest discover -s backend/tests -p test_managed_runtime.py -v
