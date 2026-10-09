@@ -171,3 +171,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Tests:** Replaced obsolete token-global tests with IPC routing, fail-closed, HTTP error and browser compatibility tests.
 - **Security and runtime boundary:** This is frontend preparation only. Native Rust `bridge_request` handler, process management and token storage **do not yet exist**. Tauri desktop API requests will fail until native handler is implemented; do not ship as complete desktop integration.
 - **Commits:** `479444b9`, `8d771068`.
+
+### 2026-10-09 — React IPC migration failure resolved
+- **Failed historical workflow:** `37942638037` (commit `479444b9`): React lifecycle test job failed because `src/lib/api.test.js` still asserted old renderer token behavior after frontend switched to native IPC. Python smoke jobs on Ubuntu and Windows passed.
+- **Correction:** Updated `frontend/src/lib/api.test.js` for native `bridge_request` IPC, fail-closed behavior and browser compatibility in commit `8d771068`.
+- **Verified:** Updated test run `37942658222` **successful**; latest documentation commit `9a3751e9` run `37942674389` **successful**. Original historical run remains failed; newer green runs supersede it.
+- **Next:** Implement Rust `bridge_request` and managed Python bridge lifecycle. The frontend IPC adapter alone does not make the desktop runtime operational.
