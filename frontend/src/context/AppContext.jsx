@@ -21,12 +21,16 @@ export function AppProvider({ children }) {
   const pollRef = useRef(null);
   const backendRef = useRef("connecting");
   const mountedRef = useRef(false);
+  const generationRef = useRef(0);
+  const initRef = useRef(0);
   const wasRunning = useRef(false);
 
   const setSelection = useCallback((patch) => setSelectionState((s) => ({ ...s, ...patch })), []);
 
   const refreshData = useCallback(async () => {
+    const generation = generationRef.current;
     const [l, h, a] = await Promise.all([api.latestScan(), api.history(), api.activity()]);
+    if (!mountedRef.current || generation !== generationRef.current) return null;
     setLatest(l);
     setHistory(h);
     setActivity(a);
@@ -35,9 +39,12 @@ export function AppProvider({ children }) {
   }, []);
 
   const poll = useCallback(async () => {
+    if (!mountedRef.current) return;
+    const generation = generationRef.current;
     clearTimeout(pollRef.current);
     try {
       const s = await api.scanState();
+      if (!mountedRef.current || generation !== generationRef.current) return;
       setScanState(s);
       if (s.status === "running") {
         pollRef.current = setTimeout(poll, 600);
@@ -46,6 +53,7 @@ export function AppProvider({ children }) {
       if (wasRunning.current) {
         wasRunning.current = false;
         const l = await refreshData();
+        if (!mountedRef.current || generation !== generationRef.current) return;
         setViewScan(null);
         if (s.status === "completed") {
           toast.success(`Scan complete — ${s.result?.status}, score ${s.result?.score}/100`);
@@ -54,6 +62,7 @@ export function AppProvider({ children }) {
         if (s.status === "failed") toast.error(`Scan failed: ${s.error}`);
       }
     } catch {
+      if (!mountedRef.current || generation !== generationRef.current) return;
       // Keep retrying after transient bridge failures; do not show stale scan progress.
       setBackend("offline");
       pollRef.current = setTimeout(poll, 2000);
@@ -62,10 +71,12 @@ export function AppProvider({ children }) {
 
   const init = useCallback(async () => {
     if (!mountedRef.current) return;
+    const generation = generationRef.current;
+    const request = ++initRef.current;
     setBackend("connecting");
     try {
       const [st, pr, se, ss] = await Promise.all([api.status(), api.profiles(), api.settings(), api.scanState()]);
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || generation !== generationRef.current || request !== initRef.current) return;
       setStatus(st);
       setProfiles(pr);
       setSettings(se);
@@ -79,7 +90,7 @@ export function AppProvider({ children }) {
       }
       await refreshData();
     } catch {
-      if (mountedRef.current) setBackend("offline");
+      if (mountedRef.current && generation === generationRef.current && request === initRef.current) setBackend("offline");
     }
   }, [poll, refreshData]);
 
@@ -89,6 +100,7 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     mountedRef.current = true;
+    generationRef.current += 1;
     init();
     // Health alone is insufficient: initialization must also reload profiles,
     // settings, scan state and history after the backend restarts.
@@ -97,6 +109,7 @@ export function AppProvider({ children }) {
       if (recovering) return;
       try {
         await api.status();
+        if (!mountedRef.current) return;
         if (backendRef.current === "offline") {
           recovering = true;
           try {
@@ -106,11 +119,13 @@ export function AppProvider({ children }) {
           }
         }
       } catch {
-        setBackend("offline");
+        if (mountedRef.current) setBackend("offline");
       }
     }, 30000);
     return () => {
       mountedRef.current = false;
+      generationRef.current += 1;
+      initRef.current += 1;
       clearInterval(id);
       clearTimeout(pollRef.current);
     };
