@@ -327,3 +327,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added `backend/desktop_sidecar.py` as an explicit, loopback-only Uvicorn entrypoint requiring desktop mode, a valid bridge port, an engine path and a per-launch token; missing configuration fails closed. Commit `0cd251e`.
 - Added `.github/workflows/desktop-sidecar.yml` to build a Windows PyInstaller onedir executable and test missing-token rejection and authenticated `/api/status` startup. Commit `e270a96`.
 - The packaging prototype currently uses the checked-out engine directory and is not yet wired into the native Tauri launcher or installer. CI validation is pending; do not advertise a distributable installer.
+
+### 2026-10-10 — PyInstaller fail-closed smoke harness correction
+- Sidecar workflow `37975957941` successfully built the Windows PyInstaller onedir executable; tokenless startup correctly printed `Desktop mode requires PIPELINEGUARD_TOKEN` and exited nonzero.
+- GitHub PowerShell treated the expected native nonzero exit as a failed step before the explicit assertion. Disabled native-command error promotion for that negative test and captured the exit code explicitly. Commit `dccb293`.
+- Authenticated packaged startup still needs validation in the next workflow run. No installer is published.
