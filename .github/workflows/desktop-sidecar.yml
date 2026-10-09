@@ -171,6 +171,36 @@ jobs:
             taskkill.exe /PID $proc.Id /T /F | Out-Null
             $global:LASTEXITCODE = 0
           }
+      - name: Verify native launcher owns and terminates packaged bridge
+        shell: pwsh
+        run: |
+          $app = (Resolve-Path dist/cerberus-standalone).Path
+          $exe = Join-Path $app 'Cerberus.exe'
+          $bridgePath = (Resolve-Path (Join-Path $app 'cerberus-runtime/cerberus-bridge.exe')).Path
+          Remove-Item Env:CERBERUS_MANAGED_DEV -ErrorAction SilentlyContinue
+          Remove-Item Env:CERBERUS_DEV_BRIDGE_TOKEN -ErrorAction SilentlyContinue
+          $desktop = Start-Process -FilePath $exe -WorkingDirectory $app -PassThru
+          $bridge = $null
+          try {
+            for ($i = 0; $i -lt 60; $i++) {
+              $desktop.Refresh()
+              if ($desktop.HasExited) { throw "Desktop exited before spawning managed bridge: $($desktop.ExitCode)" }
+              $bridge = Get-CimInstance Win32_Process -Filter "ParentProcessId=$($desktop.Id)" -ErrorAction SilentlyContinue |
+                Where-Object { $_.ExecutablePath -eq $bridgePath } | Select-Object -First 1
+              if ($bridge) { break }
+              Start-Sleep -Milliseconds 250
+            }
+            if (-not $bridge) { throw 'Native desktop did not spawn its packaged bridge' }
+            Write-Host "Native launcher spawned managed bridge PID $($bridge.ProcessId)"
+            Stop-Process -Id $desktop.Id -Force
+            Start-Sleep -Seconds 3
+            $orphan = Get-Process -Id $bridge.ProcessId -ErrorAction SilentlyContinue
+            if ($orphan) { throw 'Packaged bridge survived forced desktop termination; process lifecycle requires investigation' }
+          } finally {
+            taskkill.exe /PID $desktop.Id /T /F 2>$null | Out-Null
+            $global:LASTEXITCODE = 0
+            if ($bridge) { Stop-Process -Id $bridge.ProcessId -Force -ErrorAction SilentlyContinue }
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: cerberus-windows-standalone-preview
