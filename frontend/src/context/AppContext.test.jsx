@@ -75,6 +75,21 @@ describe("AppProvider bridge lifecycle", () => {
     }
   );
 
+  test("recovers report data with an explicit retry without reconnecting the bridge", async () => {
+    api.history.mockRejectedValueOnce(new Error("temporary history outage"));
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    expect(observed.backend).toBe("connected");
+    expect(observed.reportsError).toBe(true);
+    expect(observed.reportsLoading).toBe(false);
+    api.history.mockResolvedValue([{ scan_id: "recovered" }]);
+    await act(async () => { await observed.refreshData(); });
+    expect(observed.backend).toBe("connected");
+    expect(observed.reportsError).toBe(false);
+    expect(observed.reportsLoading).toBe(false);
+    expect(observed.history).toEqual([{ scan_id: "recovered" }]);
+    expect(api.status).toHaveBeenCalledTimes(1);
+  });
+
   test("recovers and refreshes data after a backend outage", async () => {
     await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
     await flush();
