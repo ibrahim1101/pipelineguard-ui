@@ -3,7 +3,10 @@
 use rand::RngCore;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream, SocketAddr};
+use std::io::{Read, Write};
+use std::thread;
+use std::time::Instant;
 use std::path::PathBuf;
 use serde::Serialize;
 use serde_json::Value;
@@ -61,6 +64,44 @@ fn spawn_development_bridge() -> Result<(Child, String, u16), String> {
         .spawn().map_err(|_| "Unable to start Python bridge")?;
     drop(listener);
     Ok((child, token, port))
+}
+
+// Verify the protected API with the native-only token, not the public health route.
+fn authenticated_ready(port: u16, token: &str) -> bool {
+    let address = SocketAddr::from(([127, 0, 0, 1], port));
+    let Ok(mut stream) = TcpStream::connect_timeout(&address, Duration::from_millis(300)) else {
+        return false;
+    };
+    let _ = stream.set_read_timeout(Some(Duration::from_millis(500)));
+    let _ = stream.set_write_timeout(Some(Duration::from_millis(500)));
+    let request = format!(
+        "GET /api/status HTTP/1.1\r\nHost: 127.0.0.1\r\nX-PipelineGuard-Token: {token}\r\nConnection: close\r\n\r\n"
+    );
+    if stream.write_all(request.as_bytes()).is_err() {
+        return false;
+    }
+    let mut buffer = [0u8; 256];
+    match stream.read(&mut buffer) {
+        Ok(n) => {
+            let line = String::from_utf8_lossy(&buffer[..n]);
+            line.starts_with("HTTP/1.1 200 ") || line.starts_with("HTTP/1.0 200 ")
+        }
+        Err(_) => false,
+    }
+}
+
+fn wait_for_managed_bridge(child: &mut Child, port: u16, token: &str) -> Result<(), String> {
+    let deadline = Instant::now() + Duration::from_secs(12);
+    while Instant::now() < deadline {
+        if let Ok(Some(_)) = child.try_wait() {
+            return Err("Managed Python bridge exited before becoming ready".into());
+        }
+        if authenticated_ready(port, token) {
+            return Ok(());
+        }
+        thread::sleep(Duration::from_millis(150));
+    }
+    Err("Managed Python bridge did not pass authenticated readiness within 12 seconds".into())
 }
 
 struct BridgeState {
@@ -124,7 +165,17 @@ fn main() {
     // This is a development-only bridge configuration; a future native
     // process manager must generate and own the token and child lifecycle.
     let managed = match spawn_development_bridge() {
-        Ok(child) => Some(child),
+        Ok((mut child, token, port)) => {
+            match wait_for_managed_bridge(&mut child, port, &token) {
+                Ok(()) => Some((child, token, port)),
+                Err(reason) => {
+                    eprintln!("Cerberus managed bridge readiness failed: {reason}");
+                    let _ = child.kill();
+                    let _ = child.wait();
+                    None
+                }
+            }
+        },
         Err(reason) => {
             if std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1") {
                 eprintln!("Cerberus managed development bridge failed: {reason}");
