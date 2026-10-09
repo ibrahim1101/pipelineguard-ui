@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'desktop/**'
+      - 'frontend/**'
       - 'backend/**'
       - 'engine/**'
       - '.github/workflows/desktop-check.yml'
@@ -12,6 +13,9 @@ on:
     branches: [main]
     paths:
       - 'desktop/**'
+      - 'frontend/**'
+      - 'backend/**'
+      - 'engine/**'
       - '.github/workflows/desktop-check.yml'
   workflow_dispatch:
 
@@ -40,6 +44,24 @@ jobs:
           $bytes = [System.IO.File]::ReadAllBytes((Resolve-Path $icon))
           if ($bytes.Length -lt 1024 -or $bytes[0] -ne 0 -or $bytes[1] -ne 0 -or $bytes[2] -ne 1 -or $bytes[3] -ne 0) { throw 'Invalid or placeholder Cerberus icon' }
           if (-not (Test-Path frontend/public/cerberus-logo-original.png)) { throw 'Missing high-resolution Cerberus logo' }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build production frontend for native shell
+        working-directory: frontend
+        shell: pwsh
+        run: |
+          npm ci
+          $env:CI = 'false'
+          npm run build
+      - name: Build unbundled Windows desktop executable
+        working-directory: desktop/src-tauri
+        shell: pwsh
+        run: |
+          cargo build --release
+          if (-not (Test-Path target/release/pipelineguard-desktop.exe)) { throw 'Missing compiled Cerberus desktop executable' }
       - name: Check Rust shell
         working-directory: desktop/src-tauri
         run: cargo check
