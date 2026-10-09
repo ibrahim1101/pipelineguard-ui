@@ -1,10 +1,13 @@
 !ifndef CERBERUS_PAYLOAD
   !error "CERBERUS_PAYLOAD must be supplied as an absolute path"
 !endif
+!ifndef CERBERUS_OUTPUT
+  !error "CERBERUS_OUTPUT must be supplied as an absolute path"
+!endif
 Unicode true
 !include "MUI2.nsh"
 Name "Cerberus"
-OutFile "dist\Cerberus-Setup-0.1.0.exe"
+OutFile "${CERBERUS_OUTPUT}"
 InstallDir "$LOCALAPPDATA\Programs\Cerberus"
 RequestExecutionLevel user
 SetCompressor /SOLID lzma
