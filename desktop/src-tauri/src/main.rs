@@ -186,8 +186,9 @@ fn main() {
             None
         }
     };
+    let managed_start_failed = std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1") && managed.is_none();
     let token = managed.as_ref().map(|(_, token, _)| token.clone())
-        .or_else(|| std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()));
+        .or_else(|| if managed_start_failed { None } else { std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()) });
     let fallback_port = std::env::var("CERBERUS_DEV_BRIDGE_PORT").ok()
         .and_then(|s| s.parse::<u16>().ok())
         .filter(|p| *p != 0)
