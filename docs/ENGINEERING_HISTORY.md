@@ -260,3 +260,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows Rust test-gate CI `37959048624` and `37959055101` passed, along with corresponding UI CI.
 - Added `unsafe_encoded_path` guard to reject encoded dot, slash, backslash and percent escapes in the API pathname while allowing legitimate percent-encoded filesystem paths in query parameters.
 - Added regression assertions for `%2e`, `%2f`, `%5c`, nested `%25` and mixed-case encodings. Commit `5c91a1f`; CI and Windows runtime smoke test pending.
+
+### 2026-10-09 — Windows managed Python runtime smoke test
+- Encoded native bridge path regression passed Windows CI `37961410130` and UI CI `37961410124`, `37961438891`.
+- Added `backend/tests/test_managed_runtime.py`, which starts the real Uvicorn bridge on an ephemeral Windows loopback port, waits for authenticated `/api/status`, rejects missing and incorrect tokens, verifies valid-token access, and terminates/reaps the process.
+- Added `.github/workflows/managed-bridge-smoke.yml` with Windows Python 3.11 setup, engine/backend dependencies and the subprocess smoke test. Commits `5197106`, `e77045b`.
+- This covers the Python subprocess independently, not yet the full Tauri UI or installer lifecycle. New workflow results pending.
