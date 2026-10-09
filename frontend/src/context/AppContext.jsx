@@ -19,6 +19,7 @@ export function AppProvider({ children }) {
   const [selection, setSelectionState] = useState({ project: "", config: "", profile: "standard", online: false });
   const [viewScan, setViewScan] = useState(null);
   const pollRef = useRef(null);
+  const backendRef = useRef("connecting");
   const wasRunning = useRef(false);
 
   const setSelection = useCallback((patch) => setSelectionState((s) => ({ ...s, ...patch })), []);
@@ -80,6 +81,10 @@ export function AppProvider({ children }) {
   }, [poll, refreshData]);
 
   useEffect(() => {
+    backendRef.current = backend;
+  }, [backend]);
+
+  useEffect(() => {
     init();
     // Health alone is insufficient: initialization must also reload profiles,
     // settings, scan state and history after the backend restarts.
@@ -88,13 +93,14 @@ export function AppProvider({ children }) {
       if (recovering) return;
       try {
         await api.status();
-        setBackend((current) => {
-          if (current === "offline") {
-            recovering = true;
-            Promise.resolve().then(init).finally(() => { recovering = false; });
+        if (backendRef.current === "offline") {
+          recovering = true;
+          try {
+            await init();
+          } finally {
+            recovering = false;
           }
-          return current;
-        });
+        }
       } catch {
         setBackend("offline");
       }
