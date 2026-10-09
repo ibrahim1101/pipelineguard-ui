@@ -266,3 +266,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added `backend/tests/test_managed_runtime.py`, which starts the real Uvicorn bridge on an ephemeral Windows loopback port, waits for authenticated `/api/status`, rejects missing and incorrect tokens, verifies valid-token access, and terminates/reaps the process.
 - Added `.github/workflows/managed-bridge-smoke.yml` with Windows Python 3.11 setup, engine/backend dependencies and the subprocess smoke test. Commits `5197106`, `e77045b`.
 - This covers the Python subprocess independently, not yet the full Tauri UI or installer lifecycle. New workflow results pending.
+
+### 2026-10-09 — Windows runtime smoke dependency fix
+- Initial managed Python smoke workflow `37963103410` failed during dependency installation, before executing tests: `emergentintegrations==0.2.2` was unavailable on the public package index.
+- Narrowed smoke workflow dependencies to the actual bridge runtime (`fastapi`, `uvicorn`, `python-dotenv`, `httpx`) plus engine requirements, instead of installing unrelated full backend requirements. Commit `8e489be`.
+- This does not alter the application's full backend dependency manifest; packaging dependency audit remains pending.
