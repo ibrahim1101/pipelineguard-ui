@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `54bcd72f9c4a0275f6a13e68ad5253ebf4f2767c`, GitHub Actions run [37929975956](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929975956) **successful**. New heartbeat changes await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `61205afb68bc5c2fa45cd4390522a90766c3a0fe`, GitHub Actions run [37930455737](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37930455737) **successful**. Security regression additions await CI.
 
 ## Scope and repository boundaries
 
@@ -79,6 +79,13 @@
 - **Commits:** `32829a4`, `1118bbb`.
 - **CI:** Pending. Prior history recovery run `37929975956` verified green.
 - **Engine:** No changes.
+
+### 2026-10-09 — Backend security review and snapshot regression tests (pending CI)
+- **Scope:** Reviewed `backend/server.py`, `backend/bridge/routes.py`, and `backend/bridge/storage.py`; engine repository untouched.
+- **Existing controls:** Desktop token authentication when `PIPELINEGUARD_TOKEN` is set; desktop mode requires a token; wildcard CORS rejected; report previews require recorded report paths and limit preview size; snapshot lookup rejects non-alphanumeric/non-hyphen identifiers.
+- **New tests:** Reject snapshot traversal and invalid identifiers; reject malformed snapshot report data. Commit `7e5df38`.
+- **Outstanding risks to evaluate:** When token is absent, non-desktop API mode has no authentication; confirm loopback-only binding. Filesystem browsing, configuration writing, report exports and scan paths accept broad absolute local paths by design; evaluate permissions and explicit trust boundaries. Add route-level authorization tests and report-preview symlink/allowlist tests.
+- **CI:** Pending; do not mark security review complete or production-ready.
 
 ## Next engineering tasks
 
