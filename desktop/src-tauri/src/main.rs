@@ -123,7 +123,15 @@ async fn bridge_request(
 fn main() {
     // This is a development-only bridge configuration; a future native
     // process manager must generate and own the token and child lifecycle.
-    let managed = spawn_development_bridge().ok();
+    let managed = match spawn_development_bridge() {
+        Ok(child) => Some(child),
+        Err(reason) => {
+            if std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1") {
+                eprintln!("Cerberus managed development bridge failed: {reason}");
+            }
+            None
+        }
+    };
     let token = managed.as_ref().map(|(_, token, _)| token.clone())
         .or_else(|| std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()));
     let fallback_port = std::env::var("CERBERUS_DEV_BRIDGE_PORT").ok()
