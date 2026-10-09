@@ -34,8 +34,12 @@ jobs:
         run: yarn build
 
   backend-smoke:
-    name: Python bridge smoke checks
-    runs-on: ubuntu-latest
+    name: Python bridge smoke checks (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,16 +66,4 @@ jobs:
           PIPELINEGUARD_DESKTOP_MODE: '1'
           PIPELINEGUARD_TOKEN: ci-test-token
           CORS_ORIGINS: http://localhost:3000
-        run: |
-          python - <<'PY'
-          from fastapi.testclient import TestClient
-          from server import app
-          with TestClient(app) as client:
-              health = client.get("/api/health")
-              assert health.status_code == 200, health.text
-              denied = client.get("/api/status")
-              assert denied.status_code == 401, denied.text
-              allowed = client.get("/api/status", headers={"X-PipelineGuard-Token": "ci-test-token"})
-              assert allowed.status_code == 200, allowed.text
-              print("Bridge health and token authentication: PASS")
-          PY
+        run: python ui/backend/tests/smoke_bridge.py
