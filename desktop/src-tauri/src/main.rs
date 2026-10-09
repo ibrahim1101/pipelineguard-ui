@@ -206,8 +206,8 @@ async fn bridge_request(
 }
 
 fn main() {
-    // This is a development-only bridge configuration; a future native
-    // process manager must generate and own the token and child lifecycle.
+    // Production always requires a native-managed packaged bridge; only debug
+    // builds may use an explicitly configured development bridge token.
     let packaged_requested = std::env::current_exe().ok()
         .and_then(|exe| exe.parent().map(|p| p.join("cerberus-runtime").exists()))
         .unwrap_or(false);
@@ -232,7 +232,7 @@ fn main() {
     };
     let managed_start_failed = (packaged_requested || std::env::var("CERBERUS_MANAGED_DEV").as_deref() == Ok("1")) && managed.is_none();
     let token = managed.as_ref().map(|(_, token, _)| token.clone())
-        .or_else(|| if managed_start_failed { None } else { std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()) });
+        .or_else(|| if cfg!(debug_assertions) && !managed_start_failed { std::env::var("CERBERUS_DEV_BRIDGE_TOKEN").ok().filter(|s| !s.is_empty()) } else { None });
     let fallback_port = std::env::var("CERBERUS_DEV_BRIDGE_PORT").ok()
         .and_then(|s| s.parse::<u16>().ok())
         .filter(|p| *p != 0)
