@@ -18,3 +18,11 @@ The native handler rejects missing tokens, unsafe request paths and unsupported 
 6. Add end-to-end desktop runtime tests and verify Windows installation/uninstallation.
 
 Do not distribute this as a secure production desktop application yet. The existing Python engine and browser development workflow remain unchanged.
+
+## Opt-in managed development bridge (experimental)
+
+Set `CERBERUS_MANAGED_DEV=1`, `CERBERUS_BACKEND_DIR` to the absolute `backend` directory, and `PIPELINEGUARD_ENGINE_PATH` to the engine checkout. Optionally set `CERBERUS_PYTHON` to the interpreter with uvicorn and bridge dependencies installed. Launch Tauri from this environment.
+
+Rust generates a random 256-bit token, selects an ephemeral loopback port, starts `python -m uvicorn server:app` as a child with the token and engine path in its environment, and keeps the token in native memory. The managed child is killed and reaped when the Tauri state is dropped.
+
+**Current caveats:** This is not a packaged sidecar. There is not yet an authenticated startup readiness loop, and the ephemeral port is released immediately before the child binds (a port race remains). A child crash is not automatically restarted. Rust currently falls back to the manual development token configuration if managed launch fails; this must become an explicit startup error before production. Do not ship this configuration.
