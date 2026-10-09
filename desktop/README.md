@@ -1,23 +1,20 @@
-# PipelineGuard desktop shell — foundation only
+# Cerberus desktop shell — development integration
 
-This directory contains an **isolated Tauri 2 scaffold**, not a working installer.
-It is deliberately not wired into the existing CI build or React development mode.
+The Tauri 2 desktop shell now registers a native `bridge_request` command. The React frontend calls this command in desktop mode instead of making browser HTTP requests or reading an authentication token.
 
-## Security architecture to implement
+## Native IPC development setup
 
-1. Package the Python bridge and engine as a managed desktop sidecar.
-2. On launch, generate a cryptographically random token in the **native shell**, start the bridge bound only to `127.0.0.1`, and wait for authenticated readiness.
-3. Do **not** expose the token to arbitrary renderer JavaScript. Replace the current `window.__PIPELINEGUARD_TOKEN__` transitional adapter with narrowly scoped Tauri IPC requests; the native layer attaches the token to loopback HTTP requests.
-4. Bind to a dynamically reserved local port and avoid untrusted host overrides. Restrict Tauri capabilities to the app window and necessary commands only.
-5. On window exit, terminate and reap the child process, including startup failures. Test orphan prevention, repeated launches, wrong-token requests, and process crashes.
-6. Verify platform packaging and signature/installer behavior on Windows before enabling `bundle.active`.
+For **local development only**, start the Python bridge separately with `PIPELINEGUARD_DESKTOP_MODE=1`, `PIPELINEGUARD_TOKEN` and `PIPELINEGUARD_ENGINE_PATH` configured, then launch the Tauri shell with `CERBERUS_DEV_BRIDGE_TOKEN` set to the same token and `CERBERUS_DEV_BRIDGE_PORT` (default `8000`). The native command attaches the token to loopback requests without returning it to JavaScript.
 
-## Current limitations
+The native handler rejects missing tokens, unsafe request paths and unsupported HTTP methods, and disallows HTTP redirects. Its token is read from a process environment variable, which is **not** a production secret-provisioning mechanism. This mode is suitable for local development only.
 
-- `src-tauri/src/main.rs` launches only a window; **no Python process management, token provisioning, or IPC bridge is implemented**.
-- Tauri build prerequisites and app icon assets have not yet been provisioned or validated.
-- The frontend currently expects a token on `window.__PIPELINEGUARD_TOKEN__`; it intentionally refuses API requests in a Tauri context until provisioned.
-- `tauri.conf.json` uses a fixed development API URL and intentionally disables bundling. Its CSP is an initial baseline, not a completed production security policy.
-- Do not ship or distribute this scaffold as a secure desktop app.
+## Remaining release blockers
 
-The Python development bridge and the separate engine repository are unchanged.
+1. Generate a per-launch token in Rust and start the Python bridge as a managed child, without requiring environment-based token sharing.
+2. Dynamically choose and reserve a loopback port; wait for authenticated readiness.
+3. Terminate/reap child on exit and failure, with crash/restart handling.
+4. Restrict allowed API routes and capabilities to only required UI operations; audit native IPC attack surface.
+5. Package Python engine/bridge, final branded Windows icon, installer and signed binaries.
+6. Add end-to-end desktop runtime tests and verify Windows installation/uninstallation.
+
+Do not distribute this as a secure production desktop application yet. The existing Python engine and browser development workflow remain unchanged.
