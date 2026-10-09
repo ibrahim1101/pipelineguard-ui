@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `a1bafdeaede7a83a8de8cd52c0005783fb640e4f`, GitHub Actions run [37930912193](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37930912193) **successful**. Route-level security tests await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `ff966e623ae55c1bf803ae2260a63114dae7b664`, GitHub Actions run [37932128944](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37932128944) **successful**. Loopback launcher tests await CI.
 
 ## Scope and repository boundaries
 
@@ -92,6 +92,13 @@
 - **CI:** Runs security script in both Ubuntu and Windows bridge jobs. Commits `97b84dc`, `629daa3`.
 - **Constraints:** Tests use isolated temporary data directory. Windows symlink case is skipped if OS denies symlink creation; other cases remain mandatory. Does not establish network binding safety or full filesystem authorization.
 - **Verification:** Pending GitHub Actions result. Separate engine unchanged.
+
+### 2026-10-09 — Loopback-only bridge launcher (pending CI)
+- **Security:** Added `backend/launch_local.py`, a launcher with fixed `127.0.0.1` host and generated per-launch token; no host override and no token printed.
+- **Tests:** Added `backend/tests/test_local_launcher.py` checking fresh token rotation and static loopback binding. Runs via existing cross-platform `unittest discover` CI step.
+- **Limitation:** Token is not yet handed to the React frontend; requires future trusted desktop shell integration. Existing development launch path unchanged.
+- **Commits:** `0c2b5e4`, `849e374`, `14548fd`.
+- **CI:** Pending; engine unchanged.
 
 ## Next engineering tasks
 
