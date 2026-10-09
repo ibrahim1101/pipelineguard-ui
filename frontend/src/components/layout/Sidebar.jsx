@@ -17,8 +17,8 @@ export default function Sidebar() {
   const { latest } = useApp();
   const counts = { findings: latest?.summary?.total_findings, deps: latest?.dependencies?.insights?.total };
   return (
-    <nav className="w-[232px] shrink-0 bg-pg-side border-r border-pg-line/80 flex flex-col justify-between py-4 px-3" aria-label="Main navigation" data-testid="sidebar">
-      <ul className="space-y-1">
+    <nav className="w-[216px] xl:w-[232px] shrink-0 bg-pg-side border-r border-pg-line/80 flex flex-col justify-between py-4 px-3 min-h-0" aria-label="Main navigation" data-testid="sidebar">
+      <ul className="space-y-1 overflow-y-auto min-h-0 pg-scroll">
         {NAV.map(({ to, label, icon: Icon, id, count }) => (
           <li key={id}>
             <NavLink
@@ -47,7 +47,7 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <div className="px-3 py-3 rounded-lg border border-pg-line/60 bg-pg-bg/60 text-xs text-pg-muted leading-relaxed" data-testid="sidebar-privacy-note">
+      <div className="mt-3 shrink-0 px-3 py-3 rounded-lg border border-pg-line/60 bg-pg-bg/60 text-xs text-pg-muted leading-relaxed" data-testid="sidebar-privacy-note">
         <ShieldCheck className="h-4 w-4 text-pg-accent2 mb-1.5" />
         Local-first. No telemetry. Source code never leaves this machine.
       </div>
