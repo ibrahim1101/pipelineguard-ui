@@ -35,4 +35,4 @@ jobs:
           if (-not (Test-Path desktop/src-tauri/Cargo.toml)) { throw 'Missing Rust manifest' }
       - name: Check Rust shell
         working-directory: desktop/src-tauri
-        run: cargo check --locked
+        run: cargo check
