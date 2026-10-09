@@ -7,6 +7,7 @@ on:
       - 'backend/**'
       - 'desktop/**'
       - 'engine/**'
+      - 'docs/ENGINEERING_HISTORY.md'
       - '.github/workflows/desktop-sidecar.yml'
   pull_request:
     branches: [main]
