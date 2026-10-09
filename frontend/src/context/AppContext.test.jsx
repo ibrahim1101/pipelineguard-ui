@@ -122,6 +122,20 @@ describe("AppProvider bridge lifecycle", () => {
     root = createRoot(container);
   });
 
+  test("does not overlap scan-state polling during repeated retries", async () => {
+    let resolvePending;
+    api.scanState.mockResolvedValueOnce({ status: "running" })
+      .mockImplementationOnce(() => new Promise((resolve) => { resolvePending = resolve; }));
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    expect(api.scanState).toHaveBeenCalledTimes(2);
+    await act(async () => { await observed.retry(); });
+    expect(api.scanState).toHaveBeenCalledTimes(3);
+    // Initial scan-state request, first poll, and retry initialization only.
+    // The retry must not start a second poll while the first is unresolved.
+    await act(async () => { resolvePending({ status: "completed" }); });
+    expect(observed.scanState.status).toBe("completed");
+  });
+
   test("does not schedule polling after unmount while a scan-state request is pending", async () => {
     let resolveScan;
     api.scanState.mockImplementationOnce(() => new Promise((resolve) => { resolveScan = resolve; }));
