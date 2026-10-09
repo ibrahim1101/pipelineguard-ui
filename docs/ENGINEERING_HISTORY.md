@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `879cf2207ab1fbacda5047ae55c6b4bde1dce7c3`, GitHub Actions run [37925949330](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37925949330) **successful**.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2c08d2bbd0d38d5701eb73d3ee2912f30723faa5`, GitHub Actions run [37928177818](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37928177818) **successful**. New polling changes await CI.
 
 ## Scope and repository boundaries
 
@@ -48,6 +48,14 @@
 - **Root cause:** The bridge retry test introduced literal `\\n` escape text inside JSX, causing Babel/Jest `Expecting Unicode escape sequence` at line 71. The test helper also initially mocked an idle scan at the time of `startScan`, preventing realistic completion polling.
 - **Fix:** Commit `e2b49e9c534bd87fefed64691af6f47e165d7636` converts escaped text to actual newlines and sets the scan-state mock to `running` before `startScan`.
 - **Verification:** New push CI not yet inspected; do not mark green without checking the run.
+
+### 2026-10-09 — Serialize UI scan polling (pending CI)
+- **Problem:** Repeated retries could enter `poll()` while a prior scan-state request was unresolved, allowing overlapping network calls and inconsistent completion transitions.
+- **Fix:** `pollInFlightRef` guards `poll()` reentry and is reset in `finally`; retry initialization remains independent. No engine code modified.
+- **Tests:** Added regression for retry during a pending scan-state poll; follow-up corrected mock to keep scan running during retry.
+- **Commits:** `74f7bf4`, `ebc2dc9`, `4f66ec4`.
+- **Validation:** GitHub Actions pending; inspect run before declaring success.
+- **Previous failure:** Run `37926993456` malformed JSX escapes; corrected in `e2b49e9`; runs `37928154757` and `37928177818` passed.
 
 ## Next engineering tasks
 
