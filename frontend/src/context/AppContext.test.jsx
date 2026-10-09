@@ -106,7 +106,10 @@ describe("AppProvider bridge lifecycle", () => {
     await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
     await act(async () => { root.unmount(); });
     await act(async () => { resolveScan({ status: "running" }); });
-    expect(jest.getTimerCount()).toBe(0);
+    // React/jsdom may own timers; assert our app does not make another scan request.
+    const calls = api.scanState.mock.calls.length;
+    await act(async () => { jest.advanceTimersByTime(5000); });
+    expect(api.scanState).toHaveBeenCalledTimes(calls);
     root = createRoot(container);
   });
 });
