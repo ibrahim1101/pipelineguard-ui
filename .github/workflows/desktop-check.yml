@@ -43,4 +43,4 @@ jobs:
         run: cargo check
       - name: Test Rust shell security and request guards
         working-directory: desktop/src-tauri
-        run: cargo test --locked
+        run: cargo test
