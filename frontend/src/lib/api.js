@@ -30,7 +30,13 @@ function formatDetail(detail) {
 
 async function request(method, path, body) {
   const headers = { "Content-Type": "application/json" };
-  if (window.__PIPELINEGUARD_TOKEN__) headers["X-PipelineGuard-Token"] = window.__PIPELINEGUARD_TOKEN__;
+  // Desktop requests must never be sent without the per-launch bridge token.
+  // The future trusted shell will provision this in memory (never URL/storage).
+  const token = window.__PIPELINEGUARD_TOKEN__;
+  if (window.__TAURI__?.core?.invoke && !token) {
+    throw new ApiError("Desktop bridge authentication is not initialized", 401);
+  }
+  if (token) headers["X-PipelineGuard-Token"] = token;
   let res;
   try {
     res = await fetch(`${BASE}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
