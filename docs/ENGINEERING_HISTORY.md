@@ -281,3 +281,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Managed Python bridge Windows smoke `37964539759` passed, including the negative startup test for absent desktop authentication token.
 - Added Rust test `managed_child_drop_reaps_exited_process` to exercise `ManagedChild` drop behavior with an already-exited Windows subprocess, guarding against cleanup panics. Commit `4d9af54`.
 - This is a narrow lifecycle regression; actual Tauri startup/shutdown integration and bundled sidecar tests remain pending.
+
+### 2026-10-09 — Running child shutdown regression
+- Native Rust desktop cleanup validation `37964933152` passed.
+- Added `managed_child_drop_terminates_running_process`, spawning a long-running subprocess on Windows or Unix, asserting it is running, then dropping `ManagedChild` and requiring prompt kill-and-wait cleanup (under ten seconds). Commit `517a451`.
+- This verifies native child cleanup without opening a Tauri window; full application lifecycle and packaged sidecar testing remain outstanding.
