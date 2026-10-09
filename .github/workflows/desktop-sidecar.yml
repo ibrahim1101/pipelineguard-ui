@@ -5,7 +5,9 @@ on:
     branches: [main]
     paths:
       - 'backend/**'
+      - 'desktop/**'
       - 'engine/**'
+      - 'desktop/**'
       - '.github/workflows/desktop-sidecar.yml'
   pull_request:
     branches: [main]
@@ -38,6 +40,39 @@ jobs:
           python -m PyInstaller --noconfirm --clean --onedir --name cerberus-bridge --paths backend --paths engine --collect-submodules bridge --collect-submodules pipelineguard --collect-submodules scanners --hidden-import server backend/desktop_sidecar.py
           if ($LASTEXITCODE -ne 0) { throw 'PyInstaller sidecar build failed' }
           if (-not (Test-Path dist/cerberus-bridge/cerberus-bridge.exe)) { throw 'Missing sidecar executable' }
+      - name: Assemble adjacent native runtime layout
+        shell: pwsh
+        run: |
+          $runtime = 'dist/cerberus-runtime'
+          New-Item -ItemType Directory -Path $runtime -Force | Out-Null
+          Copy-Item dist/cerberus-bridge/* $runtime -Recurse -Force
+          Copy-Item engine "$runtime/engine" -Recurse -Force
+          if (-not (Test-Path "$runtime/cerberus-bridge.exe")) { throw 'Missing adjacent bridge executable' }
+          if (-not (Test-Path "$runtime/engine/pipelineguard")) { throw 'Missing adjacent scanner engine' }
+      - name: Validate sidecar without source checkout in working directory
+        shell: pwsh
+        run: |
+          $env:CERBERUS_BRIDGE_PORT = '18765'
+          $env:PIPELINEGUARD_ENGINE_PATH = (Resolve-Path dist/cerberus-runtime/engine).Path
+          $env:PIPELINEGUARD_DESKTOP_MODE = '1'
+          $env:PIPELINEGUARD_TOKEN = 'ci-adjacent-runtime-token'
+          $exe = (Resolve-Path dist/cerberus-runtime/cerberus-bridge.exe).Path
+          $work = (Resolve-Path dist).Path
+          $proc = Start-Process -FilePath $exe -WorkingDirectory $work -PassThru -WindowStyle Hidden
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 100; $i++) {
+              if ($proc.HasExited) { throw 'Adjacent runtime exited before readiness' }
+              try {
+                $response = Invoke-WebRequest -Uri 'http://127.0.0.1:18765/api/status' -Headers @{'X-PipelineGuard-Token'='ci-adjacent-runtime-token'} -TimeoutSec 2
+                if ($response.StatusCode -eq 200) { $ready = $true; break }
+              } catch { }
+              Start-Sleep -Milliseconds 200
+            }
+            if (-not $ready) { throw 'Adjacent runtime did not become authenticated-ready' }
+          } finally {
+            if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
+          }
       - name: Verify packaged sidecar fails closed without desktop token
         shell: pwsh
         run: |
