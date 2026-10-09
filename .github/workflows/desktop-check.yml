@@ -51,7 +51,8 @@ jobs:
         working-directory: frontend
         shell: pwsh
         run: |
-          npm install --no-audit --no-fund
+          npm install --legacy-peer-deps --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { throw 'Frontend npm dependency installation failed' }
           $env:CI = 'false'
           npm run build
       - name: Build unbundled Windows desktop executable
