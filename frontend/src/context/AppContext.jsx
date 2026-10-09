@@ -52,6 +52,8 @@ export function AppProvider({ children }) {
         if (s.status === "failed") toast.error(`Scan failed: ${s.error}`);
       }
     } catch {
+      // Keep retrying after transient bridge failures; do not show stale scan progress.
+      setBackend("offline");
       pollRef.current = setTimeout(poll, 2000);
     }
   }, [refreshData]);
@@ -79,7 +81,24 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     init();
-    const id = setInterval(() => api.health().then(() => setBackend("connected")).catch(() => setBackend("offline")), 30000);
+    // Health alone is insufficient: initialization must also reload profiles,
+    // settings, scan state and history after the backend restarts.
+    let recovering = false;
+    const id = setInterval(async () => {
+      if (recovering) return;
+      try {
+        await api.status();
+        setBackend((current) => {
+          if (current === "offline") {
+            recovering = true;
+            Promise.resolve().then(init).finally(() => { recovering = false; });
+          }
+          return current;
+        });
+      } catch {
+        setBackend("offline");
+      }
+    }, 30000);
     return () => {
       clearInterval(id);
       clearTimeout(pollRef.current);
