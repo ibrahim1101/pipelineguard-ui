@@ -372,3 +372,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Native Windows desktop startup workflow `37987274034` passed.
 - Added CI check that starts staged `Cerberus.exe`, finds the packaged bridge as its direct child via Windows CIM, requests graceful GUI close, and verifies the bridge process exits. Initial draft incorrectly used forced termination, which bypasses Rust Drop; corrected in commit `1dd7fb7` before declaring test success. Commits `178b3f2`, `1dd7fb7`.
 - New lifecycle workflow is pending. This is not a full interactive UI test or installer validation.
+
+### 2026-10-10 — Public repository CI eligibility recheck
+- Repository visibility changed to public by owner. Previous workflow attempts failed before runner allocation with GitHub billing/spending-limit annotation, so they do not demonstrate code failure.
+- This documentation-only commit triggers a fresh PipelineGuard UI CI run on the public repository to test runner eligibility. No production code or workflow permissions changed.
+- Public visibility and example-file checks are not a full Git-history secret audit. Confirm Actions runner allocation and test results before resuming packaging.
