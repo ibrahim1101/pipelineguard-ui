@@ -383,3 +383,22 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows sidecar packaging run `37990822213` passed; artifact `cerberus-windows-standalone-preview` uploaded (18,387,881 compressed bytes; seven-day retention). It validates adjacent bundled runtime, authenticated bridge startup, native desktop liveness, and direct bridge child ownership.
 - Headless GitHub Windows runners cannot reliably expose a desktop main-window handle. CI now checks bridge ownership without falsely claiming graceful close validation (commit `7c2e7f7`).
 - **Before enabling MSI/NSIS bundling:** test GUI close and child cleanup on an interactive Windows session; review Tauri bundle resource layout, identifier, icon, and upgrade behavior; ensure production fail-closed bridge startup. Standalone preview success is not installer certification.
+
+### 2026-10-10 — CERBERUS NSIS installer milestone and session handoff
+- Repository: `ibrahim1101/pipelineguard-ui` (`main`); do not confuse with the separate `ibrahim1101/PipelineGuard` engine repository.
+- Production hardening: commit `e1d7fa3` restricts `CERBERUS_DEV_BRIDGE_TOKEN` fallback to debug builds. Release builds must use a native-managed bridge token. Desktop shell, packaged runtime, and general CI passed for that commit (runs `37991753669`, `37991753794`, `37991753746`).
+- Initial per-user NSIS installer script `desktop/installer/cerberus.nsi` added in `bdf29be`; packaging workflow updated in `145c685` to compile `Cerberus-Setup-0.1.0.exe`, smoke-test silent installation and uninstallation, and upload an installer artifact separately from the standalone preview.
+- **Failure 1:** run `37992947112` failed at NSIS `File: dist\\cerberus-standalone\\Cerberus.exe -> no files found`. Root cause: NSIS resolves relative paths from its script directory. Corrected by introducing `CERBERUS_PAYLOAD` with an absolute path (`682754d`, `3ff0f57`).
+- **Failure 2:** run `37993890001` failed with `Can't open output file`. The NSIS `OutFile` relative path was also resolved incorrectly. Corrected with explicit `CERBERUS_OUTPUT` absolute path (`c4f0889`, `42be98e`). The intermediate `c4f0889` workflow failed because its CI caller had not yet been updated; the final commit contains both sides.
+- **Success:** run `37994480992` passed Windows packaged-sidecar and NSIS installer workflow; general UI CI run `37994480994` also passed, both for `42be98e`. The workflow's successful conclusion includes its silent installer/uninstaller smoke checks and artifact upload; this is not evidence of interactive GUI or production install quality.
+- Installer currently uses a separate NSIS script, not Tauri `bundle.active=true`; do not enable Tauri bundling or claim MSI support without validating resource layout. The installer is per-user, under `$LOCALAPPDATA\\Programs\\Cerberus`, and bundles the adjacent `cerberus-runtime` with the Python bridge and scanner engine.
+- **Outstanding release gates:** run the installer on a real interactive Windows desktop; test first launch, scan workflow, GUI close and bridge process cleanup, uninstall and upgrade/reinstall; review code signing, versioning, shortcuts, permissions, and user-data retention. CI runner is headless and cannot prove GUI shutdown behavior.
+- **Next prioritized development:**
+  1. P0: Retrieve the latest successful installer artifact; test installation, launch, scanning, shutdown, uninstall on real Windows.
+  2. P0: Validate native bridge child termination on graceful GUI close; add a reliable interactive regression procedure or harness.
+  3. P1: Installer upgrade/reinstall and user-data retention tests, cleanup and rollback.
+  4. P1: End-to-end scanner and reporting verification using installed binary; improve user-facing failure diagnostics.
+  5. P1: Security review of packaged bridge authentication, file permissions, and public repo history for secrets.
+  6. P2: Desktop UI accessibility/polish, documentation/user guide, versioning and release checksums.
+  7. P2: Release candidate and GitHub Release after all gates are verified.
+- **New chat handoff:** Say `Continue CERBERUS from the 2026-10-10 engineering handoff in ibrahim1101/pipelineguard-ui. Check latest Actions and artifacts, then begin interactive Windows installer validation; keep ENGINEERING_HISTORY.md updated with successes, failures, fixes and outstanding gates. Do not modify ibrahim1101/PipelineGuard unless asked.`
