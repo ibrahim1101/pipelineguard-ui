@@ -255,3 +255,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Previous managed bridge hardening passed desktop runs `37958467262`, `37958481326` and UI runs `37958467467`, `37958481384`, `37958498883`.
 - Desktop Windows workflow now executes `cargo test` after `cargo check`, so Rust unit tests become a CI gate. The workflow previously compiled without running tests.
 - Commits `67c8f40`, `a891b6e`. Runtime Windows smoke testing and installer bundling are still pending.
+
+### 2026-10-09 — Encoded bridge path regression hardening
+- Windows Rust test-gate CI `37959048624` and `37959055101` passed, along with corresponding UI CI.
+- Added `unsafe_encoded_path` guard to reject encoded dot, slash, backslash and percent escapes in the API pathname while allowing legitimate percent-encoded filesystem paths in query parameters.
+- Added regression assertions for `%2e`, `%2f`, `%5c`, nested `%25` and mixed-case encodings. Commit `5c91a1f`; CI and Windows runtime smoke test pending.
