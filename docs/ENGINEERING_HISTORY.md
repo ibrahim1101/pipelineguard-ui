@@ -233,3 +233,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Settings: scrollable tab strip for six tabs on narrow windows and responsive select width.
 - Reports: changed remaining visible PipelineGuard references to Cerberus and improved format-picker grid at narrow widths.
 - Source-level changes only; rendered desktop inspection remains outstanding. CI for these commits pending.
+
+### 2026-10-09 — Scan entry guard and managed bridge diagnostics
+- Previous four-page UI refinement CI runs `37956599782`, `37956604068`, `37956612592`, `37956618490`, `37956634655` passed.
+- Header Start Scan is disabled when no project folder is selected, matching the Scan Project page's guard.
+- Desktop managed development bridge now emits an explicit startup diagnostic when `CERBERUS_MANAGED_DEV=1` and spawning fails, rather than silently swallowing the error. Production packaging, authenticated readiness and runtime visual QA remain pending.
