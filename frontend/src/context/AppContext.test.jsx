@@ -90,6 +90,28 @@ describe("AppProvider bridge lifecycle", () => {
     expect(api.history).toHaveBeenCalledTimes(1);
   });
 
+  test("preserves user-edited scan selection during reconnect", async () => {
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    await act(async () => { observed.setSelection({ project: "/my-project", profile: "deep" }); });
+    api.settings.mockResolvedValue({ ...defaults, default_project: "/server-default" });
+    await act(async () => { await observed.retry(); });
+    expect(observed.selection.project).toBe("/my-project");
+    expect(observed.selection.profile).toBe("deep");
+  });
+
+  test("ignores older refresh results when a newer refresh completes", async () => {
+    await act(async () => { root.render(<AppProvider><Probe /></AppProvider>); });
+    let resolveOld;
+    api.history.mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }));
+    let pending;
+    await act(async () => { pending = observed.refreshData(); });
+    api.history.mockResolvedValue([{ scan_id: "newer" }]);
+    await act(async () => { await observed.refreshData(); });
+    expect(observed.history).toEqual([{ scan_id: "newer" }]);
+    await act(async () => { resolveOld([{ scan_id: "older" }]); await pending; });
+    expect(observed.history).toEqual([{ scan_id: "newer" }]);
+  });
+
   test("ignores initialization response after unmount", async () => {
     let resolveStatus;
     api.status.mockImplementationOnce(() => new Promise((resolve) => { resolveStatus = resolve; }));
