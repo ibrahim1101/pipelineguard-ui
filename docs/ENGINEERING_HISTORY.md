@@ -276,3 +276,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Windows managed subprocess smoke workflow `37964134657` passed after narrowing public runtime dependencies.
 - Added negative subprocess test that launches desktop mode with no `PIPELINEGUARD_TOKEN`, requires nonzero process exit and the explicit authentication configuration error. Commit `b3c79ec`.
 - This verifies the Python backend's fail-closed startup path, not a full native Tauri launch. Pending Windows CI.
+
+### 2026-10-09 — Native managed child cleanup regression
+- Managed Python bridge Windows smoke `37964539759` passed, including the negative startup test for absent desktop authentication token.
+- Added Rust test `managed_child_drop_reaps_exited_process` to exercise `ManagedChild` drop behavior with an already-exited Windows subprocess, guarding against cleanup panics. Commit `4d9af54`.
+- This is a narrow lifecycle regression; actual Tauri startup/shutdown integration and bundled sidecar tests remain pending.
