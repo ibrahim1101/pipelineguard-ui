@@ -215,7 +215,8 @@ jobs:
           $compiler = "${env:ProgramFiles(x86)}\\NSIS\\makensis.exe"
           if (-not (Test-Path $compiler)) { throw 'NSIS compiler missing' }
           $payload = (Resolve-Path dist/cerberus-standalone).Path
-          & $compiler /V2 "/DCERBERUS_PAYLOAD=$payload" desktop/installer/cerberus.nsi
+          $output = Join-Path (Resolve-Path dist).Path "Cerberus-Setup-0.1.0.exe"
+          & $compiler /V2 "/DCERBERUS_PAYLOAD=$payload" "/DCERBERUS_OUTPUT=$output" desktop/installer/cerberus.nsi
           if ($LASTEXITCODE -ne 0) { throw 'NSIS installer build failed' }
           if (-not (Test-Path dist/Cerberus-Setup-0.1.0.exe)) { throw 'Installer output missing' }
       - name: Smoke test silent installation and uninstallation
