@@ -146,3 +146,19 @@ html.reduce-motion *::after {
     color: #c4c8ad;
     text-shadow: 0 1px 0 #72804a, 1px 2px 0 #171b13, 0 0 10px rgba(144, 163, 83, 0.18);
 }
+
+/* Brand treatment: keep the approved shield artwork unchanged. */
+.cerberus-brand-icon {
+    flex: none;
+    border-radius: 0.5rem;
+    filter: drop-shadow(0 0 7px rgba(153, 176, 69, 0.18));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .cerberus-brand-icon {
+        transition: filter 180ms ease;
+    }
+    [data-testid="app-brand"]:hover .cerberus-brand-icon {
+        filter: drop-shadow(0 0 11px rgba(153, 176, 69, 0.35));
+    }
+}
