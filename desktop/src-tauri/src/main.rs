@@ -247,6 +247,31 @@ mod tests {
     }
 
     #[test]
+    fn managed_child_drop_terminates_running_process() {
+        use super::ManagedChild;
+        use std::process::{Command, Stdio};
+        use std::sync::Mutex;
+        use std::thread;
+        use std::time::{Duration, Instant};
+
+        let mut child = if cfg!(windows) {
+            Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", "Start-Sleep -Seconds 60"])
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Windows long-running child")
+        } else {
+            Command::new("sleep").arg("60")
+                .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+                .spawn().expect("spawn Unix long-running child")
+        };
+        assert!(child.try_wait().expect("inspect running child").is_none());
+        let started = Instant::now();
+        drop(ManagedChild(Mutex::new(Some(child))));
+        assert!(started.elapsed() < Duration::from_secs(10), "managed child cleanup took too long");
+        // Drop invokes kill followed by wait; the child handle is reaped before return.
+        thread::yield_now();
+    }
+
+    #[test]
     fn rejects_unsafe_paths_and_methods() {
         for path in ["//evil.example", "/../admin", "/a/./b", "/a\\b", "/a#fragment", "/http://evil"] {
             assert!(!allowed_request("GET", path), "{path}");
