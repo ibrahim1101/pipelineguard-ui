@@ -219,3 +219,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Sidebar navigation now scrolls independently of its fixed privacy footer, preventing overlap in shorter desktop windows; sidebar width adapts at XL breakpoint.
 - Header brand and profile selector widths adapt to match sidebar sizing. No page-level visual QA performed yet; these are source-level layout corrections only.
 - Commits `8b95c68`, `167f16b`, `79f22af`. Await new CI results.
+
+### 2026-10-09 — Scan action deduplication and Findings viewport refinement
+- Previous Cerberus shell UI runs `37954926083`, `37954915128`, `37954903886`, `37954892292` passed.
+- Inspected Dashboard, Scan Project, Findings and shell sources. Confirmed two simultaneous Start Scan actions on the Scan Project route (header and primary page action). Header now omits its scan button on `/scan`, preserving the dedicated page action and header action elsewhere.
+- Findings page now has a minimum usable height, adjusted viewport sizing, and responsive search width. This is a source-level layout improvement, not a completed visual QA pass.
+- Commits `1fffa01`, `b1100ea`. CI pending.
