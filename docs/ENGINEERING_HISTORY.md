@@ -194,3 +194,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added optional `CERBERUS_MANAGED_DEV=1` mode in Tauri Rust: generates a 256-bit native token, obtains an ephemeral loopback port, spawns Python uvicorn with desktop auth and engine path, retains child in native state, and kills/reaps it on state drop.
 - Requires `CERBERUS_BACKEND_DIR`, `PIPELINEGUARD_ENGINE_PATH` and installed Python dependencies; not a packaged desktop binary.
 - **Known incomplete areas:** No authenticated readiness wait; port reservation race; no child crash recovery; managed launch errors silently fall back to manual mode; process-tree cleanup not established. Not production ready. Native CI pending for commit `dadf125`.
+
+### 2026-10-09 — Cerberus browser branding audit
+- Found `frontend/public/index.html` still displayed Emergent's default page title and description, despite the Cerberus header branding. Replaced with Cerberus product title, security-scanner description, theme color, and existing shield SVG favicon. Removed external Google Fonts requests for offline desktop consistency.
+- Applied dedicated, subtle olive-metal icon treatment in the app header without changing the approved shield shape; preserved the existing Cerberus wordmark CSS.
+- **Remaining:** The checked-in shield SVG embeds a small 72×72 JPEG reproduction, not the original high-resolution artwork; Windows native icon remains a placeholder. Final full-resolution asset integration, branded ICO, font matching and visual QA remain open.
+- **Commits:** `d1899a4`, `41e8d16`, `dd71f38`. CI pending.
