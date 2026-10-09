@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2502db54df2aa4a5b8a691f4baa1b0a9dec47828`, GitHub Actions run [37933343440](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37933343440) **successful**. Desktop token gating tests await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `30460a9913f6b40395f4de0eb50a2511ab335ab0`, GitHub Actions run [37934073872](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37934073872) **successful**. New desktop scaffold awaits CI.
 
 ## Scope and repository boundaries
 
@@ -107,6 +107,13 @@
 - **Commits:** `b309602`, `d60b202`.
 - **Security caveat:** A global JS variable is not a hardened secret boundary against untrusted renderer scripts. Future shell should use a restricted IPC bridge and minimize renderer exposure. Full desktop startup/shutdown and token provisioning remain unimplemented.
 - **CI:** Pending. Engine unchanged.
+
+### 2026-10-09 — Isolated Tauri 2 desktop scaffold (pending CI)
+- **Created:** `desktop/src-tauri/` with Cargo manifest, build script, Tauri configuration and minimal Rust entry point; `desktop/README.md` documents the security plan.
+- **Isolation:** No modifications to existing React app, Python bridge, engine or CI workflow. Desktop bundling disabled. Scaffold not yet compiled or packaged; no secure IPC or managed sidecar.
+- **Security design:** Native-only per-launch token, loopback bridge process ownership, restricted IPC and reliable child shutdown required before shipping.
+- **Commits:** `50e6f39`, `3da2c2c`, `d81d54a`, `db9cd01`, `7972609`.
+- **CI:** Pending. Existing workflow does not compile Rust/Tauri.
 
 ## Next engineering tasks
 
