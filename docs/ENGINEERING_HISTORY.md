@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `3f8ede34e59e3eb4926d17d8909d44f22eeee0a3`, GitHub Actions run [37929171669](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929171669) **successful**. New report-initialization changes await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2453d0320aa0dc2af773cffdc0c5ec5b1ffc7986`, GitHub Actions run [37929596200](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929596200) **successful**. New history recovery changes await CI.
 
 ## Scope and repository boundaries
 
@@ -63,6 +63,14 @@
 - **Tests:** Parameterized initialization regression for `latestScan`, `history`, and `activity` failures.
 - **Commits:** `f878df8`, `6b33268`.
 - **Verification:** Pending new GitHub Actions result; engine unchanged.
+
+### 2026-10-09 — Report recovery UI (pending CI)
+- **Problem:** Initial report refresh errors were shown as toasts but had no persistent recovery action.
+- **Fix:** Track report loading/error state separately from bridge health; show an inline retry action in History while preserving prior results. Retry calls `refreshData()` without restarting the bridge.
+- **Tests:** Verify initial failure then successful report retry, restored data, and no additional bridge health request.
+- **Commits:** `b602b1f`, `a35555e`, `127fb64`.
+- **CI:** Pending; latest prior green run `37929596200`.
+- **Engine:** Unchanged.
 
 ## Next engineering tasks
 
