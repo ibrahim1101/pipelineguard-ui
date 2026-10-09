@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `61205afb68bc5c2fa45cd4390522a90766c3a0fe`, GitHub Actions run [37930455737](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37930455737) **successful**. Security regression additions await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `a1bafdeaede7a83a8de8cd52c0005783fb640e4f`, GitHub Actions run [37930912193](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37930912193) **successful**. Route-level security tests await CI.
 
 ## Scope and repository boundaries
 
@@ -86,6 +86,12 @@
 - **New tests:** Reject snapshot traversal and invalid identifiers; reject malformed snapshot report data. Commit `7e5df38`.
 - **Outstanding risks to evaluate:** When token is absent, non-desktop API mode has no authentication; confirm loopback-only binding. Filesystem browsing, configuration writing, report exports and scan paths accept broad absolute local paths by design; evaluate permissions and explicit trust boundaries. Add route-level authorization tests and report-preview symlink/allowlist tests.
 - **CI:** Pending; do not mark security review complete or production-ready.
+
+### 2026-10-09 — Bridge route-level security regression suite (pending CI)
+- **Added:** `backend/tests/security_bridge.py` checks missing/invalid tokens on read and mutating endpoints, authenticated reads, report preview denial for unregistered files and symlinks, valid registered preview, oversized report denial and invalid scan identifier paths.
+- **CI:** Runs security script in both Ubuntu and Windows bridge jobs. Commits `97b84dc`, `629daa3`.
+- **Constraints:** Tests use isolated temporary data directory. Windows symlink case is skipped if OS denies symlink creation; other cases remain mandatory. Does not establish network binding safety or full filesystem authorization.
+- **Verification:** Pending GitHub Actions result. Separate engine unchanged.
 
 ## Next engineering tasks
 
