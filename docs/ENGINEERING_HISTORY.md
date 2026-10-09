@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `ff966e623ae55c1bf803ae2260a63114dae7b664`, GitHub Actions run [37932128944](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37932128944) **successful**. Loopback launcher tests await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2502db54df2aa4a5b8a691f4baa1b0a9dec47828`, GitHub Actions run [37933343440](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37933343440) **successful**. Desktop token gating tests await CI.
 
 ## Scope and repository boundaries
 
@@ -99,6 +99,14 @@
 - **Limitation:** Token is not yet handed to the React frontend; requires future trusted desktop shell integration. Existing development launch path unchanged.
 - **Commits:** `0c2b5e4`, `849e374`, `14548fd`.
 - **CI:** Pending; engine unchanged.
+
+### 2026-10-09 — Desktop token fail-closed behavior (pending CI)
+- **Review:** Frontend currently reads an in-memory `window.__PIPELINEGUARD_TOKEN__` value; there is no verified Tauri shell provisioning that value or managing the Python process.
+- **Fix:** When Tauri is present and the token is missing, API adapter now rejects requests before network I/O. Browser development mode remains backward compatible.
+- **Tests:** Missing desktop token must block fetch; provisioned token only in request header, not URL; token-free browser development still works.
+- **Commits:** `b309602`, `d60b202`.
+- **Security caveat:** A global JS variable is not a hardened secret boundary against untrusted renderer scripts. Future shell should use a restricted IPC bridge and minimize renderer exposure. Full desktop startup/shutdown and token provisioning remain unimplemented.
+- **CI:** Pending. Engine unchanged.
 
 ## Next engineering tasks
 
