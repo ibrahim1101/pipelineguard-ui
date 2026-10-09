@@ -1,3 +1,6 @@
+!ifndef CERBERUS_PAYLOAD
+  !error "CERBERUS_PAYLOAD must be supplied as an absolute path"
+!endif
 Unicode true
 !include "MUI2.nsh"
 Name "Cerberus"
@@ -14,8 +17,8 @@ SetCompressor /SOLID lzma
 
 Section "Cerberus" SecMain
   SetOutPath "$INSTDIR"
-  File "dist\cerberus-standalone\Cerberus.exe"
-  File /r "dist\cerberus-standalone\cerberus-runtime"
+  File "${CERBERUS_PAYLOAD}\Cerberus.exe"
+  File /r "${CERBERUS_PAYLOAD}\cerberus-runtime"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\Cerberus"
   CreateShortcut "$SMPROGRAMS\Cerberus\Cerberus.lnk" "$INSTDIR\Cerberus.exe"
