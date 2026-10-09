@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `2453d0320aa0dc2af773cffdc0c5ec5b1ffc7986`, GitHub Actions run [37929596200](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929596200) **successful**. New history recovery changes await CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `54bcd72f9c4a0275f6a13e68ad5253ebf4f2767c`, GitHub Actions run [37929975956](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37929975956) **successful**. New heartbeat changes await CI.
 
 ## Scope and repository boundaries
 
@@ -71,6 +71,14 @@
 - **Commits:** `b602b1f`, `a35555e`, `127fb64`.
 - **CI:** Pending; latest prior green run `37929596200`.
 - **Engine:** Unchanged.
+
+### 2026-10-09 — Heartbeat concurrency and stale response protection (pending CI)
+- **Problem:** A delayed failed health request could mark the bridge offline after manual recovery; repeated interval ticks could overlap health checks.
+- **Fix:** Serialize heartbeat checks per mounted provider; invalidate older health results when `init()` starts and on unmount. Only apply heartbeat failure when its request generation remains current.
+- **Tests:** Stale heartbeat failure after manual reconnect; no overlapping heartbeat requests during a prolonged pending health call.
+- **Commits:** `32829a4`, `1118bbb`.
+- **CI:** Pending. Prior history recovery run `37929975956` verified green.
+- **Engine:** No changes.
 
 ## Next engineering tasks
 
