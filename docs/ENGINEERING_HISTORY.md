@@ -271,3 +271,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Initial managed Python smoke workflow `37963103410` failed during dependency installation, before executing tests: `emergentintegrations==0.2.2` was unavailable on the public package index.
 - Narrowed smoke workflow dependencies to the actual bridge runtime (`fastapi`, `uvicorn`, `python-dotenv`, `httpx`) plus engine requirements, instead of installing unrelated full backend requirements. Commit `8e489be`.
 - This does not alter the application's full backend dependency manifest; packaging dependency audit remains pending.
+
+### 2026-10-09 — Managed Python bridge negative startup test
+- Windows managed subprocess smoke workflow `37964134657` passed after narrowing public runtime dependencies.
+- Added negative subprocess test that launches desktop mode with no `PIPELINEGUARD_TOKEN`, requires nonzero process exit and the explicit authentication configuration error. Commit `b3c79ec`.
+- This verifies the Python backend's fail-closed startup path, not a full native Tauri launch. Pending Windows CI.
