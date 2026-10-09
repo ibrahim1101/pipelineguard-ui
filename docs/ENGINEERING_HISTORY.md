@@ -1,6 +1,6 @@
 # PipelineGuard UI — Engineering History
 
-> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `30460a9913f6b40395f4de0eb50a2511ab335ab0`, GitHub Actions run [37934073872](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37934073872) **successful**. New desktop scaffold awaits CI.
+> Living record. Update this document whenever a meaningful UI, bridge, testing, or packaging change lands. Record unsuccessful approaches as well as successful fixes. Last verified checkpoint: 2026-10-09, UI commit `cbed81200b6d045d89188ca0618388f0f6a49504`, GitHub Actions run [37935723443](https://github.com/ibrahim1101/pipelineguard-ui/actions/runs/37935723443) **successful** (existing UI/Python checks only). Dedicated Rust validation pending.
 
 ## Scope and repository boundaries
 
@@ -114,6 +114,12 @@
 - **Security design:** Native-only per-launch token, loopback bridge process ownership, restricted IPC and reliable child shutdown required before shipping.
 - **Commits:** `50e6f39`, `3da2c2c`, `d81d54a`, `db9cd01`, `7972609`.
 - **CI:** Pending. Existing workflow does not compile Rust/Tauri.
+
+### 2026-10-09 — Dedicated Tauri Windows build validation (pending CI)
+- **Added:** `.github/workflows/desktop-check.yml` to run manifest/config checks and `cargo check` on Windows for desktop-scoped changes.
+- **Correction:** First workflow revision used `cargo check --locked` without a committed `Cargo.lock`; removed `--locked` during scaffold bootstrap. Lockfile reproducibility remains future work.
+- **Coverage boundary:** This is Rust compile validation only, not Tauri app packaging, runtime startup or Windows installer verification.
+- **Commits:** `293e11e`, `c8cc409`. Dedicated workflow result pending.
 
 ## Next engineering tasks
 
