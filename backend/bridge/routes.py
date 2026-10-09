@@ -299,6 +299,16 @@ def report_content(path: str):
     if (not target.is_absolute() or not target.is_file() or target.suffix.lower() not in REPORT_EXT.values()
             or not target.name.startswith("pipelineguard")):
         _bad("Report not found", 404)
+    # Only preview reports previously exported by this application.
+    # A filename prefix and extension alone are not proof of ownership.
+    known_reports = {
+        str(Path(report_path).resolve())
+        for entry in storage.read_history()
+        for report_path in entry.get("reports", [])
+        if isinstance(report_path, str)
+    }
+    if str(target.resolve()) not in known_reports:
+        _bad("Report not found in local scan history", 404)
     if target.stat().st_size > 5_000_000:
         _bad("Report too large to preview")
     return {"path": str(target), "format": target.suffix.lstrip(".").lower(),
