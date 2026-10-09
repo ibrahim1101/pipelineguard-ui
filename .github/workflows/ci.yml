@@ -59,6 +59,10 @@ jobs:
           python -m pip install -e ./engine
       - name: Compile Python bridge
         run: python -m compileall -q ui/backend
+      - name: Test local storage and report tracking
+        env:
+          PYTHONPATH: ${{ github.workspace }}/ui/backend
+        run: python -m unittest discover -s ui/backend/tests -p 'test_*.py' -v
       - name: Check bridge startup and authentication
         env:
           PIPELINEGUARD_ENGINE_PATH: ${{ github.workspace }}/engine
