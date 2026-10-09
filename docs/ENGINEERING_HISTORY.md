@@ -322,3 +322,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added `backend/requirements-desktop.txt` for the local FastAPI/Uvicorn bridge, excluding cloud, database, development and Emergent template dependencies from the desktop packaging dependency set.
 - Updated Windows desktop Rust integration CI and managed Python bridge smoke CI to install this isolated runtime set; HTTPX remains smoke-test-only. Commits `214e244`, `02cdc91`, `f673fe3`.
 - This validates a prerequisite for future standalone Python sidecar packaging; a bundled interpreter, sidecar startup and installer remain unimplemented and require separate tests. CI pending.
+
+### 2026-10-10 — Standalone Python sidecar prototype
+- Added `backend/desktop_sidecar.py` as an explicit, loopback-only Uvicorn entrypoint requiring desktop mode, a valid bridge port, an engine path and a per-launch token; missing configuration fails closed. Commit `0cd251e`.
+- Added `.github/workflows/desktop-sidecar.yml` to build a Windows PyInstaller onedir executable and test missing-token rejection and authenticated `/api/status` startup. Commit `e270a96`.
+- The packaging prototype currently uses the checked-out engine directory and is not yet wired into the native Tauri launcher or installer. CI validation is pending; do not advertise a distributable installer.
