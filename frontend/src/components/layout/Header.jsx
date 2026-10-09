@@ -10,14 +10,14 @@ const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 export default function Header() {
   const { profiles, selection, setSelection, startScan, running, scanState, latest } = useApp();
   return (
-    <header className="h-14 shrink-0 bg-pg-side border-b border-pg-line/80 flex items-center gap-3 px-4 z-40" data-testid="app-header">
-      <div className="flex items-center gap-2.5 w-[216px] shrink-0" data-testid="app-brand">
+    <header className="h-14 shrink-0 bg-pg-side border-b border-pg-line/80 flex items-center gap-3 px-4 z-40 min-w-0" data-testid="app-header">
+      <div className="flex items-center gap-2.5 w-[198px] xl:w-[216px] shrink-0" data-testid="app-brand">
         <img src="/cerberus-logo-original.png" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/cerberus-mark.svg"; }} alt="Cerberus three-headed guardian shield" className="cerberus-brand-icon h-10 w-10 object-contain" width="40" height="40" />
         <span className="cerberus-wordmark text-[18px] text-pg-text">CERBERUS</span>
       </div>
       <ProjectSelector />
       <Select value={selection.profile} onValueChange={(v) => setSelection({ profile: v })} disabled={running}>
-        <SelectTrigger className="w-[140px] h-9 bg-pg-surface border-pg-line text-sm" data-testid="header-profile-select" aria-label="Scan profile">
+        <SelectTrigger className="w-[120px] xl:w-[140px] h-9 bg-pg-surface border-pg-line text-sm" data-testid="header-profile-select" aria-label="Scan profile">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
