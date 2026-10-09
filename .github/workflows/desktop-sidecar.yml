@@ -114,6 +114,27 @@ jobs:
           $runtime = Join-Path (Split-Path $exe -Parent) 'cerberus-runtime'
           if (-not (Test-Path (Join-Path $runtime 'cerberus-bridge.exe'))) { throw 'Launcher sidecar discovery would fail' }
           if (-not (Test-Path (Join-Path $runtime 'engine/pipelineguard'))) { throw 'Launcher engine discovery would fail' }
+      - name: Verify standalone payload has no source-only launch dependencies
+        shell: pwsh
+        run: |
+          $app = 'dist/cerberus-standalone'
+          $required = @(
+            "$app/Cerberus.exe",
+            "$app/cerberus-runtime/cerberus-bridge.exe",
+            "$app/cerberus-runtime/engine/pipelineguard"
+          )
+          foreach ($path in $required) {
+            if (-not (Test-Path $path)) { throw "Missing required standalone payload path: $path" }
+          }
+          $bridge = Get-Item "$app/cerberus-runtime/cerberus-bridge.exe"
+          $desktop = Get-Item "$app/Cerberus.exe"
+          if ($bridge.Length -lt 100000 -or $desktop.Length -lt 100000) { throw 'Unexpectedly small native executable' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cerberus-windows-standalone-preview
+          path: dist/cerberus-standalone/
+          if-no-files-found: error
+          retention-days: 7
       - name: Verify packaged sidecar fails closed without desktop token
         shell: pwsh
         run: |
