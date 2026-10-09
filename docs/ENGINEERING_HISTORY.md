@@ -121,6 +121,11 @@
 - **Coverage boundary:** This is Rust compile validation only, not Tauri app packaging, runtime startup or Windows installer verification.
 - **Commits:** `293e11e`, `c8cc409`. Dedicated workflow result pending.
 
+### 2026-10-09 — Desktop CI failure: missing Windows ICO (fix pending validation)
+- **Failure observed:** Dedicated Tauri Windows job `37940083553` failed at `cargo check`: `desktop/src-tauri/icons/icon.ico` missing in `tauri-build` Windows resource generation. The earlier `--locked` failure was separately corrected; regular UI CI is green at run `37940103771`.
+- **Fix attempted:** `desktop/src-tauri/build.rs` generates a minimal grayscale Windows ICO if no branded icon exists, before invoking `tauri_build::build()`. This avoids committing binary icon through the text-only GitHub file interface and permits later replacement by branded assets. Commit `5c2236b`.
+- **Verification:** Pending dedicated desktop CI. If Rust or Tauri rejects placeholder ICO, inspect new logs and correct. No installer or sidecar integration claimed.
+
 ## Next engineering tasks
 
 - [ ] Regression test scan completion when history/latest/activity refresh fails.
