@@ -377,3 +377,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Repository visibility changed to public by owner. Previous workflow attempts failed before runner allocation with GitHub billing/spending-limit annotation, so they do not demonstrate code failure.
 - This documentation-only commit triggers a fresh PipelineGuard UI CI run on the public repository to test runner eligibility. No production code or workflow permissions changed.
 - Public visibility and example-file checks are not a full Git-history secret audit. Confirm Actions runner allocation and test results before resuming packaging.
+
+### 2026-10-10 — Windows standalone preview validated; installer readiness gate
+- CI run `37990822056` passed React and Python checks on Windows and Ubuntu.
+- Windows sidecar packaging run `37990822213` passed; artifact `cerberus-windows-standalone-preview` uploaded (18,387,881 compressed bytes; seven-day retention). It validates adjacent bundled runtime, authenticated bridge startup, native desktop liveness, and direct bridge child ownership.
+- Headless GitHub Windows runners cannot reliably expose a desktop main-window handle. CI now checks bridge ownership without falsely claiming graceful close validation (commit `7c2e7f7`).
+- **Before enabling MSI/NSIS bundling:** test GUI close and child cleanup on an interactive Windows session; review Tauri bundle resource layout, identifier, icon, and upgrade behavior; ensure production fail-closed bridge startup. Standalone preview success is not installer certification.
