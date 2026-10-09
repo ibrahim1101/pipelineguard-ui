@@ -183,3 +183,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Guards:** Fail closed without configured token, reject unsafe paths/methods, disable redirects, request timeout, loopback-only target; unit tests cover accepted/rejected request shapes.
 - **Development configuration only:** `CERBERUS_DEV_BRIDGE_TOKEN` and optional `CERBERUS_DEV_BRIDGE_PORT` supply the token/port to the Rust process. Production must instead generate token in native code and own Python child lifecycle. No automatic engine startup, dynamic port reservation or installer yet.
 - **Commits:** `c8ee58b`, `c2ffba7`, `a01d33e`. Windows Tauri and React CI in progress; runtime behavior not yet validated.
+
+### 2026-10-09 — Native-owned token handoff groundwork
+- **Prior validation:** Native Rust IPC compilation passed in desktop run `37944499669`; latest React/Python UI run `37944548355` passed.
+- **Bridge change:** `backend/launch_local.py` supports `CERBERUS_MANAGED_CHILD=1`: requires `PIPELINEGUARD_TOKEN` supplied by a trusted native parent and sets desktop auth mode, rather than generating a token the parent cannot know. Existing standalone development behavior remains unchanged.
+- **Test:** Added a contract test ensuring the managed-child token requirement remains present.
+- **Next blocker:** Rust does not yet generate token, launch/reap child or wait for readiness. Do not claim automatic startup works. Verify CI for this incremental bridge contract before proceeding.
