@@ -297,3 +297,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Added an opt-in Rust integration test that launches the actual Uvicorn backend, checks native authenticated readiness, rejects an incorrect token, and reaps the child via `ManagedChild`. Commit `410e92d`.
 - Updated Windows desktop workflow to install minimal public Python runtime dependencies, set backend/engine paths, and run the Rust integration test in CI. Commits `740d651`, `950a073`.
 - This exercises native readiness against the actual backend without opening the graphical Tauri window; installer bundling remains disabled. CI pending.
+
+### 2026-10-09 — Unbundled Windows desktop release compilation gate
+- Rust-to-Python native authenticated readiness workflow `37968434471` passed Windows CI.
+- Extended desktop validation to install frontend dependencies, compile production React assets, and compile the unbundled Windows Tauri executable via `cargo build --release`, verifying the executable exists. Commit `8a2e27b`.
+- Added frontend changes to desktop workflow triggers. The binary is a CI validation output, not a distributed installer; bundled packaging and graphical runtime QA remain pending. CI pending.
