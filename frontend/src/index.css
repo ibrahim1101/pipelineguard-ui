@@ -133,3 +133,16 @@ html.reduce-motion *::after {
         border-bottom-color: inherit;
     }
 }
+
+/* Cerberus metallic display wordmark. System-font fallback keeps desktop offline. */
+.cerberus-wordmark {
+    display: inline-block;
+    font-family: Impact, "Arial Black", "Segoe UI Black", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.055em;
+    line-height: 1;
+    transform: skewX(-5deg);
+    color: #c4c8ad;
+    text-shadow: 0 1px 0 #72804a, 1px 2px 0 #171b13, 0 0 10px rgba(144, 163, 83, 0.18);
+}
