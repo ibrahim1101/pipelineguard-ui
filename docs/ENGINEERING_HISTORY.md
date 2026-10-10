@@ -498,3 +498,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User physically tested the new multi-drive picker build and reported **drag/drop does not work**. Do not mark the feature PASS.
 - Reworked shared picker to prefer Tauri 2 `tauri://drag-drop` global event subscription, falling back to webview `onDragDropEvent` if needed. Validate folder drops through `/fs/list` before selecting, and validate JSON file drops against the containing folder's JSON listing. Surface a clear error if native drop events are unavailable; retain manual browse/paste.
 - Await new CI and physical Windows validation. Investigate Tauri event API availability if it still fails; don't conflate green CI with native Explorer integration success.
+
+### 2026-10-10 — Second physical Explorer drag/drop FAIL; native Rust event capture
+- User reports drag/drop still fails after `967c868` and green installer CI `38069848705`. Prior JS-only Tauri event subscription approaches were insufficient on physical Windows.
+- Implemented Rust Tauri window-level `DragDropEvent::Drop` capture into a bounded latest-drop buffer; added `take_dropped_paths` invoke command. Shared React picker polls this command only while open, verifies directory or JSON path via existing authenticated filesystem API, then selects and closes. This avoids reliance on optional global Tauri webview/event JS APIs.
+- CI and physical Explorer testing pending. No claim of resolution yet. Browser remains manual path browsing only.

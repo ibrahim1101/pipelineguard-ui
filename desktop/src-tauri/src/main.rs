@@ -28,6 +28,16 @@ use tauri::State;
 
 struct ManagedChild(Mutex<Option<Child>>);
 
+// Native window drops are buffered for the renderer to consume through the
+// already-proven Tauri invoke bridge; no optional JS event plugin is required.
+struct DroppedPaths(Mutex<Vec<String>>);
+
+#[tauri::command]
+fn take_dropped_paths(state: State<'_, DroppedPaths>) -> Vec<String> {
+    state.0.lock().map(|mut paths| std::mem::take(&mut *paths)).unwrap_or_default()
+}
+
+
 impl Drop for ManagedChild {
     fn drop(&mut self) {
         if let Ok(mut guard) = self.0.lock() {
@@ -259,8 +269,19 @@ fn main() {
     let managed_child = ManagedChild(Mutex::new(managed.map(|(child, _, _)| child)));
     tauri::Builder::default()
         .manage(managed_child)
+        .manage(DroppedPaths(Mutex::new(Vec::new())))
         .manage(BridgeState { client, token, port })
-        .invoke_handler(tauri::generate_handler![bridge_request])
+        .invoke_handler(tauri::generate_handler![bridge_request, take_dropped_paths])
+        .on_window_event(|window, event| {
+            use tauri::Manager;
+            if let tauri::WindowEvent::DragDrop(tauri::DragDropEvent::Drop { paths, .. }) = event {
+                let state = window.state::<DroppedPaths>();
+                if let Ok(mut pending) = state.0.lock() {
+                    pending.clear();
+                    pending.extend(paths.iter().map(|p| p.to_string_lossy().into_owned()));
+                }
+            }
+        })
         .build(tauri::generate_context!())
         .expect("failed to build Cerberus desktop")
         .run(|app, event| {
