@@ -402,3 +402,10 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
   6. P2: Desktop UI accessibility/polish, documentation/user guide, versioning and release checksums.
   7. P2: Release candidate and GitHub Release after all gates are verified.
 - **New chat handoff:** Say `Continue CERBERUS from the 2026-10-10 engineering handoff in ibrahim1101/pipelineguard-ui. Check latest Actions and artifacts, then begin interactive Windows installer validation; keep ENGINEERING_HISTORY.md updated with successes, failures, fixes and outstanding gates. Do not modify ibrahim1101/PipelineGuard unless asked.`
+
+### 2026-10-10 — Physical Windows first-launch frontend failure (fix pending CI)
+- **Observation:** User installed and opened Cerberus but its WebView showed `localhost refused to connect` / `ERR_CONNECTION_REFUSED`. User also observed Locat running on port 3000 appearing inside the Cerberus window, demonstrating an unintended dev-server dependency.
+- **Root cause hypothesis:** Installer CI built the native executable using `cargo build --release` directly, bypassing Tauri CLI production build preparation; `tauri.conf.json` contains development-only `devUrl: http://localhost:3000` and production `frontendDist: ../../frontend/build`.
+- **Fix:** Switch installer workflow to `cargo tauri build --no-bundle` after frontend compilation, preserving the existing separate NSIS packaging. Do not change Locat or its port. The Python bridge continues using a dynamically allocated authenticated loopback port.
+- **Validation:** New CI and physical GUI retest required; do not mark resolved based solely on a green build. Confirm the installed frontend loads even while Locat occupies port 3000, then test scan, graceful shutdown and uninstall.
+- **Next action:** Inspect the next packaged-sidecar and UI workflow runs, correct any CLI/build issues, download the rebuilt installer and retest on Windows.

@@ -92,10 +92,14 @@ jobs:
             npm run build
             if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed' }
           } finally { Pop-Location }
+          # Tauri CLI prepares the production frontend assets and build configuration.
+          # A raw cargo build can leave the WebView targeting devUrl (localhost:3000).
           Push-Location desktop/src-tauri
           try {
-            cargo build --release
-            if ($LASTEXITCODE -ne 0) { throw 'Desktop executable build failed' }
+            cargo install tauri-cli --version '^2' --locked
+            if ($LASTEXITCODE -ne 0) { throw 'Tauri CLI installation failed' }
+            cargo tauri build --no-bundle
+            if ($LASTEXITCODE -ne 0) { throw 'Tauri production desktop build failed' }
           } finally { Pop-Location }
       - name: Stage native desktop executable beside packaged runtime
         shell: pwsh
