@@ -522,3 +522,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User shared a Locat integration test using an explicitly synthetic password. The scanner previously reported it as a medium-confidence generic assignment with CRITICAL severity.
 - Updated the active `engine/scanners/secret_scanner.py` to exempt only that exact dummy literal in `.test.ts`, `.spec.ts`, `.test.js`, and `.spec.js` files. Other passwords and high-confidence signatures remain detectable. Added `engine/tests/test_secret_fixture_precision.py` with four positive/negative regression checks.
 - Commits `30969abc` and `7e66a883`. CI and physical Locat rescan pending; do not claim the other findings are false positives.
+
+### 2026-10-11 — OSV permission and secret cache semantics
+- OSV Intelligence UI now has an OFF-by-default opt-in switch for manual package queries, separate from connectivity check and Scan Project's own live OSV setting. UI and desktop validation workflows passed for commit 89084aa9. Manual permission currently lasts for the page session, not a global network firewall.
+- Locat user rescan screenshot still showed 18 findings, 17 critical, and 255/256 processed. Investigated secret cache and found its signature only hashed regex patterns/flags, not scanner interpretation logic. The test-fixture exemption did not alter regex patterns, so stale cached findings could be reused.
+- Added SCANNER_SEMANTICS_VERSION to cache signature and regression test for version-based invalidation. Changes committed as 65cc7d54 and 72fd3fc1. CI and physical rescan pending.
+- 255/256 may represent a legitimately skipped file (size/change/error), not necessarily an error; inspect discovery/fingerprint metrics before changing counting semantics.
