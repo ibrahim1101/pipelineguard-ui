@@ -503,3 +503,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User reports drag/drop still fails after `967c868` and green installer CI `38069848705`. Prior JS-only Tauri event subscription approaches were insufficient on physical Windows.
 - Implemented Rust Tauri window-level `DragDropEvent::Drop` capture into a bounded latest-drop buffer; added `take_dropped_paths` invoke command. Shared React picker polls this command only while open, verifies directory or JSON path via existing authenticated filesystem API, then selects and closes. This avoids reliance on optional global Tauri webview/event JS APIs.
 - CI and physical Explorer testing pending. No claim of resolution yet. Browser remains manual path browsing only.
+
+### 2026-10-10 — Native Explorer drag/drop Windows CI Rust E0597 failure and correction
+- Windows packaged sidecar installer run `38074186467`, commit `3c45490`, failed at "Build frontend and native Windows desktop executable" (job `114277590980`): Rust E0597 in `on_window_event` when borrowing `window.state::<DroppedPaths>()` and evaluating `state.0.lock()` as final block expression. Rust advised terminating the conditional expression with a semicolon so the temporary guard/result drops before `state`.
+- Inserted the semicolon after the `if let Ok(mut pending) = state.0.lock()` block. This is a compile-time ownership fix; functional Windows Explorer drag/drop remains unverified pending new green CI and physical test.

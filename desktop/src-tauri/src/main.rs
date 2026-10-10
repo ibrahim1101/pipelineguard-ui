@@ -279,7 +279,7 @@ fn main() {
                 if let Ok(mut pending) = state.0.lock() {
                     pending.clear();
                     pending.extend(paths.iter().map(|p| p.to_string_lossy().into_owned()));
-                }
+                };
             }
         })
         .build(tauri::generate_context!())
