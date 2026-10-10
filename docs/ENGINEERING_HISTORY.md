@@ -493,3 +493,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — Follow-up drive-root correction
 - Four workflows on `ba89277` passed: UI CI `38066021058`, desktop `38066021003`, bridge smoke `38066021105`, packaged installer `38066021099`; installer artifact `11674154854`.
 - Code review found an extra escaped backslash in Windows drive-root construction. Corrected to canonical single-separator Windows drive roots in both existence checks and returned drive paths. Rebuild and physical drive/drop testing pending.
+
+### 2026-10-10 — Drag/drop physical FAIL and native-event fallback fix
+- User physically tested the new multi-drive picker build and reported **drag/drop does not work**. Do not mark the feature PASS.
+- Reworked shared picker to prefer Tauri 2 `tauri://drag-drop` global event subscription, falling back to webview `onDragDropEvent` if needed. Validate folder drops through `/fs/list` before selecting, and validate JSON file drops against the containing folder's JSON listing. Surface a clear error if native drop events are unavailable; retain manual browse/paste.
+- Await new CI and physical Windows validation. Investigate Tauri event API availability if it still fails; don't conflate green CI with native Explorer integration success.

@@ -36,25 +36,39 @@ export default function PathPicker({ open, onOpenChange, mode = "dir", initialPa
     if (!open) return undefined;
     let disposed = false;
     let unlisten;
-    const webview = window.__TAURI__?.webview?.getCurrentWebview?.();
-    if (webview?.onDragDropEvent) {
-      webview.onDragDropEvent((event) => {
-        if (disposed) return;
-        if (event.payload.type === "leave") setDragging(false);
-        if (event.payload.type === "over") setDragging(true);
-        if (event.payload.type === "drop") {
-          setDragging(false);
-          const path = event.payload.paths?.[0];
-          if (path) {
-            if (mode === "json" && /\\.json$/i.test(path)) pick(path);
-            else if (mode === "dir") load(path);
-            else setError("Drop a JSON configuration file.");
-          }
-        }
-      }).then((fn) => { if (disposed) fn(); else unlisten = fn; }).catch(() => {});
-    }
+    const handleDrop = async (event) => {
+      if (disposed) return;
+      const payload = event.payload || {};
+      if (payload.type === "leave") setDragging(false);
+      if (payload.type === "over") setDragging(true);
+      if (payload.type !== "drop") return;
+      setDragging(false);
+      const path = payload.paths?.[0];
+      if (!path) return setError("No filesystem path was provided by Windows.");
+      if (mode === "json") {
+        if (!/\\.json$/i.test(path)) return setError("Drop a JSON configuration file.");
+        try {
+          const folder = await api.fsList(dirname(path));
+          if (!folder.json_files.includes(path.split(/[\\\\/]/).pop())) throw new Error("JSON file was not found");
+          if (!disposed) { onSelect(path); onOpenChange(false); }
+        } catch (e) { if (!disposed) setError(e.message); }
+      } else {
+        try {
+          const folder = await api.fsList(path);
+          if (!disposed) { setData(folder); setInput(folder.path); setError(null); onSelect(folder.path); onOpenChange(false); }
+        } catch (e) { if (!disposed) setError("Drop a folder, not a file: " + e.message); }
+      }
+    };
+    const tauri = window.__TAURI__;
+    // Tauri 2 can expose native drops through the event bus even when the
+    // webview wrapper is absent from the global API.
+    const register = tauri?.event?.listen
+      ? tauri.event.listen("tauri://drag-drop", handleDrop)
+      : tauri?.webview?.getCurrentWebview?.()?.onDragDropEvent?.(handleDrop);
+    if (register) Promise.resolve(register).then((fn) => { if (disposed) fn(); else unlisten = fn; }).catch(() => setError("Native drag-and-drop is unavailable in this desktop build."));
+    else setError("Native drag-and-drop is unavailable; use Browse or paste a path.");
     return () => { disposed = true; unlisten?.(); };
-  }, [open, mode, load]);
+  }, [open, mode, onSelect, onOpenChange]);
 
   const pick = (p) => {
     onSelect(p);
