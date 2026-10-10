@@ -446,3 +446,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — Installer preflight exit 20 diagnostic
 - Workflow `38047876015` failed at silent install after ~10 seconds with NSIS exit code 20; desktop and general CI passed. Exit 20 is the intentional preflight error path, but its underlying PowerShell exception was hidden by `catch { exit 20 }`.
 - Added a CI diagnostic that decodes and executes the exact embedded preflight script before silent installation, printing the underlying error on failure. Installer remains fail-closed; no relaxation of process protections. Diagnose from the next run before choosing a corrective fix.
+
+### 2026-10-10 — Fix NSIS preflight command-length failure
+- Run `38049066477` reported preflight diagnostic exit 0 but actual NSIS silent installer exit 20. This isolates the discrepancy to invocation/stack handling inside NSIS; long embedded `-EncodedCommand` likely exceeded NSIS string length limits (hypothesis, not independently proven).
+- Replaced oversized encoded command with a small, separately versioned `desktop/installer/check-running.ps1` extracted into NSIS `$PLUGINSDIR` during `.onInit`. The installer calls `powershell.exe -File` with a short command, retains fail-closed exits 10/20 and silent-mode noninteractive behavior. CI diagnostic runs the same source script. No user process is terminated.
+- Next: verify installer compile, silent install/uninstall, installed process detection, physical upgrade and cleanup.
