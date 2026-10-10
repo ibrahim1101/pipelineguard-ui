@@ -489,3 +489,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User reported shared project/configuration file picker cannot navigate above C: root to reach other drives. Added Windows drive enumeration to `/fs/list` and shared picker drive shortcuts, covering all consumers of `PathPicker`.
 - Added Tauri native webview drag/drop listener in shared picker for Explorer filesystem paths; folder drops navigate to folder for explicit selection, JSON file drops select configuration path. The browser does not expose trustworthy absolute local paths, so this capability is desktop-only.
 - Pending CI and physical Windows verification, including D:/E:/ removable drives, folder drops, JSON drops, error handling, and scanning. Do not claim validated yet.
+
+### 2026-10-10 — Follow-up drive-root correction
+- Four workflows on `ba89277` passed: UI CI `38066021058`, desktop `38066021003`, bridge smoke `38066021105`, packaged installer `38066021099`; installer artifact `11674154854`.
+- Code review found an extra escaped backslash in Windows drive-root construction. Corrected to canonical single-separator Windows drive roots in both existence checks and returned drive paths. Rebuild and physical drive/drop testing pending.

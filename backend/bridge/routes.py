@@ -85,7 +85,7 @@ def fs_list(path: str | None = None):
         entries = sorted(target.iterdir(), key=lambda p: p.name.lower())[:800]
     except OSError as exc:
         _bad(f"Cannot read folder: {exc.strerror}")
-    drives = [f"{letter}:\\\\" for letter in string.ascii_uppercase if Path(f"{letter}:\\\\").is_dir()] if os.name == "nt" else []
+    drives = [f"{letter}:\\" for letter in string.ascii_uppercase if Path(f"{letter}:\\").is_dir()] if os.name == "nt" else []
     return {"path": str(target), "parent": str(target.parent) if target.parent != target else None,
             "drives": drives,
             "directories": [e.name for e in entries if e.is_dir()],
