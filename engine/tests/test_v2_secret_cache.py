@@ -229,3 +229,20 @@ def test_cache_write_error_keeps_scan_results(tmp_path, monkeypatch):
     counts = {}
     assert scan_secrets_incremental(root, set(), 10000, metrics=counts) == []
     assert counts["scanned"] == 1
+
+
+def test_scanner_semantics_version_invalidates_existing_cache(tmp_path, monkeypatch):
+    from pipelineguard import secret_cache
+    root, target = _setup(tmp_path, monkeypatch)
+    target.write_text('password: "test-password-long" ' + "x" * 1500)
+    assert len(scan_secrets_incremental(root, set(), 10000)) == 1
+    # Same content and regex patterns, but changed interpretation of findings.
+    monkeypatch.setattr(secret_cache, "SCANNER_SEMANTICS_VERSION", secret_cache.SCANNER_SEMANTICS_VERSION + 1)
+    calls = []
+    original = secret_cache.scan_text
+    def spy(*args, **kwargs):
+        calls.append(1)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(secret_cache, "scan_text", spy)
+    scan_secrets_incremental(root, set(), 10000)
+    assert calls == [1]
