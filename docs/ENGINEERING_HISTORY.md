@@ -429,3 +429,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **CI evidence:** Commit `cb9cedc` passed desktop shell run `38041934134`, general CI run `38041934104`, and packaged sidecar/installer run `38041934090`.
 - **Scope:** One reported successful shutdown check; repeat shutdown testing and clean upgrade/uninstall remain unverified. The earlier orphaned bridge and NSIS file-lock failures are retained in history.
 - **Next:** Add a non-destructive NSIS running-process preflight before file overwrite; verify installer CI, repeat upgrade while app is open and while closed, test Start menu and uninstall cleanup. Do not touch separate PipelineGuard repository.
+
+### 2026-10-10 — NSIS upgrade preflight (pending CI)
+- Added fail-closed `.onInit` running-process check before any installer payload extraction. Windows PowerShell/CIM checks only `Cerberus.exe` and `cerberus-bridge.exe` under the installed CERBERUS directory, case-insensitively. A running process or an indeterminate preflight aborts with a message and leaves installed files untouched; installer never force-kills processes.
+- Physical graceful shutdown passed once. CI packaging and actual Windows running-upgrade tests are still required. Verify NSIS compilation, silent install and uninstall, upgrade with running GUI and orphaned bridge, then closed-app upgrade; validate no interference with unrelated same-name processes.

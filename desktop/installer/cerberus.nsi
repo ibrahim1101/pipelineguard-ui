@@ -18,6 +18,22 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
+; Abort before extracting binaries if the installed CERBERUS GUI or bridge is running.
+; Never kill processes automatically or touch unrelated applications.
+Function .onInit
+  nsExec::ExecToStack 'powershell.exe -NoProfile -NonInteractive -Command "$root = Join-Path $env:LOCALAPPDATA Programs; $root = Join-Path $root Cerberus; $busy = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -match $\"^(Cerberus|cerberus-bridge)\\.exe$$\" -and $_.ExecutablePath -and $_.ExecutablePath.StartsWith($root + [char]92, [StringComparison]::OrdinalIgnoreCase) }); if ($busy.Count -gt 0) { exit 10 } else { exit 0 }"'
+  Pop $0
+  Pop $1
+  StrCmp $0 "0" clear
+  StrCmp $0 "10" running
+  MessageBox MB_ICONSTOP|MB_OK "Could not verify whether CERBERUS is running. No files were changed. Please retry after closing CERBERUS."
+  Abort
+running:
+  MessageBox MB_ICONEXCLAMATION|MB_OK "CERBERUS or its bridge is still running. Close CERBERUS before installing or upgrading. No files were changed."
+  Abort
+clear:
+FunctionEnd
+
 Section "Cerberus" SecMain
   SetOutPath "$INSTDIR"
   File "${CERBERUS_PAYLOAD}\Cerberus.exe"
