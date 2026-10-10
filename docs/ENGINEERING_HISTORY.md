@@ -455,3 +455,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — NSIS source path fix
 - Workflow `38050664013` failed compiling NSIS: `File: "desktop\\installer\\check-running.ps1" -> no files found`, line 27. This is a compile-time path resolution issue; no installer smoke test ran. Desktop and general CI succeeded.
 - Updated `File /oname=...` to use NSIS `${__FILEDIR__}\\check-running.ps1`, resolving relative to the installer script's own directory rather than the compiler working directory. Pending CI compilation and silent-install validation.
+
+### 2026-10-10 — Fix doubled NSIS script-relative path
+- Workflow `38053810224` failed at NSIS compile: it resolved `${__FILEDIR__}\\check-running.ps1` as `desktop\\installer\\desktop\\installer\\check-running.ps1` (duplicated directory). The build did not reach installation smoke testing.
+- Changed NSIS `File` input to `check-running.ps1`, which the compiler resolves relative to `desktop/installer/cerberus.nsi` in this invocation. Next verify compiler, silent installation/uninstallation, and process preflight, then physical Windows upgrade. Release remains blocked pending validation.
