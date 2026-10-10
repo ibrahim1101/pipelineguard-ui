@@ -31,6 +31,12 @@ function Evidence({ finding, scanId }) {
       setLoading(false);
     }
   };
+  const copyMasked = async () => {
+    if (!lines) return;
+    const text = [`${finding.file}:${finding.line ?? "?"}`, ...lines.map((l) => `${l.number}: ${l.text}`)].join("\n");
+    const ok = await copyText(text);
+    toast[ok ? "success" : "error"](ok ? "Masked evidence copied" : "Clipboard unavailable");
+  };
   return (
     <div>
       <div className="rounded-lg border border-pg-line bg-[#0D1113] font-mono text-[12px] leading-6 overflow-x-auto pg-scroll" data-testid="inspector-evidence">
@@ -48,6 +54,7 @@ function Evidence({ finding, scanId }) {
         {lines ? <EyeOff className="h-3.5 w-3.5 mr-1.5" /> : <Eye className="h-3.5 w-3.5 mr-1.5" />}
         {lines ? "Hide masked context" : "Show masked context"}
       </Button>
+      {lines && <Button size="sm" variant="outline" className="mt-2 ml-2" onClick={copyMasked} data-testid="inspector-copy-masked-btn"><Copy className="h-3.5 w-3.5 mr-1.5" />Copy masked content</Button>}
       <p className="text-[11px] text-pg-muted mt-2 leading-relaxed">Credentials are redacted inside the local engine bridge before display. Raw secret values are never sent to the interface.</p>
     </div>
   );
@@ -56,7 +63,8 @@ function Evidence({ finding, scanId }) {
 export default function FindingInspector({ finding: f, scanId, onClose }) {
   const copy = async () => {
     const text = [`Rule: ${f.rule}`, `Severity: ${f.severity}`, f.file && `Location: ${f.file}:${f.line ?? "?"}`, f.package && `Package: ${f.package} ${f.version || ""}`, f.advisory_id && `Advisory: ${f.advisory_id}`].filter(Boolean).join("\n");
-    toast[(await copyText(text)) ? "success" : "error"]((await copyText(text)) ? "Finding metadata copied (no secret values)" : "Clipboard unavailable");
+    const ok = await copyText(text);
+    toast[ok ? "success" : "error"](ok ? "Finding metadata copied (no secret values)" : "Clipboard unavailable");
   };
   return (
     <aside className="pg-panel w-[440px] shrink-0 flex flex-col min-h-0" data-testid="finding-inspector">
@@ -94,7 +102,7 @@ export default function FindingInspector({ finding: f, scanId, onClose }) {
           </section>
         )}
         {f.advisory_id && <AdvisoryDetails advisory={f} />}
-        <section><h3 className="text-xs text-pg-muted mb-1.5">Evidence preview</h3><Evidence finding={f} scanId={scanId} /></section>
+        <section><h3 className="text-xs text-pg-muted mb-1.5">Evidence preview</h3><Evidence key={`${scanId}:${f.index}`} finding={f} scanId={scanId} /></section>
       </div>
     </aside>
   );
