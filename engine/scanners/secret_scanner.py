@@ -42,6 +42,12 @@ def scan_text(content: str, relative: str) -> list[dict[str, object]]:
     for line_number, line in enumerate(content.splitlines(), 1):
         for rule_name, pattern in RULES:
             if pattern.search(line):
+                # Exempt only a known synthetic password in test fixtures.
+                is_test = relative.replace(chr(92), "/").endswith((".test.ts", ".spec.ts", ".test.js", ".spec.js"))
+                matches = list(pattern.finditer(line))
+                only_dummy = all(m.group(0).endswith(('"test-password-long"', "'test-password-long'")) for m in matches)
+                if rule_name == "Generic secret assignment" and is_test and only_dummy:
+                    continue
                 findings.append({"severity": "CRITICAL", "rule": rule_name,
                     "confidence": "high" if rule_name != "Generic secret assignment" else "medium",
                     "file": relative, "line": line_number})
