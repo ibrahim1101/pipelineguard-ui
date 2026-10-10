@@ -459,3 +459,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — Fix doubled NSIS script-relative path
 - Workflow `38053810224` failed at NSIS compile: it resolved `${__FILEDIR__}\\check-running.ps1` as `desktop\\installer\\desktop\\installer\\check-running.ps1` (duplicated directory). The build did not reach installation smoke testing.
 - Changed NSIS `File` input to `check-running.ps1`, which the compiler resolves relative to `desktop/installer/cerberus.nsi` in this invocation. Next verify compiler, silent installation/uninstallation, and process preflight, then physical Windows upgrade. Release remains blocked pending validation.
+
+### 2026-10-10 — NSIS installer CI green, physical upgrade gate next
+- Commit `5797892627ac73b0398e1f3e423958a7822fe791`: all three workflows passed: desktop shell `38055166316`, packaged Python sidecar/NSIS `38055166315`, general CI `38055166285`.
+- Windows packaging job confirmed NSIS installer compilation, silent installation/uninstallation, packaged sidecar fail-closed authentication, and authenticated bridge startup. NSIS installer preview artifact ID `11671451739` (run `38055166315`).
+- **Still unverified on user Windows PC:** upgrade while GUI/bridge running must warn/abort without overwrite; upgrade after normal close must succeed; repeated GUI shutdown must leave no orphan bridge; uninstall/Start-menu/registry cleanup and fresh scan/report export need acceptance testing. Do not label beta release-ready until physical checks pass.
