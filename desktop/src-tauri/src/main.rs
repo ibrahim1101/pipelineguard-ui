@@ -248,8 +248,22 @@ fn main() {
         .manage(managed_child)
         .manage(BridgeState { client, token, port })
         .invoke_handler(tauri::generate_handler![bridge_request])
-        .run(tauri::generate_context!())
-        .expect("failed to launch Cerberus desktop");
+        .build(tauri::generate_context!())
+        .expect("failed to build Cerberus desktop")
+        .run(|app, event| {
+            // Tauri state can outlive the final window; do not rely on Drop
+            // alone to terminate the managed Python bridge on GUI exit.
+            if let tauri::RunEvent::Exit = event {
+                use tauri::Manager;
+                let state = app.state::<ManagedChild>();
+                if let Ok(mut guard) = state.0.lock() {
+                    if let Some(mut child) = guard.take() {
+                        let _ = child.kill();
+                        let _ = child.wait();
+                    }
+                }
+            }
+        });
 }
 
 #[cfg(test)]
