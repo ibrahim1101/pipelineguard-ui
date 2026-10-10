@@ -507,3 +507,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-10 — Native Explorer drag/drop Windows CI Rust E0597 failure and correction
 - Windows packaged sidecar installer run `38074186467`, commit `3c45490`, failed at "Build frontend and native Windows desktop executable" (job `114277590980`): Rust E0597 in `on_window_event` when borrowing `window.state::<DroppedPaths>()` and evaluating `state.0.lock()` as final block expression. Rust advised terminating the conditional expression with a semicolon so the temporary guard/result drops before `state`.
 - Inserted the semicolon after the `if let Ok(mut pending) = state.0.lock()` block. This is a compile-time ownership fix; functional Windows Explorer drag/drop remains unverified pending new green CI and physical test.
+
+### 2026-10-11 — Physical Windows Explorer folder drag/drop PASS
+- User reported **"nice working"** after installing native Rust drop-handler build `105a10b`, installer workflow `38075904692` (success), installer artifact `11678721536`. Mark **Explorer folder drag/drop physical PASS** on user's Windows machine.
+- Native drop buffer + Tauri invoke approach resolved two previous JS-only implementations that failed physical testing. Preserve this implementation and its regression coverage.
+- Scope of confirmation: user did not explicitly confirm JSON config drops, cross-drive browse, fresh scan, report export, or uninstall; these remain pending.
+- Next acceptance sequence: scan a user-selected project, confirm findings/results, export and open an HTML report, then test JSON drop and drive navigation, repeated shutdown and clean uninstall. Do not mark untested gates passed.
