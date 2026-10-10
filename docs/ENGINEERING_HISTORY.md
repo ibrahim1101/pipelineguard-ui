@@ -464,3 +464,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Commit `5797892627ac73b0398e1f3e423958a7822fe791`: all three workflows passed: desktop shell `38055166316`, packaged Python sidecar/NSIS `38055166315`, general CI `38055166285`.
 - Windows packaging job confirmed NSIS installer compilation, silent installation/uninstallation, packaged sidecar fail-closed authentication, and authenticated bridge startup. NSIS installer preview artifact ID `11671451739` (run `38055166315`).
 - **Still unverified on user Windows PC:** upgrade while GUI/bridge running must warn/abort without overwrite; upgrade after normal close must succeed; repeated GUI shutdown must leave no orphan bridge; uninstall/Start-menu/registry cleanup and fresh scan/report export need acceptance testing. Do not label beta release-ready until physical checks pass.
+
+### 2026-10-10 — Physical Windows installer upgrade acceptance: PASS (user reported)
+- User installed the preview from green run `38055166315` and confirmed both manual upgrade cases: launching installer while CERBERUS was open displayed the running-process warning; after closing CERBERUS, launching installer again successfully completed installation.
+- These are user-reported physical Windows observations, not independently reproduced by CI. Upgrade preflight warning and normal-close upgrade are marked **PASS**.
+- Remaining acceptance gates: repeat normal close and check for orphan bridge processes; fresh scan and HTML report export; clean uninstall with shortcut/registry/runtime cleanup; final release packaging/checksums/notes. Do not mark beta fully ready until remaining gates are checked.
