@@ -517,3 +517,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 ### 2026-10-11 — Finding evidence preview show/hide toggle
 - User found that revealing redacted evidence left no control to hide it again. Updated the existing button in `FindingInspector.jsx` to toggle between **Show masked context** and **Hide masked context**, with icon and `aria-pressed` state; hiding clears the preview from component state and restores the original hidden placeholder. No second button added and no raw secrets exposed.
 - Pending UI CI and physical acceptance. User also supplied a completed Locat deep scan: 18 findings (17 critical, 1 warning), 658 offline-unchecked dependency entries; secret findings in `src/lib/messaging.integration.test.ts` need false-positive review rather than automatic severity reduction.
+
+### 2026-10-11 — Locat test fixture precision regression
+- User shared a Locat integration test using an explicitly synthetic password. The scanner previously reported it as a medium-confidence generic assignment with CRITICAL severity.
+- Updated the active `engine/scanners/secret_scanner.py` to exempt only that exact dummy literal in `.test.ts`, `.spec.ts`, `.test.js`, and `.spec.js` files. Other passwords and high-confidence signatures remain detectable. Added `engine/tests/test_secret_fixture_precision.py` with four positive/negative regression checks.
+- Commits `30969abc` and `7e66a883`. CI and physical Locat rescan pending; do not claim the other findings are false positives.
