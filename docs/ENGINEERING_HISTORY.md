@@ -451,3 +451,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Run `38049066477` reported preflight diagnostic exit 0 but actual NSIS silent installer exit 20. This isolates the discrepancy to invocation/stack handling inside NSIS; long embedded `-EncodedCommand` likely exceeded NSIS string length limits (hypothesis, not independently proven).
 - Replaced oversized encoded command with a small, separately versioned `desktop/installer/check-running.ps1` extracted into NSIS `$PLUGINSDIR` during `.onInit`. The installer calls `powershell.exe -File` with a short command, retains fail-closed exits 10/20 and silent-mode noninteractive behavior. CI diagnostic runs the same source script. No user process is terminated.
 - Next: verify installer compile, silent install/uninstall, installed process detection, physical upgrade and cleanup.
+
+### 2026-10-10 — NSIS source path fix
+- Workflow `38050664013` failed compiling NSIS: `File: "desktop\\installer\\check-running.ps1" -> no files found`, line 27. This is a compile-time path resolution issue; no installer smoke test ran. Desktop and general CI succeeded.
+- Updated `File /oname=...` to use NSIS `${__FILEDIR__}\\check-running.ps1`, resolving relative to the installer script's own directory rather than the compiler working directory. Pending CI compilation and silent-install validation.

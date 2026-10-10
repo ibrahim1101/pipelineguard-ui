@@ -24,7 +24,7 @@ Function .onInit
   ; Extract only the preflight script into NSIS temporary plugin storage.
   ; Long -EncodedCommand arguments exceed NSIS string limits and may be truncated.
   InitPluginsDir
-  File /oname=$PLUGINSDIR\check-running.ps1 "desktop\installer\check-running.ps1"
+  File /oname=$PLUGINSDIR\check-running.ps1 "${__FILEDIR__}\check-running.ps1"
   nsExec::ExecToStack 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\check-running.ps1"'
   Pop $0
   Pop $1
