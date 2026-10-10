@@ -3,6 +3,7 @@ import { Globe2, Loader2, Search, Wifi } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useApp } from "@/context/AppContext";
 import { api } from "@/lib/api";
@@ -18,6 +19,7 @@ export default function OsvIntel() {
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [lookupEnabled, setLookupEnabled] = useState(false);
   const pinned = (latest?.dependencies.packages || []).filter((p) => p.version).slice(0, 12);
 
   const check = async () => {
@@ -26,6 +28,7 @@ export default function OsvIntel() {
   };
   const lookup = async (e, override) => {
     e?.preventDefault();
+    if (!lookupEnabled) { setError("Enable online OSV lookups first."); return; }
     const body = override || form;
     setBusy(true); setError(null);
     try { setResult(await api.osvQuery(body)); } catch (err) { setError(err.message); setResult(null); } finally { setBusy(false); }
@@ -46,6 +49,7 @@ export default function OsvIntel() {
             </div>
             <p className="text-xs text-pg-muted mt-3 leading-relaxed">Connectivity is only checked when you ask. No background requests are made.</p>
           </Panel>
+          <Panel title="Online OSV permission"><div className="flex items-center justify-between gap-3"><div><Label htmlFor="osv-permission">Allow manual OSV lookups</Label><p className="text-xs text-pg-muted mt-1">Off by default. Connectivity checks do not enable lookups. Scan permissions are separate.</p></div><Switch id="osv-permission" checked={lookupEnabled} onCheckedChange={setLookupEnabled} data-testid="osv-permission-toggle" /></div></Panel>
           <Panel title="Package lookup" testId="osv-lookup-panel">
             <form onSubmit={lookup} className="space-y-3">
               <div><Label className="text-xs text-pg-muted">Ecosystem</Label>
@@ -58,7 +62,7 @@ export default function OsvIntel() {
                 <Input id="osv-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. requests" className="mt-1.5 bg-pg-bg font-mono text-sm" data-testid="osv-name-input" /></div>
               <div><Label htmlFor="osv-version" className="text-xs text-pg-muted">Exact version</Label>
                 <Input id="osv-version" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} placeholder="e.g. 2.19.0" className="mt-1.5 bg-pg-bg font-mono text-sm" data-testid="osv-version-input" /></div>
-              <Button type="submit" className="w-full" disabled={busy || !form.name || !form.version} data-testid="osv-lookup-btn">
+              <Button type="submit" className="w-full" disabled={!lookupEnabled || busy || !form.name || !form.version} data-testid="osv-lookup-btn">
                 {busy ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Search className="h-4 w-4 mr-2" />} Look up advisories
               </Button>
               <Note testId="osv-privacy-note">Only the package name, version and ecosystem are sent to api.osv.dev, followed by advisory-detail requests for returned IDs.</Note>
@@ -68,7 +72,7 @@ export default function OsvIntel() {
             <Panel title="From latest inventory" description="Pinned versions only" testId="osv-inventory-shortcuts">
               <div className="flex flex-wrap gap-1.5">
                 {pinned.map((p) => (
-                  <button key={p.uid} onClick={() => { const b = { name: p.name, version: p.version, ecosystem: p.ecosystem }; setForm(b); lookup(null, b); }}
+                  <button key={p.uid} disabled={!lookupEnabled || busy} onClick={() => { const b = { name: p.name, version: p.version, ecosystem: p.ecosystem }; setForm(b); lookup(null, b); }}
                     className="rounded-md border border-pg-line px-2 py-1 font-mono text-[11px] hover:border-pg-accent/50 hover:text-pg-accent transition-colors" data-testid={`osv-shortcut-${p.name}`}>
                     {p.name}@{p.version}
                   </button>
