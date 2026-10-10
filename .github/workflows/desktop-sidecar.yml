@@ -228,6 +228,18 @@ jobs:
         run: |
           $setup = (Resolve-Path dist/Cerberus-Setup-0.1.0.exe).Path
           $target = Join-Path $env:LOCALAPPDATA 'Programs/Cerberus'
+          # Diagnose the same embedded preflight before invoking NSIS; print PowerShell errors.
+          $nsi = Get-Content desktop/installer/cerberus.nsi -Raw
+          $encoded = [regex]::Match($nsi, '-EncodedCommand ([A-Za-z0-9+/=]+)').Groups[1].Value
+          if (-not $encoded) { throw 'NSIS encoded preflight not found' }
+          $preflightScript = [Text.Encoding]::Unicode.GetString([Convert]::FromBase64String($encoded))
+          $diagnostic = $preflightScript -replace 'catch \\{ exit 20 \\}', 'catch { Write-Error $_; exit 20 }'
+          $diagnosticPath = Join-Path $env:RUNNER_TEMP 'cerberus-preflight-diagnostic.ps1'
+          Set-Content -Path $diagnosticPath -Value $diagnostic -Encoding utf8
+          & powershell.exe -NoProfile -NonInteractive -File $diagnosticPath
+          $preflightCode = $LASTEXITCODE
+          Write-Host "Preflight diagnostic exit code: $preflightCode"
+          if ($preflightCode -ne 0) { throw "Preflight diagnostic failed with $preflightCode" }
           $install = Start-Process -FilePath $setup -ArgumentList '/S' -PassThru
           if (-not $install.WaitForExit(90000)) {
             Stop-Process -Id $install.Id -Force -ErrorAction SilentlyContinue
