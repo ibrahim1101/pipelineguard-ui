@@ -12,6 +12,8 @@ from scanners.traversal import iter_files
 # Files smaller than this cost less to scan than to hash and cache on typical SSDs.
 # This is an experimental threshold pending platform-specific benchmarks.
 MIN_CACHE_BYTES = 1024
+# Increment when scanner interpretation changes without changing regex patterns.
+SCANNER_SEMANTICS_VERSION = 2
 
 
 
@@ -51,7 +53,7 @@ def choose_scan_strategy(root: Path, ignored_directories: set[str], max_file_siz
 
 def scan_secrets_incremental(root: Path, ignored_directories: set[str], max_file_size: int, *, metrics: dict[str, int] | None = None, on_finding: Callable[[dict[str, object]], None] | None = None) -> list[dict[str, object]]:
     root = root.resolve()
-    signature = hashlib.sha256(repr([(name, regex.pattern, regex.flags) for name, regex in RULES]).encode()).hexdigest()
+    signature = hashlib.sha256(repr((SCANNER_SEMANTICS_VERSION, [(name, regex.pattern, regex.flags) for name, regex in RULES])).encode()).hexdigest()
     base = Path(os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache")
     store = base / "PipelineGuard" / "secret-findings" / (hashlib.sha256(os.fsencode(str(root))).hexdigest() + ".json")
     try:
