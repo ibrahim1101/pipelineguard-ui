@@ -423,3 +423,9 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - **Validation pending:** Verify Windows CI compilation, then user must launch the rebuilt installer, close the window normally, wait five seconds and confirm no installed CERBERUS bridge remains. Repeat twice; verify reinstall succeeds without manually killing processes. Installer running-process preflight remains a separate P0/P1 improvement.
 
 - **CI regression and fix (2026-10-10):** Desktop shell workflow run `38041092787` failed with Rust `E0597` at `src/main.rs:259` (`state` does not live long enough) because the `if let` mutex lock temporary extended to the enclosing scope end. Added a semicolon after the `if let` statement to end the temporary before the `state` binding is dropped. Packaged installer workflow `38041092795` was still running when diagnosed; await new CI before distributing any installer. Physical GUI-close retest still required.
+
+### 2026-10-10 — Physical Windows graceful-shutdown acceptance PASS
+- **User-observed result:** After installing the updated CERBERUS build and closing its GUI normally, the user ran the five-second Windows process check and reported `PASS`, meaning no installed `Cerberus.exe` or `cerberus-bridge.exe` remained. This is physical user-reported evidence, not a CI simulation.
+- **CI evidence:** Commit `cb9cedc` passed desktop shell run `38041934134`, general CI run `38041934104`, and packaged sidecar/installer run `38041934090`.
+- **Scope:** One reported successful shutdown check; repeat shutdown testing and clean upgrade/uninstall remain unverified. The earlier orphaned bridge and NSIS file-lock failures are retained in history.
+- **Next:** Add a non-destructive NSIS running-process preflight before file overwrite; verify installer CI, repeat upgrade while app is open and while closed, test Start menu and uninstall cleanup. Do not touch separate PipelineGuard repository.
