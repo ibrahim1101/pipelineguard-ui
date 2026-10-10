@@ -2,6 +2,19 @@
 
 use rand::RngCore;
 use std::process::{Child, Command, Stdio};
+#[cfg(windows)]
+use std::os::windows::process::CommandExt;
+
+#[cfg(windows)]
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
+// Suppress console windows for managed bridge processes on Windows.
+fn hide_bridge_console(command: &mut Command) -> &mut Command {
+    #[cfg(windows)]
+    command.creation_flags(CREATE_NO_WINDOW);
+    command
+}
+
 use std::sync::Mutex;
 use std::net::{TcpListener, TcpStream, SocketAddr};
 use std::io::{Read, Write};
@@ -49,7 +62,7 @@ fn spawn_development_bridge() -> Result<(Child, String, u16), String> {
     let token: String = secret.iter().map(|b| format!("{b:02x}")).collect();
     let python = std::env::var_os("CERBERUS_PYTHON")
         .unwrap_or_else(|| "python".into());
-    let child = Command::new(python)
+    let child = hide_bridge_console(&mut Command::new(python))
         .arg("-m").arg("uvicorn")
         .arg("server:app")
         .arg("--host").arg("127.0.0.1")
@@ -88,7 +101,7 @@ fn spawn_packaged_bridge() -> Result<(Child, String, u16), String> {
     let mut secret = [0u8; 32];
     rand::rngs::OsRng.fill_bytes(&mut secret);
     let token: String = secret.iter().map(|b| format!("{b:02x}")).collect();
-    let child = Command::new(sidecar)
+    let child = hide_bridge_console(&mut Command::new(sidecar))
         .current_dir(executable.parent().ok_or("Missing desktop executable directory")?)
         .env("CERBERUS_BRIDGE_PORT", port.to_string())
         .env("PIPELINEGUARD_ENGINE_PATH", engine)

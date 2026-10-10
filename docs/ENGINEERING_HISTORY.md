@@ -469,3 +469,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User installed the preview from green run `38055166315` and confirmed both manual upgrade cases: launching installer while CERBERUS was open displayed the running-process warning; after closing CERBERUS, launching installer again successfully completed installation.
 - These are user-reported physical Windows observations, not independently reproduced by CI. Upgrade preflight warning and normal-close upgrade are marked **PASS**.
 - Remaining acceptance gates: repeat normal close and check for orphan bridge processes; fresh scan and HTML report export; clean uninstall with shortcut/registry/runtime cleanup; final release packaging/checksums/notes. Do not mark beta fully ready until remaining gates are checked.
+
+### 2026-10-10 — Suppress unwanted Windows bridge console
+- User screenshot after successful installer upgrade showed CERBERUS GUI connected to engine alongside an unwanted blank command prompt. This is a UI/packaging defect, not proof of scan/report success.
+- Updated native Rust launcher to set Windows `CREATE_NO_WINDOW` on both development Python and packaged bridge child processes, retaining stdin/stdout/stderr null redirection, random token authentication, and existing child shutdown ownership. Non-Windows behavior unchanged.
+- Pending GitHub desktop/sidecar CI and physical Windows installer verification. Existing installed binary will not change until the updated build is installed. Continue fresh scan/HTML export acceptance after this change.
