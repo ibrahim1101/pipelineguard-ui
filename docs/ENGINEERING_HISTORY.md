@@ -484,3 +484,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User installed the latest CERBERUS preview installer built from commit `a497ffc` / green installer workflow `38061383156`, artifact `11673906906`, and reported installation succeeded, CERBERUS launched without an extra command prompt, and the GUI closed normally.
 - Mark **physical installer success**, **no visible bridge console**, and **normal GUI close** as PASS based on user report. This validates the `CREATE_NO_WINDOW` launcher fix on the user's PC.
 - Do NOT infer that no orphan bridge process remained: explicit process inspection after shutdown is still pending. Fresh scan, HTML report export, and uninstall/cleanup acceptance remain pending. Continue these tests before beta release.
+
+### 2026-10-10 — Cross-drive picker and Windows Explorer drag/drop (implementation pending CI)
+- User reported shared project/configuration file picker cannot navigate above C: root to reach other drives. Added Windows drive enumeration to `/fs/list` and shared picker drive shortcuts, covering all consumers of `PathPicker`.
+- Added Tauri native webview drag/drop listener in shared picker for Explorer filesystem paths; folder drops navigate to folder for explicit selection, JSON file drops select configuration path. The browser does not expose trustworthy absolute local paths, so this capability is desktop-only.
+- Pending CI and physical Windows verification, including D:/E:/ removable drives, folder drops, JSON drops, error handling, and scanning. Do not claim validated yet.

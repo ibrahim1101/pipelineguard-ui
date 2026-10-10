@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ArrowUp, FileJson, Folder } from "lucide-react";
+import { ArrowUp, HardDrive, FileJson, Folder } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ export default function PathPicker({ open, onOpenChange, mode = "dir", initialPa
   const [data, setData] = useState(null);
   const [input, setInput] = useState("");
   const [error, setError] = useState(null);
+  const [dragging, setDragging] = useState(false);
 
   const load = useCallback(async (p) => {
     try {
@@ -31,6 +32,30 @@ export default function PathPicker({ open, onOpenChange, mode = "dir", initialPa
     api.fsList(start || undefined).then((d) => { setData(d); setInput(d.path); setError(null); }).catch(() => load(undefined));
   }, [open, initialPath, mode, load]);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    let disposed = false;
+    let unlisten;
+    const webview = window.__TAURI__?.webview?.getCurrentWebview?.();
+    if (webview?.onDragDropEvent) {
+      webview.onDragDropEvent((event) => {
+        if (disposed) return;
+        if (event.payload.type === "leave") setDragging(false);
+        if (event.payload.type === "over") setDragging(true);
+        if (event.payload.type === "drop") {
+          setDragging(false);
+          const path = event.payload.paths?.[0];
+          if (path) {
+            if (mode === "json" && /\\.json$/i.test(path)) pick(path);
+            else if (mode === "dir") load(path);
+            else setError("Drop a JSON configuration file.");
+          }
+        }
+      }).then((fn) => { if (disposed) fn(); else unlisten = fn; }).catch(() => {});
+    }
+    return () => { disposed = true; unlisten?.(); };
+  }, [open, mode, load]);
+
   const pick = (p) => {
     onSelect(p);
     onOpenChange(false);
@@ -48,7 +73,10 @@ export default function PathPicker({ open, onOpenChange, mode = "dir", initialPa
           <Button type="submit" variant="outline" data-testid="path-picker-go-btn">Go</Button>
         </form>
         <InlineError message={error} testId="path-picker-error" />
+        <p className={`text-xs rounded-md border border-dashed p-2 text-center ${dragging ? "border-pg-accent text-pg-accent" : "border-pg-line text-pg-muted"}`} data-testid="path-picker-drop-hint">Drag a {mode === "dir" ? "folder" : "JSON file"} here from Windows Explorer, or browse drives below.</p>
         <div className="h-72 overflow-y-auto pg-scroll rounded-lg border border-pg-line bg-pg-bg/60 p-1" data-testid="path-picker-list">
+          {data?.drives?.length > 0 && <div className="px-3 py-1 text-xs text-pg-muted">This PC · Available drives</div>}
+          {data?.drives?.map((drive) => <button key={drive} onClick={() => load(drive)} className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm hover:bg-pg-surface2 text-left" data-testid={`path-picker-drive-${drive[0]}`}><HardDrive className="h-4 w-4 text-pg-accent shrink-0" />{drive}</button>)}
           {data?.parent && (
             <button onClick={() => load(data.parent)} className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-pg-muted hover:bg-pg-surface2" data-testid="path-picker-up">
               <ArrowUp className="h-4 w-4" /> Parent folder
