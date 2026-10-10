@@ -479,3 +479,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Workflow `38056858864` attempt 1 failed at installing NSIS from Chocolatey due to HTTP 503 service outage (external dependency, not Rust/bridge build failure). Attempt 2 rerun completed **success** with no failed jobs.
 - Verified fresh Windows installer artifact `cerberus-windows-nsis-installer-preview` ID `11673660103` and standalone artifact `11673346690` on attempt 2. Commit `a497ffc428c953e67657c5691fbeb2fea010a08d` contains Rust Windows `CREATE_NO_WINDOW` for managed Python/packaged bridge child.
 - Next physical Windows acceptance: install the updated artifact, verify no console window, engine bridge connected, clean shutdown with no orphan bridge; run a fresh scan and HTML export. These checks are pending user testing; do not claim physical pass yet.
+
+### 2026-10-10 — Physical Windows hidden-console and installation acceptance: PASS (user reported)
+- User installed the latest CERBERUS preview installer built from commit `a497ffc` / green installer workflow `38061383156`, artifact `11673906906`, and reported installation succeeded, CERBERUS launched without an extra command prompt, and the GUI closed normally.
+- Mark **physical installer success**, **no visible bridge console**, and **normal GUI close** as PASS based on user report. This validates the `CREATE_NO_WINDOW` launcher fix on the user's PC.
+- Do NOT infer that no orphan bridge process remained: explicit process inspection after shutdown is still pending. Fresh scan, HTML report export, and uninstall/cleanup acceptance remain pending. Continue these tests before beta release.
