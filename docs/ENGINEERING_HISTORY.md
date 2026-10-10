@@ -528,3 +528,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Locat user rescan screenshot still showed 18 findings, 17 critical, and 255/256 processed. Investigated secret cache and found its signature only hashed regex patterns/flags, not scanner interpretation logic. The test-fixture exemption did not alter regex patterns, so stale cached findings could be reused.
 - Added SCANNER_SEMANTICS_VERSION to cache signature and regression test for version-based invalidation. Changes committed as 65cc7d54 and 72fd3fc1. CI and physical rescan pending.
 - 255/256 may represent a legitimately skipped file (size/change/error), not necessarily an error; inspect discovery/fingerprint metrics before changing counting semantics.
+
+### 2026-10-11 — Physical Locat rescan after scanner/cache fixes
+- User supplied Windows CERBERUS screenshot showing fresh Locat scan with 4 findings: 3 critical generic secret assignments and 1 warning (dependency check incomplete), down from 18 (17 critical and 1 warning). This validates that the installed correction reduced previously reported detections by 14; does not establish all removed findings were false positives.
+- Remaining generic secret assignments displayed at `src/lib/messaging.integration.test.ts` lines 140 and 550 and a truncated `src/lib/password.test...` at line 17. Exact values/evidence not yet reviewed. Release remains BLOCKED. OSV status shows Not checked, meaning connectivity has not been checked; dependency analysis warning remains.
+- Next: inspect masked evidence and surrounding redacted source for three remaining findings, validate HTML export, and separately explain discovered/processed file counts. No blanket suppression of test secrets.
