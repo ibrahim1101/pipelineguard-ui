@@ -27,10 +27,14 @@ Function .onInit
   Pop $1
   StrCmp $0 "0" clear
   StrCmp $0 "10" running
-  MessageBox MB_ICONSTOP|MB_OK "Could not verify whether CERBERUS is running. No files were changed. Please retry after closing CERBERUS."
+  SetErrorLevel 20
+  IfSilent +2
+    MessageBox MB_ICONSTOP|MB_OK "Could not verify whether CERBERUS is running. No files were changed. Please retry after closing CERBERUS."
   Abort
 running:
-  MessageBox MB_ICONEXCLAMATION|MB_OK "CERBERUS or its bridge is still running. Close CERBERUS before installing or upgrading. No files were changed."
+  SetErrorLevel 10
+  IfSilent +2
+    MessageBox MB_ICONEXCLAMATION|MB_OK "CERBERUS or its bridge is still running. Close CERBERUS before installing or upgrading. No files were changed."
   Abort
 clear:
 FunctionEnd

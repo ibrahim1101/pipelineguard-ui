@@ -228,13 +228,23 @@ jobs:
         run: |
           $setup = (Resolve-Path dist/Cerberus-Setup-0.1.0.exe).Path
           $target = Join-Path $env:LOCALAPPDATA 'Programs/Cerberus'
-          $install = Start-Process -FilePath $setup -ArgumentList '/S' -Wait -PassThru
+          $install = Start-Process -FilePath $setup -ArgumentList '/S' -PassThru
+          if (-not $install.WaitForExit(90000)) {
+            Stop-Process -Id $install.Id -Force -ErrorAction SilentlyContinue
+            throw 'Silent installer timed out after 90 seconds (possible hidden dialog or preflight hang)'
+          }
+          Write-Host "Silent installer exit code: $($install.ExitCode)"
           if ($install.ExitCode -ne 0) { throw "Installer exited with $($install.ExitCode)" }
           if (-not (Test-Path (Join-Path $target 'Cerberus.exe'))) { throw 'Installed native executable missing' }
           if (-not (Test-Path (Join-Path $target 'cerberus-runtime/cerberus-bridge.exe'))) { throw 'Installed sidecar missing' }
           if (-not (Test-Path (Join-Path $target 'cerberus-runtime/engine/pipelineguard'))) { throw 'Installed scanner engine missing' }
           $uninstaller = Join-Path $target 'Uninstall.exe'
-          $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
+          $uninstall = Start-Process -FilePath $uninstaller -ArgumentList '/S' -PassThru
+          if (-not $uninstall.WaitForExit(90000)) {
+            Stop-Process -Id $uninstall.Id -Force -ErrorAction SilentlyContinue
+            throw 'Silent uninstaller timed out after 90 seconds'
+          }
+          Write-Host "Silent uninstaller exit code: $($uninstall.ExitCode)"
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller exited with $($uninstall.ExitCode)" }
           Start-Sleep -Seconds 2
           if (Test-Path (Join-Path $target 'Cerberus.exe')) { throw 'Uninstall left native executable behind' }
