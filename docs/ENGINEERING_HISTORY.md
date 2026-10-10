@@ -513,3 +513,7 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - Native drop buffer + Tauri invoke approach resolved two previous JS-only implementations that failed physical testing. Preserve this implementation and its regression coverage.
 - Scope of confirmation: user did not explicitly confirm JSON config drops, cross-drive browse, fresh scan, report export, or uninstall; these remain pending.
 - Next acceptance sequence: scan a user-selected project, confirm findings/results, export and open an HTML report, then test JSON drop and drive navigation, repeated shutdown and clean uninstall. Do not mark untested gates passed.
+
+### 2026-10-11 — Finding evidence preview show/hide toggle
+- User found that revealing redacted evidence left no control to hide it again. Updated the existing button in `FindingInspector.jsx` to toggle between **Show masked context** and **Hide masked context**, with icon and `aria-pressed` state; hiding clears the preview from component state and restores the original hidden placeholder. No second button added and no raw secrets exposed.
+- Pending UI CI and physical acceptance. User also supplied a completed Locat deep scan: 18 findings (17 critical, 1 warning), 658 offline-unchecked dependency entries; secret findings in `src/lib/messaging.integration.test.ts` need false-positive review rather than automatic severity reduction.

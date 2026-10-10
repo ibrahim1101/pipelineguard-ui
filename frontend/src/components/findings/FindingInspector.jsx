@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, EyeOff, Lock, X } from "lucide-react";
+import { Copy, Eye, EyeOff, Lock, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
@@ -15,7 +15,12 @@ function Evidence({ finding, scanId }) {
   if (finding.category !== "Secret") {
     return <p className="text-xs text-pg-muted">Source preview is not applicable to this finding type.</p>;
   }
-  const load = async () => {
+  const toggle = async () => {
+    if (lines) {
+      setLines(null);
+      setError(null);
+      return;
+    }
     setLoading(true);
     try {
       setLines((await api.evidence(scanId, finding.index)).lines);
@@ -39,11 +44,10 @@ function Evidence({ finding, scanId }) {
         )}
       </div>
       <InlineError message={error} testId="inspector-evidence-error" />
-      {!lines && (
-        <Button size="sm" variant="outline" className="mt-2" onClick={load} disabled={loading} data-testid="inspector-reveal-masked-btn">
-          <EyeOff className="h-3.5 w-3.5 mr-1.5" /> Show masked context
-        </Button>
-      )}
+      <Button size="sm" variant="outline" className="mt-2" onClick={toggle} disabled={loading} aria-pressed={Boolean(lines)} data-testid="inspector-reveal-masked-btn">
+        {lines ? <EyeOff className="h-3.5 w-3.5 mr-1.5" /> : <Eye className="h-3.5 w-3.5 mr-1.5" />}
+        {lines ? "Hide masked context" : "Show masked context"}
+      </Button>
       <p className="text-[11px] text-pg-muted mt-2 leading-relaxed">Credentials are redacted inside the local engine bridge before display. Raw secret values are never sent to the interface.</p>
     </div>
   );
