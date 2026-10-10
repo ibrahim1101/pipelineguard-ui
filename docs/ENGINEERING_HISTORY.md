@@ -474,3 +474,8 @@ Prefer small commits and inspect CI after each batch. Preserve the engine reposi
 - User screenshot after successful installer upgrade showed CERBERUS GUI connected to engine alongside an unwanted blank command prompt. This is a UI/packaging defect, not proof of scan/report success.
 - Updated native Rust launcher to set Windows `CREATE_NO_WINDOW` on both development Python and packaged bridge child processes, retaining stdin/stdout/stderr null redirection, random token authentication, and existing child shutdown ownership. Non-Windows behavior unchanged.
 - Pending GitHub desktop/sidecar CI and physical Windows installer verification. Existing installed binary will not change until the updated build is installed. Continue fresh scan/HTML export acceptance after this change.
+
+### 2026-10-10 — Hidden bridge console installer CI success
+- Workflow `38056858864` attempt 1 failed at installing NSIS from Chocolatey due to HTTP 503 service outage (external dependency, not Rust/bridge build failure). Attempt 2 rerun completed **success** with no failed jobs.
+- Verified fresh Windows installer artifact `cerberus-windows-nsis-installer-preview` ID `11673660103` and standalone artifact `11673346690` on attempt 2. Commit `a497ffc428c953e67657c5691fbeb2fea010a08d` contains Rust Windows `CREATE_NO_WINDOW` for managed Python/packaged bridge child.
+- Next physical Windows acceptance: install the updated artifact, verify no console window, engine bridge connected, clean shutdown with no orphan bridge; run a fresh scan and HTML export. These checks are pending user testing; do not claim physical pass yet.
